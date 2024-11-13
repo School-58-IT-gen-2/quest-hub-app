@@ -5,10 +5,6 @@ from typing import Optional, List
 
 class AbstractSource(ABC):
     @abstractmethod
-    def get_by_query(self, collection_name: str, query: dict) -> List[dict]:
-        pass
-
-    @abstractmethod
     def get_all(self, collection_name: str) -> List[dict]:
         pass
 
