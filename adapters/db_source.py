@@ -80,3 +80,10 @@ class DBSource(AbstractSource):
         :return: Список из словаря с удалённой строкой
         """
         return self.__supabase.table(table_name).delete().eq("id", id).execute()
+    
+    #def get_by_query(self, table_name: str, query: dict) -> List[dict]:
+     #   code = 'return self.__supabase.table(table_name).delete()'
+      #  columns = list(query.keys())
+       # values = list(query.values())
+        #for i in range(len(query)):
+         #   code += f'.eq("{}")'

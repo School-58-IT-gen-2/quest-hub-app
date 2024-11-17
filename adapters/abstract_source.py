@@ -5,21 +5,25 @@ from typing import Optional, List
 
 class AbstractSource(ABC):
     @abstractmethod
-    def get_all(self, collection_name: str) -> List[dict]:
+    def get_all(self, table_name: str) -> List[dict]:
         pass
 
     @abstractmethod
-    def get_by_id(self, collection_name: str, object_id: int) -> dict:
+    def get_by_id(self, table_name: str, id: int) -> List[dict]:
         pass
 
     @abstractmethod
-    def insert(self, collection_name: str, document: dict) -> dict:
+    def insert(self, table_name: str, dict: dict) -> List[dict]:
         pass
 
     @abstractmethod
-    def update(self, collection_name: str, object_id: int, document: dict) -> dict:
+    def update(self, table_name: str, dict: dict, id: int) -> List[dict]:
         pass
 
     @abstractmethod
-    def delete(self, collection_name: str, object_id: int) -> dict:
+    def delete(self, table_name: str, id: int) -> List[dict]:
+        pass
+
+    @abstractmethod
+    def get_by_query(self, table_name: str, query: dict) -> List[dict]:
         pass
