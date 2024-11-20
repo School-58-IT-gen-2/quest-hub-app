@@ -13,7 +13,7 @@ class DBSource(AbstractSource):
             :param key: Ключ от supabase
         """
         self.__url = url
-        self.__key = key.get_secret_value()
+        self.__key = key
 
     def connect(self) -> None:
         """Подключение к БД"""

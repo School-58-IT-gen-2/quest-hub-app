@@ -1,15 +1,15 @@
 import sys
-
 sys.path.append("./")
-
 import unittest
 import os
 from dotenv import load_dotenv
 import time
 from datetime import datetime, timezone
-
 from adapters.db_source import DBSource
 
+load_dotenv()
+
+DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY")).connect()
 
 class TestSupabaseAdapter(unittest.TestCase):
     def test_select_user(self):
