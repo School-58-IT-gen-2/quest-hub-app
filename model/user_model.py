@@ -1,7 +1,7 @@
 from __future__ import annotations  # нужно чтобы parse мог быть типизирован
 
 from model.abstract_model import AbstractModel
-from character_list_model import CharacterList
+from model.character_list_model import CharacterList
 from typing import List, Optional, TYPE_CHECKING
 import hashlib
 
@@ -11,22 +11,31 @@ if TYPE_CHECKING:
 
 class User(AbstractModel):
 
-    def __init__(self, name: str, login: str, hash_password: Optional[str] = None,
-                 password: Optional[str] = None, id: int = None):
+    def __init__(self, username: str, tg_id: int, db_source: DBSource, first_name: str = None, last_name: str = None, role: str = None, id: int = None, age: int = None, is_bot: bool = None, language_code: str = None, is_premium: bool = None):
+        """ 
+        :param str username: Имя пользователя в Telegram
+        :param int tg_id: id пользователя в Telegram
+        :param DBSource db_source: Объект класса базы данных
+        :param str first_name: Имя 
+        :param str last_name: Фамилия
+        :param str role: Роль (игрок или мастер)
+        :param int id: id пользователя в supabase
+        :param int age: Возраст
+        :param bool is_bot: Является ли пользователь ботом ?????
+        :param str language_code: ?????
+        :param bool is_premium: ?????
         """
-            :param login: Логин
-            :param password_hash: Пароль
-            :param name: Имя пользователя
-        """
-        self.__login = login
-        if hash_password is None and password is not None:
-            self.__password_hash = hashlib.sha256(password.encode()).hexdigest()
-        elif password is None and hash_password is not None:
-            self.__password_hash = hash_password
-        else:
-            raise ValueError('Ошибка создания: должен присутствовать password ИЛИ hash_password')
-        self.__name = name
+        self.__username = username
+        self.__tg_id = tg_id
+        self.__db_source = db_source
+        self.__first_name = first_name
+        self.__last_name = last_name
+        self.__role = role
         self.__id = id
+        self.__age = age
+        self.__is_bot = is_bot
+        self.__language_code = language_code
+        self.__is_premium = is_premium
 
     @classmethod
     def get_by_login(cls, login: str, db_source: DBSource) -> Optional[User]:
@@ -37,7 +46,7 @@ class User(AbstractModel):
             raise ValueError('Too big data')
         return User(**data[0], db_source=db_source)
     
-    def create_character_list(self,
+    def create_char_list(self,
                             character_name: str,
                             race: str,
                             character_class: str,
@@ -62,28 +71,13 @@ class User(AbstractModel):
                             notes: str,
                             languages: list,
                             npc_relations: dict):
-        self.character_list = CharacterList(self.__id, character_name, race, character_class, characteristics, hp, alignment, skills, weapons_and_equipment, saving_throws, death_saving_throws, attacks, spells, passive_perception, traits, initiative, level, speed, backstory, experience, valuables, diary, notes, languages, npc_relations)
+        self.__char_list = CharacterList(self.__id, character_name, race, character_class, characteristics, hp, alignment, skills, weapons_and_equipment, saving_throws, death_saving_throws, attacks, spells, passive_perception, traits, initiative, level, speed, backstory, experience, valuables, diary, notes, languages, npc_relations)
 
-    def get_login(self) -> str:
-        return self.__login
-
-    def get_password_hash(self) -> str:
-        return self.__password_hash
-
-    def get_name(self) -> str:
-        return self.__name
-
-    def get_main_id(self) -> int:
-        return self.__id
-
-    def __str__(self):
-        return f"Пользователь {self.get_name()} с логином {self.get_login()}"
+    def get_char_list(self):
+        return self.__char_list
 
     def __dict__(self) -> dict:
         return {"name": self.get_name(),
                 "login": self.get_login(),
                 "hash_password": self.get_password_hash(),
                 'id': self.get_main_id()}
-
-    def compare_hash(self, password: str) -> bool:
-        return self.__password_hash == hashlib.sha256(password.encode()).hexdigest()

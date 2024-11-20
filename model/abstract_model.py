@@ -11,6 +11,9 @@ class AbstractModel(ABC):
     """Абстрактный класс сущности"""
 
     def __init__(self, db_source: DBSource):
+        """
+        :param DBSource db_source: Объект класса базы данных
+        """
         self._db_source = db_source
 
     @classmethod
@@ -74,10 +77,6 @@ class AbstractModel(ABC):
         """
         obj = db_source.get_by_query(cls._get_collection_name(), query)
         return [cls(**el, db_source=db_source) for el in obj]
-
-    @abstractmethod
-    def __str__(self):
-        pass
 
     @abstractmethod
     def __dict__(self):

@@ -25,5 +25,5 @@ class AbstractSource(ABC):
         pass
 
     @abstractmethod
-    def get_by_query(self, table_name: str, query: dict) -> List[dict]:
+    def get_by_value(self, table_name: str, query: dict) -> List[dict]:
         pass
