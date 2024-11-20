@@ -9,15 +9,12 @@ from adapters.db_source import DBSource
 
 load_dotenv()
 
-DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY")).connect()
 
 class TestSupabaseAdapter(unittest.TestCase):
     def test_select_user(self):
         try:
             supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
-
             supa.connect()
-            print(supa.get_all("test"))
             self.assertIsNotNone(supa.get_all("test"))
         except:
             self.fail("Failed to select user :(")
@@ -26,7 +23,7 @@ class TestSupabaseAdapter(unittest.TestCase):
         try:
             supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
             supa.connect()
-            len1 = len(supa.get_all())
+            len1 = len(list(supa.get_all("test"))[0][1])
             new_user = {
                 "id": int(time.time()),
                 "created_at": str(datetime.now(timezone.utc)),
@@ -34,7 +31,7 @@ class TestSupabaseAdapter(unittest.TestCase):
                 "test2": 123,
             }
             supa.insert("test", new_user)
-            len2 = len(supa.get_all("test"))
+            len2 = len(list(supa.get_all("test"))[0][1])
             self.assertNotEqual(len1, len2)
         except:
             self.fail("Failed to create user :(")
@@ -54,9 +51,9 @@ class TestSupabaseAdapter(unittest.TestCase):
         try:
             supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
             supa.connect()
-            len1 = len(supa.get_all("test"))
+            len1 = len(list(supa.get_all("test"))[0][1])
             supa.delete("test", 1)
-            len2 = len(supa.get_all("test"))
+            len2 = len(list(supa.get_all("test"))[0][1])
             new_user = {
                 "id": 1,
                 "created_at": str(datetime.now(timezone.utc)),

@@ -38,7 +38,7 @@ class DBSource(AbstractSource):
         :param table: Название таблицы
         :return: Список из словаря
         """
-        return self.__supabase.table(table_name).select().execute()
+        return self.__supabase.table(table_name).select("*").execute()
 
     def get_by_id(self, table_name: str, id: int) -> List[dict]:
         """
@@ -48,7 +48,7 @@ class DBSource(AbstractSource):
         :param id: id объекта
         :return: Список из словаря со строкой таблицы
         """
-        return self.__supabase.table(table_name).select().eq("id", id).execute()
+        return self.__supabase.table(table_name).select("*").eq("id", id).execute()
 
     def insert(self, table_name: str, dict: dict) -> List[dict]:
         """
