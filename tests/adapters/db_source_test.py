@@ -11,11 +11,20 @@ load_dotenv()
 
 
 class TestSupabaseAdapter(unittest.TestCase):
-    def test_select_user(self):
+    def test_select_all_users(self):
         try:
             supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
             supa.connect()
             self.assertIsNotNone(supa.get_all("test"))
+        except:
+            self.fail("Failed to select users :(")
+    
+
+    def test_select_user(self):
+        try:
+            supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+            supa.connect()
+            self.assertIsNotNone(supa.get_by_id("test",1))
         except:
             self.fail("Failed to select user :(")
 
