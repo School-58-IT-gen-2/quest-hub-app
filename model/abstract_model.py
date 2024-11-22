@@ -10,16 +10,6 @@ if TYPE_CHECKING:
 class AbstractModel(ABC):
     """Абстрактный класс сущности"""
 
-    def __init__(self, db_source: DBSource):
-        """
-        :param DBSource db_source: Объект класса базы данных
-        """
-        self._db_source = db_source
-
-    @classmethod
-    def _get_collection_name(cls) -> str:
-        return cls.__name__
-
     def save(self) -> AbstractModel:
         if self.get_main_id() is None:
             result = self._db_source.insert(self._get_collection_name(), self.__dict__())
@@ -81,24 +71,3 @@ class AbstractModel(ABC):
     @abstractmethod
     def __dict__(self):
         pass
-
-    def get_db_source(self) -> DBSource:
-        return self._db_source
-
-    def get_main_id(self) -> int:
-        """
-        Возвращает id текущего объекта
-
-        :return: id текущего объекта
-        """
-        return self._id
-
-    def _set_main_id(self, elem_id: Optional[int] = None) -> AbstractModel:
-        """
-        Меняет id текущего объекта на значение параметра
-
-        :param elem_id: Новый id
-        :return: Текущий объект
-        """
-        self._id = elem_id
-        return self

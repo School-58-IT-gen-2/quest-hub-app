@@ -91,19 +91,3 @@ class DBSource(AbstractSource):
         :return List[dict]: Список из словаря с удалённой строкой
         """
         return self.__supabase.table(table_name).delete().eq("id", id).execute()
-    
-    # def get_by_query(self, table_name: str, query: dict) -> List[dict]:
-    #     """
-    #     Поиск с несколькими параметрами
-
-    #     :param table_name: Название таблицы
-    #     :param query: Словарь в формате {<название столбца>: <значение в столбце>}
-    #     :return: Список из строк, удовлетворяющих запросу
-    #     """
-    #     code = 'self.__supabase.table(table_name).select()'
-    #     columns = list(query.keys())
-    #     values = list(query.values())
-    #     for i in range(len(query)):
-    #         code += f'.eq("{columns[i]}", {values[i]})'
-    #     code += '.execute()'
-    #     return exec(code)
