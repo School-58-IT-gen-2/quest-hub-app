@@ -40,7 +40,7 @@ class DBSource(AbstractSource):
         """
         return self.__supabase.table(table_name).select().execute()
 
-    def get_by_id(self, table_name: str, id: int) -> List[dict]:
+    def get_by_id(self, table_name: str, id: str | int) -> List[dict]:
         """
         Получение объекта по id
 
@@ -50,9 +50,9 @@ class DBSource(AbstractSource):
         """
         return self.__supabase.table(table_name).select().eq("id", id).execute()
     
-    def get_by_value(self, table_name: str, parameter: str, parameter_value: str | int | list) -> List[dict]:
+    def get_by_value(self, table_name: str, parameter: str, parameter_value: any) -> List[dict]:
         """
-        Получение объекта по id
+        Получение объекта по значению определенного параметра
 
         :param str table_name: Название таблицы
         :param str parameter: Столбец, по которому происходит сравнение
