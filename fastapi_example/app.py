@@ -54,4 +54,3 @@ def put_data(data: User):
 @app.get("/data")
 def get_data():
     return {"data": "ACCESS DENIED"}
-
