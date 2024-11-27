@@ -1,6 +1,6 @@
 import uvicorn
 
-from fastapi_example.modules.settings import settings
+from fastapi_example.fastapi_example.modules.settings import settings
 
 
 def start():
