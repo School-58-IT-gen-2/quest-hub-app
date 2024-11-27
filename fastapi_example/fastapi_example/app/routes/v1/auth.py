@@ -32,13 +32,8 @@ def sign_in(tg_id: int, first_name: str):
 
 
 @route.post(path="/sign-out")
-def sign_out(user: UserModel):
+def sign_out():
     try:
-        supa = get_supabase_client()
-        credentials = {
-            "email": user.email,
-            "password": user.password.get_secret_value(),
-        }
-        return supa.auth.sign_out()
+        return {"status": "Ok"}
     except Exception as error:
         print(error)
