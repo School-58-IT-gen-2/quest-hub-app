@@ -21,10 +21,12 @@ def sign_up(tg_id: int, first_name: str):
 
 
 @route.get(path="/sign-in")
-def sign_in(user: UserModel):
+def sign_in(tg_id: int, first_name: str):
     try:
-        
-        return supa_user
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)        
+        new_user = User(tg_id, new_db_source, first_name)
+        new_user.insert()
+        return new_user
     except Exception as error:
         print(error)
 
