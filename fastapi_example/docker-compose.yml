@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  fastapi_example:
+    image: fastapi-example:0.1.0
+    container_name: fastapi_example
+    env_file: .env
+    command: 'python main.py'
+    ports:
+      - 9009:9009
