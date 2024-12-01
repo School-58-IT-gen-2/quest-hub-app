@@ -94,7 +94,6 @@ class User(AbstractModel):
                 char_list.synchronize(i["id"])
                 self.__char_lists[char_list.id] = char_list
 
-    
     def create_char_list(self,
                             name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: int = None, death_saving_throws: int = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: int = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_fours: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None) -> CharacterList:
         """Создание листа персонажа пользователя"""
@@ -105,7 +104,7 @@ class User(AbstractModel):
         self.__char_lists[char_list.id] = char_list
 
     def get_char_lists(self) -> dict:
-        """Получение листа персонажа пользователя"""
+        """Получение словаря с листами персонажей пользователя"""
         return self.__char_lists
 
     def __dict__(self) -> dict:
