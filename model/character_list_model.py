@@ -85,10 +85,12 @@ class CharacterList(AbstractModel):
 
     def insert(self):
         """Сохранение листа персонажа в базу данных"""
-        if self.__dict__()["id"] == None:
+        if self.id:
+            self.synchronize(self.id)
+        else:
             insert_dict = self.__dict__()
             del insert_dict["id"]
-            self.id = dict(self.db_source.insert(self.table_name, insert_dict))["data"][0]["id"]
+            self.id = self.db_source.insert(self.table_name, insert_dict)[0]["id"]
 
     def update(self, dict: dict) -> List[dict]:
         """
@@ -97,13 +99,15 @@ class CharacterList(AbstractModel):
         :param dict dict: Словарь с новыми данными листа персонажа
         :return List[dict]: Список из словаря с новой строкой
         """
-        return self.db_source.update(self.table_name, dict, self.id)
+        data_list = self.db_source.update(self.table_name, dict, self.id)
+        self.synchronize(self.id)
+        return data_list
     
     def delete(self) -> List[dict]:
         """Удаление листа персонажа из базы данных"""
         return self.db_source.delete(self.table_name, self.id)
 
-    def get_by_id(self, id: str) -> List[dict]:
+    def get_by_id(self, id: int) -> List[dict]:
         """
         Получение листа персонажа по id
 
@@ -121,6 +125,19 @@ class CharacterList(AbstractModel):
         :return List[dict]: Список из словаря со строкой таблицы
         """
         return self.db_source.get_by_value(self.table_name, parameter, parameter_value)
+    
+    def synchronize(self, id: int):
+        """
+        Синхронизация объекта класса и данных в таблицах
+
+        :param int id: id листа персонажа в таблице
+        """
+        data_list = self.get_by_id(id)
+        if len(data_list) == 0:
+            self.insert()
+        else:
+            data_dict = data_list[0]
+            self.set_attributes(data_dict)
     
     def __dict__(self) -> dict:
         return {
@@ -160,3 +177,12 @@ class CharacterList(AbstractModel):
             "damage": self.damage,
             "stat_modifiers": self.stat_modifiers
         }
+    
+    def set_attributes(self, attr_dict: dict):
+        """
+        Установка параметров листа персонажа, заданных в словаре
+
+        :param dict attr_dict: Словарь с параметрами, которые нужно установить листу персонажа
+        """
+        for key in attr_dict:
+            setattr(self, key, attr_dict[key])

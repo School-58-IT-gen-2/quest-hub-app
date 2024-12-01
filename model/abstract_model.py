@@ -1,10 +1,4 @@
-from __future__ import annotations
-import json
 from abc import ABC, abstractmethod
-from typing import Optional, List, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from adapters.db_source import DBSource
 
 
 class AbstractModel(ABC):
@@ -32,4 +26,12 @@ class AbstractModel(ABC):
 
     @abstractmethod
     def get_by_value(self):
+        pass
+
+    @abstractmethod
+    def synchronize(self):
+        pass
+
+    @abstractmethod
+    def set_attributes(self):
         pass
