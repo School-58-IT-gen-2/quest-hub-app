@@ -41,9 +41,8 @@ class User(AbstractModel):
             insert_dict = self.__dict__()
             del insert_dict["id"]
             self.__id = self.__db_source.insert(self.table_name, insert_dict)[0]["id"]
-            return self.__dict__()
-        else:
-            self.synchronize()
+        self.synchronize()
+        return self.__dict__()
     
     def update(self, dict: dict) -> List[dict]:
         """

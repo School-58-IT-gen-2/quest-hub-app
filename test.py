@@ -3,9 +3,7 @@ from net_config import envirements
 
 db_source = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
 db_source.connect()
-user = User(98240956203984, db_source, 'jbvsodbfvosidbvihfbkb')
-user.synchronize()
+user = User(9726598346987569278678945692736549, db_source, 'test')
 
-print(user.__dict__())
-print('=====================================')
-print(user.get_char_lists())
+print(user.insert())
+print(user)

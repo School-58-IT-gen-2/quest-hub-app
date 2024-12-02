@@ -61,7 +61,7 @@ class DBSource(AbstractSource):
         """
         return dict(self.__supabase.table(table_name).select().eq(parameter, parameter_value).execute())["data"]
 
-    def insert(self, table_name: str, dict: dict) -> List[dict]:
+    def insert(self, table_name: str, insert_dict: dict) -> List[dict]:
         """
         Вставка строки в таблицу
 
@@ -69,7 +69,7 @@ class DBSource(AbstractSource):
         :param dict dict: Словарь с данными для новой строки
         :return List[dict]: Список из словаря с новой строкой
         """
-        return dict(self.__supabase.table(table_name).insert(dict).execute())["data"]
+        return dict(self.__supabase.table(table_name).insert(insert_dict).execute())["data"]
 
     def update(self, table_name: str, update_dict: dict, id: int) -> List[dict]:
         """
