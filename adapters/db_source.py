@@ -71,7 +71,7 @@ class DBSource(AbstractSource):
         :return List[dict]: Список из словаря с новой строкой
         """
         
-        return dict(self.__supabase.table(table_name).insert(insert_dict).execute())
+        return dict(self.__supabase.table(table_name).insert(insert_dict).execute())["data"]
 
     def update(self, table_name: str, update_dict: dict, id: int) -> List[dict]:
         """
