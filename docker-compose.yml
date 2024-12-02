@@ -2,8 +2,8 @@ version: '3'
 
 services:
   fastapi_example:
-    image: fastapi-example:0.1.0
-    container_name: fastapi_example
+    image: quest_hub_app:0.0.2
+    container_name: quest_hub_app
     env_file: .env
     command: 'python main.py'
     ports:
