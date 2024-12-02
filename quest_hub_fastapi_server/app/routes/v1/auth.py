@@ -1,7 +1,5 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
-from fastapi_example.modules.user.models import UserModel
-from fastapi_example.adapters.supabase import get_supabase_client
 from model.user_model import User
 from adapters.db_source import DBSource
 from net_config import settings
