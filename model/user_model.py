@@ -6,7 +6,7 @@ from typing import List
 
 class User(AbstractModel):
 
-    def __init__(self, tg_id: int, db_source: DBSource, first_name: str, username: str = None, last_name: str = None, role: str = None, id: str = None, age: int = None, is_bot: bool = None, language_code: str = None, is_premium: bool = None):
+    def __init__(self, tg_id: int, db_source: DBSource, first_name: str, username: str = None, last_name: str = None, role: str = None, id: str = None, age: int = None, is_bot: bool = None, language_code: str = None, is_premium: bool = None) -> None:
         """ 
         :param int tg_id: id пользователя в Telegram
         :param DBSource db_source: Объект класса базы данных
@@ -34,8 +34,12 @@ class User(AbstractModel):
         self.__char_lists = {}
         self.table_name = 'profiles'
 
-    def insert(self):
-        """Сохранение пользователя в базу данных"""
+    def insert(self) -> dict:
+        """
+        Сохранение пользователя в базу данных
+        
+        :return dict: Словарь с данными пользователя
+        """
         data_list = self.get_by_value("tg_id", self.__tg_id)
         if len(data_list) == 0:
             insert_dict = self.__dict__()
@@ -58,7 +62,11 @@ class User(AbstractModel):
         return data_list
     
     def delete(self) -> List[dict]:
-        """Удаление пользователя из базы данных"""
+        """
+        Удаление пользователя из базы данных
+        
+        :return List[dict]: Список из словаря с удалённой строкой
+        """
         return self.__db_source.delete(self.table_name, self.__id)
     
     def get_by_id(self, id: str) -> List[dict]:
@@ -95,7 +103,7 @@ class User(AbstractModel):
 
     
     def create_char_list(self,
-                            name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: int = None, death_saving_throws: int = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: int = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_fours: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None) -> CharacterList:
+                            name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: int = None, death_saving_throws: int = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: int = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_fours: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None) -> None:
         """Создание листа персонажа пользователя"""
         if self.__id == None:
             raise Exception("id пользователя не может быть None. Добавьте пользователя в базу данных методом insert.")
@@ -104,11 +112,19 @@ class User(AbstractModel):
         self.__char_lists[char_list.id] = char_list
 
     def get_char_lists(self) -> dict:
-        """Получение листа персонажа пользователя"""
+        """
+        Получение листов персонажей пользователя
+        
+        :return dict: Словарь с листами персонажей пользователя
+        """
         return self.__char_lists
 
     def __dict__(self) -> dict:
-        """Вывод всех параметров пользователя в формате словаря"""
+        """
+        Вывод всех параметров пользователя в формате словаря
+
+        :return dict: Словарь с данными пользователя
+        """
         return {
             "id": self.__id,
             "first_name": self.__first_name,
@@ -122,7 +138,7 @@ class User(AbstractModel):
             "tg_id": self.__tg_id
         }
     
-    def set_attributes(self, attr_dict: dict):
+    def set_attributes(self, attr_dict: dict) -> None:
         """
         Установка параметров пользователя, заданных в словаре
 
