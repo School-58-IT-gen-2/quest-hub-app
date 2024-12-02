@@ -2,7 +2,6 @@ from adapters.abstract_source import AbstractSource
 from typing import List
 from supabase import create_client, Client
 from supabase.client import ClientOptions
-import json
 
 
 class DBSource(AbstractSource):
@@ -70,7 +69,6 @@ class DBSource(AbstractSource):
         :param dict dict: Словарь с данными для новой строки
         :return List[dict]: Список из словаря с новой строкой
         """
-        
         return dict(self.__supabase.table(table_name).insert(insert_dict).execute())["data"]
 
     def update(self, table_name: str, update_dict: dict, id: int) -> List[dict]:

@@ -88,7 +88,7 @@ class User(AbstractModel):
         """
         return self.__db_source.get_by_value(self.table_name, parameter, parameter_value)
     
-    def synchronize(self):
+    def synchronize(self) -> None:
         """Синхронизация объекта класса и данных в таблицах"""
         data_list = self.get_by_value("tg_id", self.__tg_id)
         if len(data_list) == 0:
