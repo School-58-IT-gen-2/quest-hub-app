@@ -13,7 +13,7 @@ class DBSource(AbstractSource):
         :param str key: Ключ от supabase
         """
         self.__url = url
-        self.__key = key #key.get_secret_value()
+        self.__key = key.get_secret_value()
 
     def connect(self) -> None:
         """Подключение к БД"""
@@ -38,7 +38,11 @@ class DBSource(AbstractSource):
         :param str table_name: Название таблицы
         :return List[dict]: Список из словаря
         """
+<<<<<<< HEAD
         return self.__supabase.table(table_name).select("*").execute()
+=======
+        return dict(self.__supabase.table(table_name).select().execute())["data"]
+>>>>>>> dev_backup
 
     def get_by_id(self, table_name: str, id: str | int) -> List[dict]:
         """
@@ -48,7 +52,7 @@ class DBSource(AbstractSource):
         :param int id: id объекта
         :return List[dict]: Список из словаря со строкой таблицы
         """
-        return self.__supabase.table(table_name).select().eq("id", id).execute()
+        return dict(self.__supabase.table(table_name).select().eq("id", id).execute())["data"]
     
     def get_by_value(self, table_name: str, parameter: str, parameter_value: any) -> List[dict]:
         """
@@ -59,7 +63,7 @@ class DBSource(AbstractSource):
         :param str / int / list parameter_value: Значение, по которому происходит сравнение
         :return List[dict]: Список из словаря со строкой таблицы
         """
-        return self.__supabase.table(table_name).select().eq(parameter, parameter_value).execute()
+        return dict(self.__supabase.table(table_name).select().eq(parameter, parameter_value).execute())["data"]
 
     def insert(self, table_name: str, dict: dict) -> List[dict]:
         """
@@ -69,9 +73,9 @@ class DBSource(AbstractSource):
         :param dict dict: Словарь с данными для новой строки
         :return List[dict]: Список из словаря с новой строкой
         """
-        return self.__supabase.table(table_name).insert(dict).execute()
+        return dict(self.__supabase.table(table_name).insert(dict).execute())["data"]
 
-    def update(self, table_name: str, dict: dict, id: int) -> List[dict]:
+    def update(self, table_name: str, update_dict: dict, id: int) -> List[dict]:
         """
         Изменение строки в таблице
 
@@ -80,7 +84,7 @@ class DBSource(AbstractSource):
         :param int id: id строки, которую нужно изменить
         :return List[dict]: Список из словаря с новой строкой
         """
-        return self.__supabase.table(table_name).update(dict).eq("id", id).execute()
+        return dict(self.__supabase.table(table_name).update(update_dict).eq("id", id).execute())["data"]
 
     def delete(self, table_name: str, id: int) -> List[dict]:
         """
@@ -90,4 +94,4 @@ class DBSource(AbstractSource):
         :param int id: id строки, которую нужно удалить
         :return List[dict]: Список из словаря с удалённой строкой
         """
-        return self.__supabase.table(table_name).delete().eq("id", id).execute()
+        return dict(self.__supabase.table(table_name).delete().eq("id", id).execute())["data"]
