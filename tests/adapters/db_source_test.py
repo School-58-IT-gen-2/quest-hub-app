@@ -6,73 +6,66 @@ from dotenv import load_dotenv
 import time
 from datetime import datetime, timezone
 from adapters.db_source import DBSource
-
+from net_config import envirements
 load_dotenv()
 
 
 class TestSupabaseAdapter(unittest.TestCase):
-    def test_select_all_users(self):
+    def test_get_all_users(self):
         try:
-            supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+            supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
             supa.connect()
             self.assertIsNotNone(supa.get_all("test"))
         except:
-            self.fail("Failed to select users :(")
+            self.fail("Failed to get all :(")
     
 
-    def test_select_user(self):
+    def test_get_by_id(self):
         try:
-            supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+            supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
             supa.connect()
-            self.assertIsNotNone(supa.get_by_id("test",1))
+            self.assertIsNotNone(supa.get_by_id("test",52))
         except:
-            self.fail("Failed to select user :(")
+            self.fail("Failed to by id :(")
 
-    def test_create_user(self):
+    def test_insert(self):
         try:
-            supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+            supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
             supa.connect()
-            len1 = len(list(supa.get_all("test"))[0][1])
-            new_user = {
+            n1 = len(list(supa.get_all("test")))
+            new_data = {
                 "id": int(time.time()),
                 "created_at": str(datetime.now(timezone.utc)),
                 "test": "test",
                 "test2": 123,
             }
-            supa.insert("test", new_user)
-            len2 = len(list(supa.get_all("test"))[0][1])
-            self.assertNotEqual(len1, len2)
+            supa.insert("test",new_data)
+            n2 = len(list(supa.get_all("test")))
+            self.assertNotEqual(n1,n2)
         except:
-            self.fail("Failed to create user :(")
+            self.fail("Failed to insert :(")
 
-    def test_update_user(self):
+    def test_update(self):
         try:
-            supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+            supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
             supa.connect()
-            user_old = supa.get_by_id("test", 1)
-            supa.update("test", {"created_at": str(datetime.now(timezone.utc))}, 1)
-            user_new = supa.get_by_id("test", 1)
-            self.assertNotEqual(user_old, user_new)
+            u1 = supa.get_by_id("test",16)[0]["created_at"]
+            u2 = supa.update("test",{"created_at": str(datetime.now(timezone.utc))},16)[0]["created_at"]
+            self.assertNotEqual(u1,u2)
         except:
-            self.fail("Failed to update user info :(")
+            self.fail("Failed to update :(")
 
-    def test_delete_user(self):
+    def test_delete(self):
         try:
-            supa = DBSource(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+            supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
             supa.connect()
-            len1 = len(list(supa.get_all("test"))[0][1])
-            supa.delete("test", 1)
-            len2 = len(list(supa.get_all("test"))[0][1])
-            new_user = {
-                "id": 1,
-                "created_at": str(datetime.now(timezone.utc)),
-                "test": "test",
-                "test2": 123,
-            }
-            supa.insert("test", new_user)
-            self.assertNotEqual(len1, len2)
+            n1 = len(list(supa.get_all("test")))
+            supa.delete("test",52)
+            n2 = len(list(supa.get_all("test")))
+            supa.insert("test",{"id": 52,"created_at": str(datetime.now(timezone.utc)),"test": "test","test2": 123})
+            self.assertNotEqual(n1,n2)
         except:
-            self.fail("Failed to update user info :(")
+            self.fail("Failed to delete :(")
 
 
 if __name__ == "__main__":
