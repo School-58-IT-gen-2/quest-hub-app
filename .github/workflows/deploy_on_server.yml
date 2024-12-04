@@ -1,4 +1,4 @@
-name: Ansible Playbook Execution
+name: Deploy project on server
 
 on:
   push:
@@ -25,4 +25,4 @@ jobs:
           chmod 600 hosts.ini
       - name: Run Ansible playbook
         run: |
-          ansible-playbook -i hosts.ini deploy.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+          ansible-playbook -i hosts.ini /home/runner/deploy.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
