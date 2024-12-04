@@ -3,7 +3,7 @@ name: Ansible Playbook Execution
 on:
   push:
     branches:
-      - development
+      - cd
   workflow_dispatch:
 jobs:
   ansible:
@@ -24,5 +24,5 @@ jobs:
         uses: ansible/ansible-runner@v2
         with:
           playbook: ./playbooks/deploy.yml
-          inventory:  "${{ secrets.SSH_HOST:secrets.SSH_PORT }},"
+          inventory:  "${{ secrets.SSH_HOST }},"
           ssh-private-key: ~/.ssh/private_key.pem
