@@ -26,10 +26,7 @@ jobs:
 
       - name: Construct connection string
         run: |
-          HOST="${{ secrets.SSH_HOST }}"
-          PORT="${{ secrets.SSH_PORT }}"
-          CONNECTION_STRING="${HOST}:${PORT}"
-          echo "CONNECTION_STRING=$CONNECTION_STRING" >> inventory.ini
+          echo "${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}" >> inventory.ini
 
       - name: Run Ansible playbook
         env:
