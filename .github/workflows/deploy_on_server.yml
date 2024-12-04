@@ -34,4 +34,4 @@ jobs:
 
             ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          dir
+          ansible-playbook -i hosts.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
