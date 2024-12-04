@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from fastapi_example.app.routes.v1 import route as v1_route
+from quest_hub_fastapi_server.app.routes.v1 import route as v1_route
 
 route = APIRouter(prefix="/api")
 
