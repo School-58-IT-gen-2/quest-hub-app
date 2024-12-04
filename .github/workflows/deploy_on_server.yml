@@ -21,7 +21,7 @@ jobs:
           chmod 600 ~/.ssh/private_key.pem
 
       - name: Run Ansible playbook
-        uses: ansible/ansible-runner@latest
+        uses: ansible/ansible-runner@2.4.0
         with:
           playbook: ./playbooks/deploy.yml
           inventory:  "${{ secrets.SSH_HOST }},"
