@@ -24,5 +24,10 @@ jobs:
           echo "${{ secrets.SSH_HOST }}" > hosts.ini
           chmod 600 hosts.ini
       - name: Run Ansible playbook
+        env:
+
+            ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
+
+            ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          ansible-playbook -i hosts.ini /home/runner/deploy.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+          ansible-playbook -i hosts.ini playbooks/deploy.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
