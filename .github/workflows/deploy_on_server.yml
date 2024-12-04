@@ -35,4 +35,4 @@ jobs:
 
             ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+          ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }} --ask-become-pass
