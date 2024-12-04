@@ -1,6 +1,4 @@
----
-- hosts: all
-  become: true
+hosts: all
   tasks:
     - name: Pull changes from git repository
       git:
