@@ -25,7 +25,7 @@ jobs:
           chmod 600 private_key.pem
       - name: Set up inventory
         run: |
-          echo "${{ secrets.SSH_HOST }}" > hosts.ini
+          echo "${{ secrets.SSH_HOST:secrets.SSH_PORT }}" > hosts.ini
           chmod 600 hosts.ini
       - name: Run Ansible playbook
         env:
