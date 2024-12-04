@@ -1,35 +1,38 @@
-from __future__ import annotations
-import json
 from abc import ABC, abstractmethod
-from typing import Optional, List, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from adapters.db_source import DBSource
+from typing import List
 
 
 class AbstractModel(ABC):
     """Абстрактный класс сущности"""
 
     @abstractmethod
-    def __dict__(self):
+    def __dict__(self) -> dict:
         pass
 
     @abstractmethod
-    def insert(self):
+    def insert(self) -> dict:
         pass
 
     @abstractmethod
-    def update(self):
+    def update(self) -> List[dict]:
         pass
 
     @abstractmethod
-    def delete(self):
+    def delete(self) -> List[dict]:
         pass
 
     @abstractmethod
-    def get_by_id(self):
+    def get_by_id(self) -> List[dict]:
         pass
 
     @abstractmethod
-    def get_by_value(self):
+    def get_by_value(self) -> List[dict]:
+        pass
+
+    @abstractmethod
+    def synchronize(self) -> None:
+        pass
+
+    @abstractmethod
+    def set_attributes(self) -> None:
         pass

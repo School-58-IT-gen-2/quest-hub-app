@@ -6,7 +6,7 @@ from typing import List
 class CharacterList(AbstractModel):
     """Класс листа персонажа"""
 
-    def __init__(self, user_id: str, db_source: DBSource, id: int = None, name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: int = None, death_saving_throws: int = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: int = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_fours: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None):
+    def __init__(self, user_id: str, db_source: DBSource, id: int = None, name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: int = None, death_saving_throws: int = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: int = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_fours: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None) -> None:
         """
         :param str user_id: id пользователя в базе данных
         :param DBSource db_source: Объект класса базы данных
@@ -83,12 +83,19 @@ class CharacterList(AbstractModel):
         self.stat_modifiers = stat_modifiers
         self.table_name = 'character_list'
 
-    def insert(self):
-        """Сохранение листа персонажа в базу данных"""
-        if self.__dict__()["id"] == None:
+    def insert(self) -> dict:
+        """
+        Сохранение листа персонажа в базу данных
+        
+        :return dict: Словарь с данными листа персонажа
+        """
+        if self.id:
+            self.synchronize(self.id)
+        else:
             insert_dict = self.__dict__()
             del insert_dict["id"]
-            self.id = dict(self.db_source.insert(self.table_name, insert_dict))["data"][0]["id"]
+            self.id = self.db_source.insert(self.table_name, insert_dict)[0]["id"]
+        return self.__dict__()
 
     def update(self, dict: dict) -> List[dict]:
         """
@@ -97,13 +104,19 @@ class CharacterList(AbstractModel):
         :param dict dict: Словарь с новыми данными листа персонажа
         :return List[dict]: Список из словаря с новой строкой
         """
-        return self.db_source.update(self.table_name, dict, self.id)
+        data_list = self.db_source.update(self.table_name, dict, self.id)
+        self.synchronize(self.id)
+        return data_list
     
     def delete(self) -> List[dict]:
-        """Удаление листа персонажа из базы данных"""
+        """
+        Удаление листа персонажа из базы данных
+        
+        :return List[dict]: Список из словаря с удалённой строкой
+        """
         return self.db_source.delete(self.table_name, self.id)
 
-    def get_by_id(self, id: str) -> List[dict]:
+    def get_by_id(self, id: int) -> List[dict]:
         """
         Получение листа персонажа по id
 
@@ -122,7 +135,25 @@ class CharacterList(AbstractModel):
         """
         return self.db_source.get_by_value(self.table_name, parameter, parameter_value)
     
+    def synchronize(self, id: int) -> None:
+        """
+        Синхронизация объекта класса и данных в таблицах
+
+        :param int id: id листа персонажа в таблице
+        """
+        data_list = self.get_by_id(id)
+        if len(data_list) == 0:
+            self.insert()
+        else:
+            data_dict = data_list[0]
+            self.set_attributes(data_dict)
+    
     def __dict__(self) -> dict:
+        """
+        Вывод всех параметров листа персонажа в формате словаря
+
+        :return dict: Словарь с данными листа персонажа
+        """
         return {
             "id": self.id,
             "user_id": self.user_id,
@@ -160,3 +191,12 @@ class CharacterList(AbstractModel):
             "damage": self.damage,
             "stat_modifiers": self.stat_modifiers
         }
+    
+    def set_attributes(self, attr_dict: dict) -> None:
+        """
+        Установка параметров листа персонажа, заданных в словаре
+
+        :param dict attr_dict: Словарь с параметрами, которые нужно установить листу персонажа
+        """
+        for key in attr_dict:
+            setattr(self, key, attr_dict[key])
