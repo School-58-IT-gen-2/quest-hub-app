@@ -111,15 +111,12 @@ class User(AbstractModel):
         self.__char_lists[char_list.id] = char_list
 
     def get_char_lists(self) -> dict:
-<<<<<<< HEAD
-        """Получение словаря с листами персонажей пользователя"""
-=======
         """
         Получение листов персонажей пользователя
         
         :return dict: Словарь с листами персонажей пользователя
         """
->>>>>>> development
+
         return self.__char_lists
 
     def __dict__(self) -> dict:

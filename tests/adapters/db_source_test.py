@@ -28,6 +28,14 @@ class TestSupabaseAdapter(unittest.TestCase):
         except:
             self.fail("Failed to by id :(")
 
+    def test_get_by_value(self):
+        try:
+            supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
+            supa.connect()
+            self.assertIsNotNone(supa.get_by_value("test", "test", "test"))
+        except:
+            self.fail("Failed to by id :(")
+
     def test_insert(self):
         try:
             supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
