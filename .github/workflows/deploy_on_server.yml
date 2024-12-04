@@ -23,13 +23,13 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem
-          
+
       - name: Construct connection string
         run: |
           HOST="${{ secrets.SSH_HOST }}"
           PORT="${{ secrets.SSH_PORT }}"
           CONNECTION_STRING="${HOST}:${PORT}"
-          echo "CONNECTION_STRING=$CONNECTION_STRING" >> $GITHUB_ENV
+          echo "CONNECTION_STRING=$CONNECTION_STRING" >> inventory.ini
 
       - name: Run Ansible playbook
         env:
@@ -38,4 +38,4 @@ jobs:
 
             ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          ansible-playbook -i "${{ env.CONNECTION_STRING }}" playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+          ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
