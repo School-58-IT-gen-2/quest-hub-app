@@ -10,14 +10,10 @@
         sudo_user: ansible
     
     - name: Build Docker image
-      docker_image:
-        name: quest_hub_app:0.0.2
-        path: /projects/dnd/quest-hub-app/Dockerfile
+      command: cd /projects/dnd/quest-hub-app && docker build -t quest_hub_app:0.0.2 .
 
 
     - name: Run docker-compose up
       command: docker-compose up -d --force-recreate
-      args:
-        chdir: /projects/dnd/quest-hub-app
 
 
