@@ -17,11 +17,11 @@ jobs:
 
       - name: Set up SSH
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/private_key.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > /home/runner/.ssh/private_key.pem
           chmod 600 /home/runner/.ssh/private_key.pem
       - name: Set up SSH
         run: |
-          echo "${{ secrets.SSH_HOST }}" > ~/inventory/hosts.ini
+          echo "${{ secrets.SSH_HOST }}" > /home/runner/inventory/hosts.ini
           chmod 600 /home/runner/inventory/hosts.ini
       - name: Run Ansible playbook
         run: |
