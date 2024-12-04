@@ -1,0 +1,28 @@
+name: Ansible Playbook Execution
+
+on:
+  push:
+    branches:
+      - development
+  workflow_dispatch:
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Ansible
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install ansible
+
+      - name: Set up SSH
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/private_key.pem
+          chmod 600 ~/.ssh/private_key.pem
+
+      - name: Run Ansible playbook
+        uses: ansible/ansible-runner@v2
+        with:
+          playbook: ./playbooks/deploy.yml
+          inventory:  "${{ secrets.SSH_HOST }},"
+          ssh-private-key: ~/.ssh/private_key.pem
