@@ -19,10 +19,10 @@ jobs:
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem
-      - name: Set up SSH
+      - name: Set up inventory
         run: |
           echo "${{ secrets.SSH_HOST }}" > hosts.ini
           chmod 600 hosts.ini
       - name: Run Ansible playbook
         run: |
-          ansible-playbook -i hosts.ini ~/playbooks/deploy_web_server.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+          ansible-playbook -i hosts.ini deploy.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
