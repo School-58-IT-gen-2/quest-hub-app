@@ -9,6 +9,10 @@ jobs:
   ansible:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+
+        uses: actions/checkout@v4
+
       - name: Install Ansible
         shell: bash
         run: |
