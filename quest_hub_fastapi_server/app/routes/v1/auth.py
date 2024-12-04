@@ -9,15 +9,15 @@ route = APIRouter(prefix="/auth", tags=["auth"])
 
 @route.post(path="/sign-up")
 def sign_up(
-            first_name: str,
-            last_name: str,
-            role: str,
-            is_bot: bool,
-            language_code: str,
-            is_premium: bool,
-            username: str,
-            age: int,
             tg_id: int,
+            first_name: str,
+            role: str='player',
+            is_bot: bool=False,
+            username: str=None,
+            age: int=None,
+            last_name: str=None,
+            is_premium: bool=False,
+            language_code: str='rus',
         ):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key) 
@@ -30,10 +30,13 @@ def sign_up(
         if user:
             return user
         else: 
-            raise HTTPException(status_code=503, detail="Database unreachable")
+            raise HTTPException(status_code=503, 
+                                detail={"error": "Service Unavailable", 
+    "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
     except Exception as error:
-        print(error)
-
+        raise HTTPException(status_code=500, 
+    detail={"error": "Internal Server Error", 
+            "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
 
 @route.get(path="/sign-in")
 def sign_in(tg_id: int, first_name: str):
