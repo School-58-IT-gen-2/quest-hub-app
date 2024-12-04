@@ -2,7 +2,19 @@
 - hosts: questhub.pro
   become: true
   tasks:
+    - name: Fetch changes from git repository
+      git:
+        repo: https://github.com/School-58-IT-gen-2/quest-hub-app.git
+        dest: /projects/dnd/quest-hub-app
+        fetch: yes
+        branch: development
 
+    - name: Pull changes from git repository
+      git:
+        repo: https://github.com/School-58-IT-gen-2/quest-hub-app.git
+        dest: /projects/dnd/quest-hub-app
+        update: yes
+        branch: development
     
     - name: Build Docker image
       docker_image:
