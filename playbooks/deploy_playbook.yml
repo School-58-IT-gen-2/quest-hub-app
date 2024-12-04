@@ -1,5 +1,5 @@
 ---
-- hosts: questhub.pro
+- hosts: all
   become: true
   tasks:
     - name: Fetch changes from git repository
