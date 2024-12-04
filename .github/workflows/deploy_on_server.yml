@@ -3,7 +3,7 @@ name: Ansible Playbook Execution
 on:
   push:
     branches:
-      - development
+      - cd
   workflow_dispatch:
 jobs:
   ansible:
