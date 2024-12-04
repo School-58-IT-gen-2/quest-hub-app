@@ -7,13 +7,25 @@ from net_config import settings
 
 route = APIRouter(prefix="/auth", tags=["auth"])
 
-
 @route.post(path="/sign-up")
-def sign_up(tg_id: int, first_name: str):
+def sign_up(
+            first_name: str,
+            last_name: str,
+            role: str,
+            is_bot: bool,
+            language_code: str,
+            is_premium: bool,
+            username: str,
+            age: int,
+            tg_id: int,
+        ):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key) 
         new_db_source.connect()
-        new_user = User(tg_id, new_db_source, first_name)
+        new_user = User(
+            tg_id, new_db_source, first_name, username, last_name, role, 
+            age=age, is_bot=is_bot, language_code=language_code, is_premium=is_premium
+            )
         user = new_user.insert()
         if user:
             return user
