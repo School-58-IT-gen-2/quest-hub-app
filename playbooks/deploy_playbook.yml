@@ -1,15 +1,15 @@
 hosts: all
-tasks:
-  - name: Pull changes from git repository
-    git:
-      repo: https://github.com/School-58-IT-gen-2/quest-hub-app.git
-      dest: /projects/dnd/quest-hub-app
-      branch: development
-      sudo_user: ansible
-  
-  - name: Build Docker image
-    command: cd /projects/dnd/quest-hub-app && docker build -t quest_hub_app:0.0.2 .
+  tasks:
+    - name: Pull changes from git repository
+      git:
+        repo: https://github.com/School-58-IT-gen-2/quest-hub-app.git
+        dest: /projects/dnd/quest-hub-app
+        branch: development
+        sudo_user: ansible
+    
+    - name: Build Docker image
+      command: cd /projects/dnd/quest-hub-app && docker build -t quest_hub_app:0.0.2 .
 
-  - name: Run docker-compose up
-    command: docker-compose up -d --force-recreate
+    - name: Run docker-compose up
+      command: docker-compose up -d --force-recreate
 
