@@ -42,7 +42,7 @@ jobs:
 
       - name: Run tests
         run:
-          flake8 quest-hub-app
+          flake8 
 
       - name: Run tests
         run: 
