@@ -6,11 +6,13 @@ on:
       - development
       - main
       - feature/ci
+      - tryflake8
   pull_request:
     branches:
       - development
       - main
       - feature/ci
+      - tryflake8
 
 jobs:
   test:
@@ -40,7 +42,7 @@ jobs:
 
       - name: Run tests
         run:
-          python flake8
+          flake8 quest-hub-app
 
       - name: Run tests
         run: 
