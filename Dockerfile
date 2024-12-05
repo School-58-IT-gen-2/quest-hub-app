@@ -13,4 +13,7 @@ ENV PATH="/app/.venv/bin:$PATH"
 
 
 COPY main.py main.py
-COPY quest_hub_app/ quest_hub_app/
+COPY adapters/ adapters/
+COPY model/ model/
+COPY tests/ tests/
+COPY quest_hub_fastapi_server/ quest_hub_fastapi_server/
