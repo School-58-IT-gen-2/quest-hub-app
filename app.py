@@ -3,6 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 
 
+
 async def lifespan(app: FastAPI):
     print("Server started")
     yield
