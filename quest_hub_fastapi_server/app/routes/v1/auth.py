@@ -8,9 +8,9 @@ from quest_hub_fastapi_server.modules.settings import settings
 route = APIRouter(prefix="/auth", tags=["auth"])
 
 @route.post(path="/user")
-def sign_up(
+def create_user(
     tg_id: int,
-    first_name: str,
+    first_name: str = "",
     role: str = "player",
     is_bot: bool = False,
     username: str = None,
@@ -46,11 +46,11 @@ def sign_up(
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
 
-@route.get(path="/user")
-def sign_in(tg_id: int, first_name: str):
+@route.get(path="/user?tg_id={tg_id}")
+def get_user(tg_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_user = User(tg_id, new_db_source, first_name)
+        new_user = User(tg_id, new_db_source)
         new_user.insert()
         if new_user:
             return new_user
@@ -63,11 +63,11 @@ def sign_in(tg_id: int, first_name: str):
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
     
-@route.delete(path="/user")
-def sign_in(tg_id: int, first_name: str):
+@route.delete(path="/user?id={tg_id}")
+def delete_user(tg_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)        
-        new_user = User(tg_id, new_db_source, first_name)
+        new_user = User(tg_id, new_db_source)
         new_user.insert()
         if new_user:
             return new_user.delete()
@@ -79,3 +79,31 @@ def sign_in(tg_id: int, first_name: str):
         raise HTTPException(status_code=500, 
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
+    
+@route.put(path="/user")
+def edit_user(
+    tg_id: int,
+    first_name: str = "",
+    username: str = None,
+    age: int = None,
+    last_name: str = None,
+    is_premium: bool = False,
+    language_code: str = "rus",
+    ):
+    if True:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_user = User(tg_id, new_db_source)
+        new_user.insert()
+        if new_user:
+            return new_user.update({
+                        "first_name": first_name,
+                        "username": username,
+                        "age": age,
+                        "last_name": last_name,
+                        "is_premium": is_premium,
+                        "language_code": language_code
+                        })
+        else: 
+            raise HTTPException(status_code=503, 
+                                detail={"error": "Service Unavailable", 
+    "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
