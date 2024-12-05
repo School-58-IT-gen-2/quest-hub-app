@@ -10,6 +10,9 @@
     - name: Build Docker image
       command: cd /projects/dnd/quest-hub-app && docker build -t quest_hub_app:0.0.2 .
 
+    - name: Stop old container
+      command: docker compose down
+
     - name: Run docker-compose up
-      command: docker-compose up -d --force-recreate
+      command: docker compose up -d --force-recreate
 
