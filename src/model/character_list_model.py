@@ -6,7 +6,7 @@ from typing import List
 class CharacterList(AbstractModel):
     """Класс листа персонажа"""
 
-    def __init__(self, user_id: str, db_source: DBSource, id: int = None, name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: int = None, death_saving_throws: int = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: int = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_fours: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None) -> None:
+    def __init__(self, user_id: str, db_source: DBSource, id: int = None, name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: dict = None, death_saving_throws: dict = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: bool = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_features: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None) -> None:
         """
         :param str user_id: id пользователя в базе данных
         :param DBSource db_source: Объект класса базы данных
@@ -19,8 +19,8 @@ class CharacterList(AbstractModel):
         :param str allignment: Мировозрение персонажа
         :param dict skills: Навыки персонажа
         :param dict weapons_and_equipment: Оружие и снаряжение персонажа
-        :param int ability_saving_throws: Спасброски способностей персонажа
-        :param int death_saving_throws: Смертельные спасброски персонажа
+        :param dict ability_saving_throws: Спасброски способностей персонажа
+        :param dict death_saving_throws: Смертельные спасброски персонажа
         :param dict attacks: Атаки персонажа
         :param dict spells: Заклинания персонажа
         :param int passive_perception: Пассивное восприятие персонажа
@@ -35,13 +35,13 @@ class CharacterList(AbstractModel):
         :param str notes: Дополнительные заметки к персонажу
         :param dict languages: Языки, известные персонажу
         :param dict npc_relations: Отношения персонажа с NPC
-        :param int inspiration: Вдохновение персонажа ?????
-        :param bool interference: ?????
-        :param int ownership_bonus: ?????
-        :param bool advantages: Преимущества персонажа ?????
-        :param int attribute_points: ?????
-        :param dict special_fours: ?????
-        :param dict weaknesses: Слабости персонажа ?????
+        :param bool inspiration: Вдохновение персонажа
+        :param bool interference: Вмешательство
+        :param int ownership_bonus: Бонус владения персонажа
+        :param bool advantages: Преимущества персонажа
+        :param int attribute_points: Очки навыков персонажа
+        :param dict special_features: Особые способности
+        :param dict weaknesses: Слабости персонажа
         :param dict damage: Урон от атак персонажа
         :param dict stat_modifiers: Модификаторы к характеристикам персонажа
         """
@@ -77,7 +77,7 @@ class CharacterList(AbstractModel):
         self.ownership_bonus = ownership_bonus
         self.advantages = advantages
         self.attribute_points = attribute_points
-        self.special_fours = special_fours
+        self.special_features = special_features
         self.weaknesses = weaknesses
         self.damage = damage
         self.stat_modifiers = stat_modifiers
@@ -186,7 +186,7 @@ class CharacterList(AbstractModel):
             "ownership_bonus": self.ownership_bonus,
             "advantages": self.advantages,
             "attribute_points": self.attribute_points,
-            "special_fours": self.special_fours,
+            "special_features": self.special_features,
             "weaknesses": self.weaknesses,
             "damage": self.damage,
             "stat_modifiers": self.stat_modifiers
