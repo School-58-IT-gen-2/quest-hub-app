@@ -3,7 +3,7 @@ name: Deploy project on server
 on:
   push:
     branches:
-      - cd
+      - master
   workflow_dispatch:
 jobs:
   ansible:
