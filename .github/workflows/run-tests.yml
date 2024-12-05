@@ -1,0 +1,49 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - development
+      - main
+      - feature/ci
+      - tryflake8
+  pull_request:
+    branches:
+      - development
+      - main
+      - feature/ci
+      - tryflake8
+
+jobs:
+  test:
+    name: Install & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: 
+          python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: 
+          pip install -r requirements.txt
+
+      - name: Install dependencies
+        run:
+          python -m pip install flake8 
+
+      - name: Run tests
+        run:
+          flake8 
+
+      - name: Run tests
+        run: 
+          python -m unittest tests/adapters/db_source_test.py
