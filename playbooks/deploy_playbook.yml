@@ -5,8 +5,7 @@
       git:
         repo: https://github.com/School-58-IT-gen-2/quest-hub-app.git
         dest: /projects/dnd/quest-hub-app
-        branch: development
-        sudo_user: ansible
+        version: development
       
     - name: Build Docker image
       command: cd /projects/dnd/quest-hub-app && docker build -t quest_hub_app:0.0.2 .
