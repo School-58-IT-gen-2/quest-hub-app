@@ -7,21 +7,36 @@ from net_config import settings
 
 route = APIRouter(prefix="/auth", tags=["auth"])
 
-
 @route.post(path="/sign-up")
-def sign_up(tg_id: int, first_name: str):
+def sign_up(
+            tg_id: int,
+            first_name: str,
+            role: str='player',
+            is_bot: bool=False,
+            username: str=None,
+            age: int=None,
+            last_name: str=None,
+            is_premium: bool=False,
+            language_code: str='rus',
+        ):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key) 
         new_db_source.connect()
-        new_user = User(tg_id, new_db_source, first_name)
+        new_user = User(
+            tg_id, new_db_source, first_name, username, last_name, role, 
+            age=age, is_bot=is_bot, language_code=language_code, is_premium=is_premium
+            )
         user = new_user.insert()
         if user:
             return user
         else: 
-            raise HTTPException(status_code=503, detail="Database unreachable")
+            raise HTTPException(status_code=503, 
+                                detail={"error": "Service Unavailable", 
+    "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
     except Exception as error:
-        print(error)
-
+        raise HTTPException(status_code=500, 
+    detail={"error": "Internal Server Error", 
+            "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
 
 @route.get(path="/sign-in")
 def sign_in(tg_id: int, first_name: str):

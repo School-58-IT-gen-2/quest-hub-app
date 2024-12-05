@@ -42,6 +42,3 @@ typing-extensions==4.12.2 ; python_version >= "3.12" and python_version < "4.0"
 uvicorn[standart]==0.32.0 ; python_version >= "3.12" and python_version < "4.0"
 websockets==13.1 ; python_version >= "3.12" and python_version < "4.0"
 yarl==1.17.1 ; python_version >= "3.12" and python_version < "4.0"
-
-
-
