@@ -1,12 +1,13 @@
 from fastapi import APIRouter, HTTPException
 from model.character_list_model import CharacterList
 from adapters.db_source import DBSource
-from net_config import settings
+from quest_hub_fastapi_server.modules.settings import settings
 
 route = APIRouter(prefix="/characters", tags=["characters"])
 
-@route.post(path="/add")
-def add_character(character: CharacterList):
+
+@route.post(path="/create-character")
+def add_character(character):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -55,8 +56,9 @@ def add_character(character: CharacterList):
         print(error)
         raise HTTPException(status_code=500, detail="Error adding character")
 
-@route.get(path="/{character_id}")
-def get_character(character_id: int):
+
+@route.get(path="/get-character/{character_id}")
+def get_character(character_id):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -69,8 +71,9 @@ def get_character(character_id: int):
         print(error)
         raise HTTPException(status_code=500, detail="Error retrieving character")
 
-@route.put(path="/update/{character_id}")
-def update_character(character_id: int, character: CharacterList):
+
+@route.put(path="/update-character/{character_id}")
+def update_character(character_id: int, character):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -119,7 +122,8 @@ def update_character(character_id: int, character: CharacterList):
         print(error)
         raise HTTPException(status_code=500, detail="Error updating character")
 
-@route.delete(path="/delete/{character_id}")
+
+@route.delete(path="/delete-character/{character_id}")
 def delete_character(character_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)

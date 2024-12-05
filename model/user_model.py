@@ -6,7 +6,7 @@ from typing import List
 
 class User(AbstractModel):
 
-    def __init__(self, tg_id: int, db_source: DBSource, first_name: str, username: str = None, last_name: str = None, role: str = None, id: str = None, age: int = None, is_bot: bool = None, language_code: str = None, is_premium: bool = None) -> None:
+    def __init__(self, tg_id: int, db_source: DBSource, first_name: str = None, username: str = None, last_name: str = None, role: str = None, id: str = None, age: int = None, is_bot: bool = None, language_code: str = None, is_premium: bool = None) -> None:
         """ 
         :param int tg_id: id пользователя в Telegram
         :param DBSource db_source: Объект класса базы данных
