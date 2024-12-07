@@ -1,12 +1,13 @@
-from adapters.abstract_source import AbstractSource
 from typing import List
-from supabase import create_client, Client
+from pydantic import SecretStr
 from supabase.client import ClientOptions
+from supabase import create_client, Client
+from adapters.abstract_source import AbstractSource
 
 class DBSource(AbstractSource):
     """Адаптер для работы с базой данных"""
 
-    def __init__(self, url: str, key: str):
+    def __init__(self, url: str, key: SecretStr):
         """
         :param str url: Ссылка на supabase
         :param str key: Ключ от supabase
@@ -48,9 +49,16 @@ class DBSource(AbstractSource):
         :param int id: id объекта
         :return List[dict]: Список из словаря со строкой таблицы
         """
-        return dict(self.__supabase.table(table_name).select().eq("id", id).execute())["data"]
-    
-    def get_by_value(self, table_name: str, parameter: str, parameter_value: any) -> List[dict]:
+        return dict(self.__supabase.table(table_name).select().eq("id", id).execute())[
+            "data"
+        ]
+
+    def get_by_value(
+        self,
+        table_name: str,
+        parameter: str,
+        parameter_value: any,
+    ) -> List[dict]:
         """
         Получение объекта по значению определенного параметра
 
@@ -59,7 +67,12 @@ class DBSource(AbstractSource):
         :param str / int / list parameter_value: Значение, по которому происходит сравнение
         :return List[dict]: Список из словаря со строкой таблицы
         """
-        return dict(self.__supabase.table(table_name).select().eq(parameter, parameter_value).execute())["data"]
+        return dict(
+            self.__supabase.table(table_name)
+            .select()
+            .eq(parameter, parameter_value)
+            .execute()
+        )["data"]
 
     def insert(self, table_name: str, insert_dict: dict) -> List[dict]:
         """
@@ -69,7 +82,9 @@ class DBSource(AbstractSource):
         :param dict dict: Словарь с данными для новой строки
         :return List[dict]: Список из словаря с новой строкой
         """
-        return dict(self.__supabase.table(table_name).insert(insert_dict).execute())["data"]
+        return dict(self.__supabase.table(table_name).insert(insert_dict).execute())[
+            "data"
+        ]
 
     def update(self, table_name: str, update_dict: dict, id: int) -> List[dict]:
         """
@@ -80,7 +95,9 @@ class DBSource(AbstractSource):
         :param int id: id строки, которую нужно изменить
         :return List[dict]: Список из словаря с новой строкой
         """
-        return dict(self.__supabase.table(table_name).update(update_dict).eq("id", id).execute())["data"]
+        return dict(
+            self.__supabase.table(table_name).update(update_dict).eq("id", id).execute()
+        )["data"]
 
     def delete(self, table_name: str, id: int) -> List[dict]:
         """
@@ -90,4 +107,6 @@ class DBSource(AbstractSource):
         :param int id: id строки, которую нужно удалить
         :return List[dict]: Список из словаря с удалённой строкой
         """
-        return dict(self.__supabase.table(table_name).delete().eq("id", id).execute())["data"]
+        return dict(self.__supabase.table(table_name).delete().eq("id", id).execute())[
+            "data"
+        ]

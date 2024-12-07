@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fastapi-example"
+name = "quest-hub-fastapi-server"
 version = "0.1.0"
 description = ""
 authors = ["Sergey Smaglyuk <smegloy@gmail.com>"]
@@ -22,7 +22,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-start = "fastapi_example:start"
+start = "quest_hub_fastapi_server:start"
 
 [tool.black]
 line-length = 88

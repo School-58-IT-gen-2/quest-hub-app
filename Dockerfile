@@ -1,16 +1,29 @@
-FROM thehale/python-poetry as poetry-base
+FROM python:3.12-alpine AS builder
+
+RUN pip install poetry==1.8.3
+
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
+
 WORKDIR /app
 
-COPY poetry.lock pyproject.toml ./
-RUN poetry config virtualenvs.in-project true \
-	&& poetry install --only main
+COPY pyproject.toml poetry.lock ./
 
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --without dev --no-root
 
-FROM python:3.12-slim
+FROM python:3.12-alpine AS runtime
+
 WORKDIR /app
-COPY --from=poetry-base /app /app
-ENV PATH="/app/.venv/bin:$PATH"
 
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
 
-COPY main.py main.py
-COPY quest_hub_app/ quest_hub_app/
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+
+COPY src ./src
+
+RUN cd /app/src
+
+ENTRYPOINT [ "python3", "src/main.py" ]
