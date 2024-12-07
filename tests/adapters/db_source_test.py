@@ -1,14 +1,10 @@
 import sys
-sys.path.append("./")
+sys.path.append("./src")
 import unittest
-import os
-from dotenv import load_dotenv
 import time
 from datetime import datetime, timezone
 from adapters.db_source import DBSource
-from net_config import envirements
-load_dotenv()
-
+from quest_hub_fastapi_server.modules.settings import envirements
 
 class TestSupabaseAdapter(unittest.TestCase):
     def test_get_all_users(self):
@@ -26,7 +22,7 @@ class TestSupabaseAdapter(unittest.TestCase):
             supa.connect()
             self.assertIsNotNone(supa.get_by_id("test",52))
         except:
-            self.fail("Failed to by id :(")
+            self.fail("Failed to get by id :(")
 
     def test_get_by_value(self):
         try:
@@ -34,7 +30,7 @@ class TestSupabaseAdapter(unittest.TestCase):
             supa.connect()
             self.assertIsNotNone(supa.get_by_value("test", "test", "test"))
         except:
-            self.fail("Failed to by id :(")
+            self.fail("Failed to get by value :(")
 
     def test_insert(self):
         try:
