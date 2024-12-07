@@ -12,7 +12,7 @@ import random
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
-bot = Bot("7652421845:AAGe4sdIXvBMlQLTTCO0skZmc74tQTFq9DI") #пока на костыле, потому что я недоразбирался в ошибках. В теории нужно добавить этот параметр в settugs.py, но он ведь в дургом проекте, можно сказать
+bot = Bot(envirements.BOT_TOKEN.get_secret_value())
 dp = Dispatcher()
 
 @dp.message(Command("start"))
