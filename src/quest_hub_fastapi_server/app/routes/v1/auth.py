@@ -22,21 +22,31 @@ class SignUpUserModel(BaseModel):
 
 
 @route.post(path="/sign-up")
-def sign_up(sing_up_user_model: SignUpUserModel):
+def sign_up(
+    tg_id: int,
+    first_name: str,
+    role: str = "player",
+    is_bot: bool = False,
+    username: str = None,
+    age: int = None,
+    last_name: str = None,
+    is_premium: bool = False,
+    language_code: str = "rus",
+):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         new_user = User(
-            tg_id=sing_up_user_model.tg_id,
-            db_source=new_db_source,
-            first_name=sing_up_user_model.first_name,
-            username=sing_up_user_model.username,
-            last_name=sing_up_user_model.last_name,
-            role=sing_up_user_model.role,
-            age=sing_up_user_model.age,
-            is_bot=sing_up_user_model.is_bot,
-            language_code=sing_up_user_model.language_code,
-            is_premium=sing_up_user_model.is_premium,
+            tg_id,
+            new_db_source,
+            first_name,
+            username,
+            last_name,
+            role,
+            age=age,
+            is_bot=is_bot,
+            language_code=language_code,
+            is_premium=is_premium,
         )
         user = new_user.insert()
         if user:
