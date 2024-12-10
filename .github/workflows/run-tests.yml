@@ -16,7 +16,7 @@ on:
 
 jobs:
   test:
-    name: Install & Test
+    name: Autotest
     runs-on: ubuntu-latest
 
     steps:
@@ -41,7 +41,7 @@ jobs:
           python -m unittest tests/adapters/db_source_test.py
   
   lint:
-    name: Install & Test
+    name: Linters
     runs-on: ubuntu-latest
 
     steps:
