@@ -75,7 +75,7 @@ def sign_in(tg_id: int, first_name: str):
         new_db_source.connect()
         new_user = User(tg_id, new_db_source, first_name)
         new_user.insert()
-        return new_user
+        return new_user.__dict__()
     except Exception as error:
         print(error)
 
