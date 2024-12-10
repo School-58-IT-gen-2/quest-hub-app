@@ -1,0 +1,18 @@
+- name: Pull repo and recreate docker container
+  hosts: all
+  tasks:
+    - name: Pull changes from git repository
+      git:
+        repo: https://github.com/School-58-IT-gen-2/quest-hub-app.git
+        dest: /projects/dnd/quest-hub-app
+        version: master
+
+    - name: Build Docker image
+      command: docker build -t quest_hub_app:0.0.2 /projects/dnd/quest-hub-app
+
+    - name: Stop old container
+      command: docker compose -f /projects/dnd/quest-hub-app/docker-compose.yml down --remove-orphans
+
+    - name: Run docker-compose up
+      command: docker compose -f /projects/dnd/quest-hub-app/docker-compose.yml up -d --force-recreate
+
