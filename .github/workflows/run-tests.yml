@@ -16,7 +16,7 @@ on:
 
 jobs:
   test:
-    name: Install & Test
+    name: Autotest
     runs-on: ubuntu-latest
 
     steps:
@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Install dependencies
+      - name: upgrate pip
         run: 
           python -m pip install --upgrade pip
 
@@ -36,14 +36,31 @@ jobs:
         run: 
           pip install -r requirements.txt
 
-      - name: Install dependencies
+      - name: Run CI tests
+        run: 
+          python -m unittest tests/adapters/db_source_test.py
+  
+  lint:
+    name: Linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: upgrate pip
+        run: 
+          python -m pip install --upgrade pip
+      
+      - name: Install flake8
         run:
           python -m pip install flake8 
 
-      - name: Run tests
+      - name: Flake8 tests
         run:
           flake8 
-
-      - name: Run tests
-        run: 
-          python -m unittest tests/adapters/db_source_test.py
