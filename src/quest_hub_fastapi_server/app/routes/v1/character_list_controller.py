@@ -65,3 +65,18 @@ def delete_character(character_id: int):
     except Exception as error:
         print(error)
         raise HTTPException(status_code=500, detail="Error deleting character")
+    
+
+@route.get(path="/get-characters-by-user/{user_id}")
+def get_characters_by_user(user_id: str):
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        characters = new_db_source.get_by_value("character_list", "user_id", user_id) 
+        if characters:
+            return characters 
+        else:
+            raise HTTPException(status_code=404, detail="No characters found for this user")
+    except Exception as error:
+        print(error)
+        raise HTTPException(status_code=500, detail="Error retrieving characters")
