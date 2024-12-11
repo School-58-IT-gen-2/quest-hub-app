@@ -3,37 +3,30 @@ from fastapi import HTTPException
 from model.user_model import User
 from adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
-
+from quest_hub_fastapi_server.app.schemas.auth import UserRequest, UserPutRequest
 
 route = APIRouter(prefix="/auth", tags=["auth"])
 
+
 @route.post(path="/user")
 def create_user(
-    tg_id: int,
-    first_name: str = "",
-    role: str = "player",
-    is_bot: bool = False,
-    username: str = None,
-    age: int = None,
-    last_name: str = None,
-    is_premium: bool = False,
-    language_code: str = "rus",
+    body: UserRequest
 ):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         try:
             new_user = User(
-                tg_id,
+                body.tg_id,
                 new_db_source,
-                first_name,
-                username,
-                last_name,
-                role,
-                age=age,
-                is_bot=is_bot,
-                language_code=language_code,
-                is_premium=is_premium,
+                body.first_name,
+                body.username,
+                body.last_name,
+                body.role,
+                age=body.age,
+                is_bot=body.is_bot,
+                language_code=body.language_code,
+                is_premium=body.is_premium,
             )
         except:
             raise HTTPException(status_code=400, 
@@ -41,7 +34,7 @@ def create_user(
     "message":"Некорректный формат запроса"})
         user = new_user.insert()
         if user:
-            return user
+            return user.__dict__()
         else: 
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
@@ -51,10 +44,11 @@ def create_user(
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
 
-@route.get(path="/user?tg_id={tg_id}")
+@route.get(path="/user")
 def get_user(tg_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
         try:
             new_user = User(tg_id, new_db_source)
             new_user.insert()
@@ -63,7 +57,7 @@ def get_user(tg_id: int):
                                 detail={"error": "Invalid request", 
     "message":"Некорректный формат запроса"})
         if new_user:
-            return new_user
+            return new_user.__dict__()
         else: 
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
@@ -73,10 +67,11 @@ def get_user(tg_id: int):
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
     
-@route.delete(path="/user?id={tg_id}")
+@route.delete(path="/user")
 def delete_user(tg_id: int):
     try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)        
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key) 
+        new_db_source.connect()       
         try:
             new_user = User(tg_id, new_db_source)
             new_user.insert()
@@ -97,18 +92,13 @@ def delete_user(tg_id: int):
     
 @route.put(path="/user")
 def edit_user(
-    tg_id: int,
-    first_name: str = "",
-    username: str = None,
-    age: int = None,
-    last_name: str = None,
-    is_premium: bool = False,
-    language_code: str = "rus",
+    body: UserPutRequest
     ):
-    if True:
+    try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
         try:
-            new_user = User(tg_id, new_db_source)
+            new_user = User(body.tg_id, new_db_source)
             new_user.insert()
         except:
             raise HTTPException(status_code=400, 
@@ -116,14 +106,18 @@ def edit_user(
                                             "message":"Некорректный формат запроса"})
         if new_user:
             return new_user.update({
-                        "first_name": first_name,
-                        "username": username,
-                        "age": age,
-                        "last_name": last_name,
-                        "is_premium": is_premium,
-                        "language_code": language_code
+                        "first_name": body.first_name,
+                        "username": body.username,
+                        "age": body.age,
+                        "last_name": body.last_name,
+                        "is_premium": body.is_premium,
+                        "language_code": body.language_code
                         })
         else: 
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
     "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
+    except:
+        raise HTTPException(status_code=500, 
+    detail={"error": "Internal Server Error", 
+            "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
