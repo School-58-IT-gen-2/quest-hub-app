@@ -6,7 +6,45 @@ from typing import List
 class CharacterList(AbstractModel):
     """Класс листа персонажа"""
 
-    def __init__(self, user_id: str, db_source: DBSource, id: int = None, name: str = None, race: str = None, character_class: str = None, stats: dict = None, hp: int = None, alignment: str = None, skills: dict = None, weapons_and_equipment: dict = None, ability_saving_throws: dict = None, death_saving_throws: dict = None, attacks: dict = None, spells: dict = None, passive_perception: int = None, traits_and_abilities: dict = None, initiative: int = None, lvl: int = None, speed: int = None, backstory: str = None, experience: int = None, valuables: dict = None, diary: str = None, notes: str = None, languages: dict = None, npc_relations: dict = None, inspiration: bool = None, interference: bool = None, ownership_bonus: int = None, advantages: bool = None, attribute_points: int = None, special_features: dict = None, weaknesses: dict = None, damage: dict = None, stat_modifiers: dict = None) -> None:
+    def __init__(
+        self,
+        user_id: str,
+        db_source: DBSource,
+        id: int = None,
+        name: str = None,
+        race: str = None,
+        character_class: str = None,
+        stats: dict = None,
+        hp: int = None,
+        alignment: str = None,
+        skills: dict = None,
+        weapons_and_equipment: dict = None,
+        ability_saving_throws: dict = None,
+        death_saving_throws: dict = None,
+        attacks: dict = None,
+        spells: dict = None,
+        passive_perception: int = None,
+        traits_and_abilities: dict = None,
+        initiative: int = None,
+        lvl: int = None,
+        speed: int = None,
+        backstory: str = None,
+        experience: int = None,
+        valuables: dict = None,
+        diary: str = None,
+        notes: str = None,
+        languages: dict = None,
+        npc_relations: dict = None,
+        inspiration: bool = None,
+        interference: bool = None,
+        ownership_bonus: int = None,
+        advantages: bool = None,
+        attribute_points: int = None,
+        special_features: dict = None,
+        weaknesses: dict = None,
+        damage: dict = None,
+        stat_modifiers: dict = None,
+    ) -> None:
         """
         :param str user_id: id пользователя в базе данных
         :param DBSource db_source: Объект класса базы данных
@@ -81,12 +119,12 @@ class CharacterList(AbstractModel):
         self.weaknesses = weaknesses
         self.damage = damage
         self.stat_modifiers = stat_modifiers
-        self.table_name = 'character_list'
+        self.table_name = "character_list"
 
     def insert(self) -> dict:
         """
         Сохранение листа персонажа в базу данных
-        
+
         :return dict: Словарь с данными листа персонажа
         """
         if self.id:
@@ -107,11 +145,11 @@ class CharacterList(AbstractModel):
         data_list = self.db_source.update(self.table_name, dict, self.id)
         self.synchronize(self.id)
         return data_list
-    
+
     def delete(self) -> List[dict]:
         """
         Удаление листа персонажа из базы данных
-        
+
         :return List[dict]: Список из словаря с удалённой строкой
         """
         return self.db_source.delete(self.table_name, self.id)
@@ -134,7 +172,7 @@ class CharacterList(AbstractModel):
         :return List[dict]: Список из словаря со строкой таблицы
         """
         return self.db_source.get_by_value(self.table_name, parameter, parameter_value)
-    
+
     def synchronize(self, id: int) -> None:
         """
         Синхронизация объекта класса и данных в таблицах
@@ -147,7 +185,7 @@ class CharacterList(AbstractModel):
         else:
             data_dict = data_list[0]
             self.set_attributes(data_dict)
-    
+
     def __dict__(self) -> dict:
         """
         Вывод всех параметров листа персонажа в формате словаря
@@ -165,12 +203,12 @@ class CharacterList(AbstractModel):
             "alignment": self.alignment,
             "skills": self.skills,
             "weapons_and_equipment": self.weapons_and_equipment,
-            "ability_saving_throws": self.ability_saving_throws,   
+            "ability_saving_throws": self.ability_saving_throws,
             "death_saving_throws": self.death_saving_throws,
             "attacks": self.attacks,
-            "spells": self.spells,   
+            "spells": self.spells,
             "passive_perception": self.passive_perception,
-            "traits_and_abilities": self.traits_and_abilities,   
+            "traits_and_abilities": self.traits_and_abilities,
             "initiative": self.initiative,
             "lvl": self.lvl,
             "speed": self.speed,
@@ -189,9 +227,9 @@ class CharacterList(AbstractModel):
             "special_features": self.special_features,
             "weaknesses": self.weaknesses,
             "damage": self.damage,
-            "stat_modifiers": self.stat_modifiers
+            "stat_modifiers": self.stat_modifiers,
         }
-    
+
     def set_attributes(self, attr_dict: dict) -> None:
         """
         Установка параметров листа персонажа, заданных в словаре

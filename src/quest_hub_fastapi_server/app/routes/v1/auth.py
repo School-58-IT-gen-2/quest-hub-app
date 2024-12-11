@@ -1,5 +1,5 @@
-from fastapi import APIRouter
-from fastapi import HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel, Field
 from model.user_model import User
 from adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings

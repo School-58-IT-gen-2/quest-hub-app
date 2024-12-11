@@ -1,0 +1,38 @@
+name: Deploy project on server
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+
+        uses: actions/checkout@v4
+
+      - name: Install Ansible
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install ansible
+
+      - name: Set up SSH
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Construct connection string
+        run: |
+          echo "${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}" >> inventory.ini
+
+      - name: Run Ansible playbook
+        env:
+
+            ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
+
+            ANSIBLE_HOST_KEY_CHECKING: False
+        run: |
+          ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
