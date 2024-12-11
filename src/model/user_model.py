@@ -10,7 +10,7 @@ class User(AbstractModel):
         self,
         tg_id: str,
         db_source: DBSource,
-        first_name: str,
+        first_name: str = None,
         username: str = None,
         last_name: str = None,
         role: str = None,

@@ -11,7 +11,6 @@ class UserRequest(BaseModel):
     last_name: str = None
     is_premium: bool = False
     language_code: str = "rus"
-
 class UserPutRequest(BaseModel):
     tg_id: int
     first_name: str = ""
@@ -20,3 +19,4 @@ class UserPutRequest(BaseModel):
     last_name: str = None
     is_premium: bool = False
     language_code: str = "rus"
+    

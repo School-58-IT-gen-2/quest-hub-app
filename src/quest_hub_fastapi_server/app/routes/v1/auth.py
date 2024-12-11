@@ -34,7 +34,7 @@ def create_user(
     "message":"Некорректный формат запроса"})
         user = new_user.insert()
         if user:
-            return user.__dict__()
+            return user
         else: 
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
