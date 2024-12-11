@@ -39,7 +39,9 @@ def create_user(
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
     "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
-    except:
+    except HTTPException as exception:
+        if exception.status_code in [400, 503]:
+            raise exception
         raise HTTPException(status_code=500, 
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
@@ -62,7 +64,9 @@ def get_user(tg_id: int):
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
     "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
-    except:
+    except HTTPException as exception:
+        if exception.status_code in [400, 503]:
+            raise exception
         raise HTTPException(status_code=500, 
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
@@ -85,7 +89,9 @@ def delete_user(tg_id: int):
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
     "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
-    except:
+    except HTTPException as exception:
+        if exception.status_code in [400, 503]:
+            raise exception
         raise HTTPException(status_code=500, 
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
@@ -117,7 +123,9 @@ def edit_user(
             raise HTTPException(status_code=503, 
                                 detail={"error": "Service Unavailable", 
     "message":"Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."})
-    except:
+    except HTTPException as exception:
+        if exception.status_code in [400, 503]:
+            raise exception
         raise HTTPException(status_code=500, 
     detail={"error": "Internal Server Error", 
             "message":"Неизвестная ошибка на сервере. Обратитесь к администратору."})
