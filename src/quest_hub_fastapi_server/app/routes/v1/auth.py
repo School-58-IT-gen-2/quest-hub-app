@@ -86,3 +86,7 @@ def sign_out():
         return {"status": "Ok"}
     except Exception as error:
         print(error)
+
+@route.get(path="/git_actions_test")
+def test_git_actions():
+    return "Git Actions work"
