@@ -7,12 +7,14 @@ on:
       - main
       - feature/ci
       - tryflake8
+      - git_actions_test
   pull_request:
     branches:
       - development
       - main
       - feature/ci
       - tryflake8
+      - git_actions_test
 
 jobs:
   test:
