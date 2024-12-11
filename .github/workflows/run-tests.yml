@@ -1,13 +1,6 @@
 name: Run Tests
 
 on:
-  push:
-    branches:
-      - development
-      - main
-      - feature/ci
-      - tryflake8
-      - git_actions_test
   pull_request:
     branches:
       - development
