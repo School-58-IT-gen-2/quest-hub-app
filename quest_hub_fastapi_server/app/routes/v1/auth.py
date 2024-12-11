@@ -22,18 +22,23 @@ def create_user(
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
-        new_user = User(
-            tg_id,
-            new_db_source,
-            first_name,
-            username,
-            last_name,
-            role,
-            age=age,
-            is_bot=is_bot,
-            language_code=language_code,
-            is_premium=is_premium,
-        )
+        try:
+            new_user = User(
+                tg_id,
+                new_db_source,
+                first_name,
+                username,
+                last_name,
+                role,
+                age=age,
+                is_bot=is_bot,
+                language_code=language_code,
+                is_premium=is_premium,
+            )
+        except:
+            raise HTTPException(status_code=400, 
+                                detail={"error": "Invalid request", 
+    "message":"Некорректный формат запроса"})
         user = new_user.insert()
         if user:
             return user
@@ -50,8 +55,13 @@ def create_user(
 def get_user(tg_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_user = User(tg_id, new_db_source)
-        new_user.insert()
+        try:
+            new_user = User(tg_id, new_db_source)
+            new_user.insert()
+        except:
+            raise HTTPException(status_code=400, 
+                                detail={"error": "Invalid request", 
+    "message":"Некорректный формат запроса"})
         if new_user:
             return new_user
         else: 
@@ -67,8 +77,13 @@ def get_user(tg_id: int):
 def delete_user(tg_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)        
-        new_user = User(tg_id, new_db_source)
-        new_user.insert()
+        try:
+            new_user = User(tg_id, new_db_source)
+            new_user.insert()
+        except:
+            raise HTTPException(status_code=400, 
+                                detail={"error": "Invalid request", 
+    "message":"Некорректный формат запроса"})
         if new_user:
             return new_user.delete()
         else: 
@@ -92,8 +107,13 @@ def edit_user(
     ):
     if True:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_user = User(tg_id, new_db_source)
-        new_user.insert()
+        try:
+            new_user = User(tg_id, new_db_source)
+            new_user.insert()
+        except:
+            raise HTTPException(status_code=400, 
+                                detail={"error": "Invalid request", 
+                                            "message":"Некорректный формат запроса"})
         if new_user:
             return new_user.update({
                         "first_name": first_name,
