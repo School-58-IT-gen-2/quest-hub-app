@@ -1,22 +1,23 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class UserRequest(BaseModel):
     tg_id: int
-    first_name: str = ""
+    first_name: str
     role: str = "player"
-    is_bot: bool = False
-    username: str = None
-    age: int = None
-    last_name: str = None
-    is_premium: bool = False
-    language_code: str = "rus"
+    is_bot: bool
+    username: Optional[str] = None
+    age: Optional[int] = None
+    last_name: Optional[str] = None
+    is_premium: Optional[bool] = None
+    language_code: str
+
 class UserPutRequest(BaseModel):
     tg_id: int
-    first_name: str = ""
-    username: str = None
-    age: int = None
-    last_name: str = None
-    is_premium: bool = False
-    language_code: str = "rus"
-    
+    first_name: str
+    username: Optional[str] = None
+    age: Optional[int] = None
+    last_name: Optional[str] = None
+    is_premium: Optional[bool] = None
+    language_code: str
