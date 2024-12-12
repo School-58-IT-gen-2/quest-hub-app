@@ -25,7 +25,7 @@ build-backend = "poetry.core.masonry.api"
 start = "quest_hub_fastapi_server:start"
 
 [tool.black]
-line-length = 88
+line-length = 100
 include = '\.pyi?$'
 exclude = '''
 (
@@ -44,3 +44,8 @@ exclude = '''
   | foo.py           # also separately exclude a file named foo.py in
                      # the root of the project
 )'''
+
+[tool.ruff]
+line-length = 120
+[tool.ruff.lint]
+extend-select = ["E501"]

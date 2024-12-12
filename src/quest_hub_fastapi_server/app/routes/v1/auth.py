@@ -1,9 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from model.user_model import User
 from adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
-from model.character_list_model import CharacterList
 from typing import Optional
 
 route = APIRouter(prefix="/auth", tags=["auth"])
@@ -31,7 +30,8 @@ def sign_up(
     age: int = None,
     last_name: str = None,
     is_premium: bool = False,
-    language_code: str = "rus"):
+    language_code: str = "rus",
+):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -58,7 +58,7 @@ def sign_up(
                     "message": "Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору.",
                 },
             )
-    except Exception as error:
+    except Exception:
         raise HTTPException(
             status_code=500,
             detail={
@@ -86,6 +86,7 @@ def sign_out():
         return {"status": "Ok"}
     except Exception as error:
         print(error)
+
 
 @route.get(path="/git_actions_test")
 def test_git_actions():
