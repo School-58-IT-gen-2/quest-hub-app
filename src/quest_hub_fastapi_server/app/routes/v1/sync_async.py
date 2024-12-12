@@ -1,7 +1,6 @@
 from time import sleep as sync_sleep
-from fastapi import APIRouter, BackgroundTasks
-from starlette.concurrency import run_in_threadpool
-from asyncio import sleep as async_sleep, gather, create_task
+from fastapi import APIRouter
+from asyncio import sleep as async_sleep
 
 
 route = APIRouter(prefix="/sync-async", tags=["/sync-async"])

@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any
 
 
-
 class CharListRequestModel(BaseModel):
     race: Optional[str] = None  # text
     character_class: Optional[str] = None  # text

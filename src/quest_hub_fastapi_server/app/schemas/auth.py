@@ -13,6 +13,7 @@ class UserRequest(BaseModel):
     is_premium: Optional[bool] = None
     language_code: str
 
+
 class UserPutRequest(BaseModel):
     tg_id: int
     first_name: str
