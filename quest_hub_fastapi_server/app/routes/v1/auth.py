@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
-from model.user_model import User
-from adapters.db_source import DBSource
+
 from quest_hub_fastapi_server.modules.settings import settings
-from quest_hub_fastapi_server.app.schemas.auth import UserRequest, UserPutRequest
+from quest_hub_fastapi_server.adapters.db_source import DBSource
+from quest_hub_fastapi_server.modules.model.user_model import User
+from quest_hub_fastapi_server.modules.schemas.auth import UserRequest, UserPutRequest
 
 route = APIRouter(prefix="/auth", tags=["auth"])
 

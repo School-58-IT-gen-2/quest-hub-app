@@ -2,7 +2,8 @@ from typing import List
 from pydantic import SecretStr
 from supabase.client import ClientOptions
 from supabase import create_client, Client
-from adapters.abstract_source import AbstractSource
+
+from quest_hub_fastapi_server.adapters.abstract_source import AbstractSource
 
 
 class DBSource(AbstractSource):

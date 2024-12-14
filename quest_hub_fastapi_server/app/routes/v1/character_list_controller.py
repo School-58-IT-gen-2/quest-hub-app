@@ -1,7 +1,10 @@
 from fastapi import APIRouter, HTTPException
-from adapters.db_source import DBSource
+
 from quest_hub_fastapi_server.modules.settings import settings
-from model.request_model.charlist_model import CharListRequestModel
+from quest_hub_fastapi_server.adapters.db_source import DBSource
+from quest_hub_fastapi_server.modules.model.request_model.charlist_model import (
+    CharListRequestModel,
+)
 
 route = APIRouter(prefix="/characters", tags=["characters"])
 
