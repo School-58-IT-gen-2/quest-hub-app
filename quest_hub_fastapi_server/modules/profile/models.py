@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class UserRequest(BaseModel):
+class ProfileRequest(BaseModel):
     tg_id: int
     first_name: str
     role: str = "player"
@@ -14,7 +14,7 @@ class UserRequest(BaseModel):
     language_code: str
 
 
-class UserPutRequest(BaseModel):
+class ProfilePutRequest(BaseModel):
     tg_id: int
     first_name: str
     username: Optional[str] = None

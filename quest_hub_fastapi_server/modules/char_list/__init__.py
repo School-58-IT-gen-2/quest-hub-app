@@ -1,7 +1,7 @@
 from typing import List
 
 from quest_hub_fastapi_server.adapters.db_source import DBSource
-from quest_hub_fastapi_server.modules.model.abstract_model import AbstractModel
+from quest_hub_fastapi_server.modules.abstract_model import AbstractModel
 
 
 class CharacterList(AbstractModel):

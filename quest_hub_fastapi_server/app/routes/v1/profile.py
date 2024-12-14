@@ -1,20 +1,24 @@
 from fastapi import APIRouter, HTTPException
 
+from quest_hub_fastapi_server.modules.profile import Profile
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.adapters.db_source import DBSource
-from quest_hub_fastapi_server.modules.model.user_model import User
-from quest_hub_fastapi_server.modules.schemas.auth import UserRequest, UserPutRequest
+from quest_hub_fastapi_server.modules.profile.models import (
+    ProfileRequest,
+    ProfilePutRequest,
+)
 
-route = APIRouter(prefix="/auth", tags=["auth"])
+
+profile_route = APIRouter(tags=["profile"])
 
 
-@route.post(path="/user")
-def create_user(body: UserRequest):
+@profile_route.post(path="/profile")
+def create_user(body: ProfileRequest):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         try:
-            new_user = User(
+            new_user = Profile(
                 body.tg_id,
                 new_db_source,
                 body.first_name,
@@ -57,13 +61,13 @@ def create_user(body: UserRequest):
         )
 
 
-@route.get(path="/user")
+@profile_route.get(path="/profile")
 def get_user(tg_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         try:
-            new_user = User(tg_id, new_db_source)
+            new_user = Profile(tg_id, new_db_source)
             new_user.insert()
         except:
             raise HTTPException(
@@ -95,13 +99,13 @@ def get_user(tg_id: int):
         )
 
 
-@route.delete(path="/user")
+@profile_route.delete(path="/profile")
 def delete_user(tg_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         try:
-            new_user = User(tg_id, new_db_source)
+            new_user = Profile(tg_id, new_db_source)
             new_user.insert()
         except:
             raise HTTPException(
@@ -133,13 +137,13 @@ def delete_user(tg_id: int):
         )
 
 
-@route.put(path="/user")
-def edit_user(body: UserPutRequest):
+@profile_route.put(path="/profile")
+def edit_user(body: ProfilePutRequest):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         try:
-            new_user = User(body.tg_id, new_db_source)
+            new_user = Profile(body.tg_id, new_db_source)
             new_user.insert()
         except:
             raise HTTPException(

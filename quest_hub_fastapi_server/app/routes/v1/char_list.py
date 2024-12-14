@@ -2,14 +2,14 @@ from fastapi import APIRouter, HTTPException
 
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.adapters.db_source import DBSource
-from quest_hub_fastapi_server.modules.model.request_model.charlist_model import (
+from quest_hub_fastapi_server.modules.char_list.models import (
     CharListRequestModel,
 )
 
-route = APIRouter(prefix="/characters", tags=["characters"])
+char_route = APIRouter(tags=["characters"])
 
 
-@route.post(path="/create-character", response_model=CharListRequestModel)
+@char_route.post(path="/char-list", response_model=CharListRequestModel)
 def add_character(character: CharListRequestModel):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
@@ -25,7 +25,7 @@ def add_character(character: CharListRequestModel):
         raise HTTPException(status_code=500, detail="Error adding character")
 
 
-@route.put(path="/update-character/{character_id}", response_model=CharListRequestModel)
+@char_route.put(path="/char-list/{character_id}", response_model=CharListRequestModel)
 def update_character(character_id: int, character: CharListRequestModel):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
@@ -41,7 +41,7 @@ def update_character(character_id: int, character: CharListRequestModel):
         raise HTTPException(status_code=500, detail="Error updating character")
 
 
-@route.get(path="/get-character/{character_id}")
+@char_route.get(path="/char-list/{character_id}")
 def get_character(character_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
@@ -56,7 +56,7 @@ def get_character(character_id: int):
         raise HTTPException(status_code=500, detail="Error retrieving character")
 
 
-@route.delete(path="/delete-character/{character_id}")
+@char_route.delete(path="/char-list/{character_id}")
 def delete_character(character_id: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
@@ -72,7 +72,7 @@ def delete_character(character_id: int):
         raise HTTPException(status_code=500, detail="Error deleting character")
 
 
-@route.get(path="/get-characters-by-user/{user_id}")
+@char_route.get(path="/char-list/{user_id}")
 def get_characters_by_user(user_id: str):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
