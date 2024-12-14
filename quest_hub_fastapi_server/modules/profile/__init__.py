@@ -3,33 +3,21 @@ from typing import List, Optional
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import HTTPException
 
-from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.profile.models import (
     RequestProfileModel,
-    ResponseProfileModel,
-)
-from quest_hub_fastapi_server.modules.abstract_model import AbstractModel
-from quest_hub_fastapi_server.modules.char_list import (
-    CharacterList,
+    DatabaseProfileModel,
 )
 
 
 def get_profile():
-    return ProfileSecond()
+    return Profile()
 
 
-class ProfileSecond:
+class Profile:
     def __init__(self):
         self.db_table_name = "profiles"
-        self.db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        try:
-            self.db_source.connect()
-        except Exception:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Не удалось подключиться к базе данных",
-            )
+        self.db_source = DBSource()
 
     def __get_dict_by_tg_id(self, tg_id: int) -> dict:
         profile_dict_list = self.db_source.get_by_value(
@@ -47,10 +35,10 @@ class ProfileSecond:
             )
         return profile_dict_list[0]
 
-    def get_by_tg_id(self, tg_id: int) -> Optional[ResponseProfileModel]:
+    def get_by_tg_id(self, tg_id: int) -> Optional[DatabaseProfileModel]:
         """Получение профиля по идентификатору Telegram."""
         profile_dict_list = self.__get_dict_by_tg_id(tg_id)
-        return ResponseProfileModel(**profile_dict_list)
+        return DatabaseProfileModel(**profile_dict_list)
 
     def delete(self, tg_id: int) -> List[dict]:
         profile_model = self.get_by_tg_id(tg_id)
@@ -69,7 +57,7 @@ class ProfileSecond:
     def create_or_update(
         self,
         rq_profile_model: RequestProfileModel,
-    ) -> ResponseProfileModel:
+    ) -> DatabaseProfileModel:
         """Создание нового профиля, если он не существует."""
         profile_dict_list = self.db_source.get_by_value(
             self.db_table_name, "tg_id", rq_profile_model.tg_id
@@ -79,19 +67,18 @@ class ProfileSecond:
                 self.db_table_name,
                 rq_profile_model.model_dump(),
             )
-            return ResponseProfileModel(**created_profile_dict[0])
-        elif len(profile_dict_list) == 1:
+            return DatabaseProfileModel(**created_profile_dict[0])
+        if len(profile_dict_list) == 1:
             tg_id = profile_dict_list[0].get("id")
             updated_profile_dict_list = self.db_source.update(
                 self.db_table_name, rq_profile_model.model_dump(), tg_id
             )
-            return ResponseProfileModel(**updated_profile_dict_list[0])
+            return DatabaseProfileModel(**updated_profile_dict_list[0])
         if len(profile_dict_list) > 1:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Найдено несколько профилей с таким tg_id.",
             )
-
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

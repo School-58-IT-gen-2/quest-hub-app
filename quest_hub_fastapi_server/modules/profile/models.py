@@ -15,7 +15,7 @@ class RequestProfileModel(BaseModel):
     language_code: str
 
 
-class ResponseProfileModel(BaseModel):
+class DatabaseProfileModel(BaseModel):
     id: UUID
     tg_id: int
     first_name: str
@@ -27,12 +27,3 @@ class ResponseProfileModel(BaseModel):
     is_premium: Optional[bool] = None
     language_code: str
 
-
-class ProfileUpdateModel(BaseModel):
-    tg_id: int
-    first_name: str
-    username: Optional[str] = None
-    age: Optional[int] = None
-    last_name: Optional[str] = None
-    is_premium: Optional[bool] = None
-    language_code: str

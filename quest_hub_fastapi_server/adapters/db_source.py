@@ -1,7 +1,9 @@
 from typing import List
-from pydantic import SecretStr
+from fastapi import status
 from supabase.client import ClientOptions
 from supabase import create_client, Client
+from fastapi.exceptions import HTTPException
+from quest_hub_fastapi_server.modules.settings import settings
 
 from quest_hub_fastapi_server.adapters.abstract_source import AbstractSource
 
@@ -9,29 +11,34 @@ from quest_hub_fastapi_server.adapters.abstract_source import AbstractSource
 class DBSource(AbstractSource):
     """Адаптер для работы с базой данных"""
 
-    def __init__(self, url: str, key: SecretStr):
+    def __init__(self):
         """
         :param str url: Ссылка на supabase
         :param str key: Ключ от supabase
         """
-        self.__url = url
-        self.__key = key.get_secret_value()
+        self.url = settings.supabase.url
+        self.key = settings.supabase.key.get_secret_value()
+        self.connect()
 
     def connect(self) -> None:
         """Подключение к БД"""
         try:
             supabase: Client = create_client(
-                supabase_url=self.__url,
-                supabase_key=self.__key,
+                supabase_url=self.url,
+                supabase_key=self.key,
                 options=ClientOptions(
                     postgrest_client_timeout=10,
                     storage_client_timeout=10,
                     schema="public",
                 ),
             )
-            self.__supabase = supabase
+            self.supabase = supabase
         except Exception as error:
             print(f"Error: {error}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Не удалось подключиться к базе данных",
+            )
 
     def get_all(self, table_name: str) -> List[dict]:
         """
@@ -69,7 +76,7 @@ class DBSource(AbstractSource):
         :return List[dict]: Список из словаря со строкой таблицы
         """
         return dict(
-            self.__supabase.table(table_name)
+            self.supabase.table(table_name)
             .select()
             .eq(parameter, parameter_value)
             .execute()
