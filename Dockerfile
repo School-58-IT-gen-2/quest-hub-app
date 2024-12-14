@@ -1,6 +1,6 @@
 FROM python:3.12-alpine AS builder
 
-RUN pip install poetry==1.8.3
+RUN pip install poetry==1.8.5
 
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
@@ -22,8 +22,7 @@ ENV VIRTUAL_ENV=/app/.venv \
 
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
-COPY src ./src
+COPY quest_hub_fastapi_server ./quest_hub_fastapi_server
+COPY main.py ./main.py
 
-RUN cd /app/src
-
-ENTRYPOINT [ "python3", "src/main.py" ]
+ENTRYPOINT [ "python3", "main.py" ]
