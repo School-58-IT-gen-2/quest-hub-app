@@ -4,7 +4,7 @@ sys.path.append("./src")
 import unittest
 import time
 from datetime import datetime, timezone
-from adapters.db_source import DBSource
+from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import envirements
 
 
