@@ -33,7 +33,7 @@ jobs:
 
       - name: Construct .env
         run:
-          echo "FASTAPI_HOST=${{secrets.FASTAPI_HOST}} FASTAPI_PORT=${{secrets.FASTAPI_PORT}} SUPABASE_URL=${{secrets.SUPABASE_URL}} SUPABASE_KEY=${{secrets.SUPABASE_KEY}}" >> .env
+          echo "FASTAPI_HOST=${{secrets.FASTAPI_HOST}}" >> .env & echo "FASTAPI_PORT=${{secrets.FASTAPI_PORT}}" >> .env & echo "SUPABASE_URL=${{secrets.SUPABASE_URL}}" >> .env & echo "SUPABASE_KEY=${{secrets.SUPABASE_KEY}}" >> .env
 
       - name: Run CI tests
         run: 
