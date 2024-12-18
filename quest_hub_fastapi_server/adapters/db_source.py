@@ -32,7 +32,7 @@ class DBSource(AbstractSource):
                     schema="public",
                 ),
             )
-            self.supabase = supabase
+            self.__supabase = supabase
         except Exception as error:
             print(f"Error: {error}")
             raise HTTPException(
@@ -76,7 +76,7 @@ class DBSource(AbstractSource):
         :return List[dict]: Список из словаря со строкой таблицы
         """
         return dict(
-            self.supabase.table(table_name)
+            self.__supabase.table(table_name)
             .select()
             .eq(parameter, parameter_value)
             .execute()
