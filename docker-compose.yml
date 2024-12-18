@@ -2,7 +2,7 @@ version: '3'
 
 services:
   quest_hub_app:
-    image: quest_hub_app:0.0.2
+    image: quest_hub_app:master
     container_name: quest_hub_app
     env_file: .env
     command: 'python main.py'
