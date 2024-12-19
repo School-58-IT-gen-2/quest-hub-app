@@ -1,4 +1,6 @@
 from typing import List
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from pydantic import SecretStr
 from supabase.client import ClientOptions
 from supabase import create_client, Client
@@ -29,8 +31,14 @@ class DBSource(AbstractSource):
                 ),
             )
             self.__supabase = supabase
+            print(1111111111111111111)
+            print(self.__supabase)
         except Exception as error:
             print(f"Error: {error}")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Не удалось подключиться к базе данных",
+            )
 
     def get_all(self, table_name: str) -> List[dict]:
         """
