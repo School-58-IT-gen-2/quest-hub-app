@@ -31,8 +31,8 @@ class DBSource(AbstractSource):
                 ),
             )
             self.__supabase = supabase
-            print(1111111111111111111)
-            print(self.__supabase)
+            response = supabase.table('profiles').select('*').execute()
+            response.raise_when_api_error(response)
         except Exception as error:
             print(f"Error: {error}")
             raise HTTPException(

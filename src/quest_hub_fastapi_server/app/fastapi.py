@@ -33,10 +33,10 @@ def handle_500_error(request: Request, exception: Exception) -> JSONResponse:
                  "message": "Неизвестная ошибка на сервере. Обратитесь к администратору."},
     )
 
-@app.exception_handler(503)
-def handle_503_error(request: Request, exception: Exception) -> JSONResponse:
-    return JSONResponse(
-        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-        content={"error": "Service Unavailable", 
-                 "message": "Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."},
-    )
+# @app.exception_handler(503)
+# def handle_503_error(request: Request, exception: Exception) -> JSONResponse:
+#     return JSONResponse(
+#         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+#         content={"error": "Service Unavailable", 
+#                  "message": "Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."},
+#     )
