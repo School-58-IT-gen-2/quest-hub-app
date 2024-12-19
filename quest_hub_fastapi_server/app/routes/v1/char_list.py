@@ -1,14 +1,22 @@
 from fastapi import APIRouter, HTTPException
-from adapters.db_source import DBSource
+from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
-from model.request_model.charlist_model import CharListRequestModel
+from quest_hub_fastapi_server.modules.char_list.models import (
+    CharListRequestModel,
+    BadRequestException,
+    InternalServerErrorException,
+    ServiceUnavailableException
+)
 
-route = APIRouter(prefix="/characters", tags=["characters"])
+char_route = APIRouter(prefix="/characters", tags=["characters"])
 
 
-@route.post(path="/create-character", response_model=CharListRequestModel)
+
+@char_route.post(path="/char-list", response_model=CharListRequestModel)
 def add_character(character: CharListRequestModel):
     try:
+        if not character:
+            raise BadRequestException()
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         new_character = character.model_dump(exclude_unset=True)
@@ -16,15 +24,19 @@ def add_character(character: CharListRequestModel):
         if result:
             return result
         else:
-            raise HTTPException(status_code=503, detail="Database unreachable")
+            raise ServiceUnavailableException()
+    except BadRequestException as e:
+        raise e
     except Exception as error:
         print(error)
-        raise HTTPException(status_code=500, detail="Error adding character")
+        raise InternalServerErrorException()
 
 
-@route.put(path="/update-character/{character_id}", response_model=CharListRequestModel)
+@char_route.put(path="/char-list", response_model=CharListRequestModel)
 def update_character(character_id: int, character: CharListRequestModel):
     try:
+        if not character_id or not character:
+            raise BadRequestException()
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         updated_character = character.model_dump(exclude_unset=True)
@@ -33,14 +45,18 @@ def update_character(character_id: int, character: CharListRequestModel):
             return result
         else:
             raise HTTPException(status_code=404, detail="Character not found")
+    except BadRequestException as e:
+        raise e
     except Exception as error:
         print(error)
-        raise HTTPException(status_code=500, detail="Error updating character")
+        raise InternalServerErrorException()
 
 
-@route.get(path="/get-character/{character_id}")
+@char_route.get(path="/char-list/{character_id}")
 def get_character(character_id: int):
     try:
+        if not character_id:
+            raise BadRequestException()
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         character = new_db_source.get_by_id("character_list", character_id)
@@ -48,14 +64,18 @@ def get_character(character_id: int):
             return character
         else:
             raise HTTPException(status_code=404, detail="Character not found")
+    except BadRequestException as e:
+        raise e
     except Exception as error:
         print(error)
-        raise HTTPException(status_code=500, detail="Error retrieving character")
+        raise InternalServerErrorException()
 
 
-@route.delete(path="/delete-character/{character_id}")
+@char_route.delete(path="/char-list/{character_id}")
 def delete_character(character_id: int):
     try:
+        if not character_id:
+            raise BadRequestException()
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         character = new_db_source.get_by_id("character_list", character_id)
@@ -64,14 +84,18 @@ def delete_character(character_id: int):
             return {"detail": "Character deleted successfully", "character": character}
         else:
             raise HTTPException(status_code=404, detail="Character not found")
+    except BadRequestException as e:
+        raise e
     except Exception as error:
         print(error)
-        raise HTTPException(status_code=500, detail="Error deleting character")
+        raise InternalServerErrorException()
 
 
-@route.get(path="/get-characters-by-user/{user_id}")
+@char_route.get(path="/char-list/{user_id}/")
 def get_characters_by_user(user_id: str):
     try:
+        if not user_id:
+            raise BadRequestException()
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         characters = new_db_source.get_by_value("character_list", "user_id", user_id)
@@ -81,6 +105,8 @@ def get_characters_by_user(user_id: str):
             raise HTTPException(
                 status_code=404, detail="No characters found for this user"
             )
+    except BadRequestException as e:
+        raise e
     except Exception as error:
         print(error)
-        raise HTTPException(status_code=500, detail="Error retrieving characters")
+        raise InternalServerErrorException()

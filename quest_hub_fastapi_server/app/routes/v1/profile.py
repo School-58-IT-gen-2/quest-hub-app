@@ -1,10 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from model.user_model import User
-from adapters.db_source import DBSource
-from quest_hub_fastapi_server.modules.settings import settings
-from quest_hub_fastapi_server.app.schemas.auth import UserRequest, UserPutRequest
 
-route = APIRouter(prefix="/auth", tags=["auth"])
+from quest_hub_fastapi_server.modules.profile import Profile
+from quest_hub_fastapi_server.modules.settings import settings
+from quest_hub_fastapi_server.adapters.db_source import DBSource
+from quest_hub_fastapi_server.modules.profile.models import (
+    ProfileRequest,
+    ProfilePutRequest,
+)
 
 
 @route.post(path="/user")
@@ -28,7 +30,7 @@ def create_user(
     user = new_user.insert()
     return user
 
-@route.get(path="/user")
+@profile_route.get(path="/profile")
 def get_user(tg_id: int):
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
