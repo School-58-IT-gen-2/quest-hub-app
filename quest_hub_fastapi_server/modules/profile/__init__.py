@@ -1,16 +1,19 @@
-from model.abstract_model import AbstractModel
-from model.character_list_model import CharacterList
-from adapters.db_source import DBSource
 from typing import List
 
+from quest_hub_fastapi_server.adapters.db_source import DBSource
+from quest_hub_fastapi_server.modules.abstract_model import AbstractModel
+from quest_hub_fastapi_server.modules.char_list import (
+    CharacterList,
+)
 
-class User(AbstractModel):
+
+class Profile(AbstractModel):
 
     def __init__(
         self,
         tg_id: str,
         db_source: DBSource,
-        first_name: str,
+        first_name: str = None,
         username: str = None,
         last_name: str = None,
         role: str = None,

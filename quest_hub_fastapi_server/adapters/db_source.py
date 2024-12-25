@@ -1,8 +1,11 @@
 from typing import List
+from fastapi import status
+from fastapi.exceptions import HTTPException
 from pydantic import SecretStr
 from supabase.client import ClientOptions
 from supabase import create_client, Client
-from adapters.abstract_source import AbstractSource
+
+from quest_hub_fastapi_server.adapters.abstract_source import AbstractSource
 
 
 class DBSource(AbstractSource):
@@ -29,8 +32,14 @@ class DBSource(AbstractSource):
                 ),
             )
             self.__supabase = supabase
+            response = supabase.table('profiles').select('*').execute()
+            response.raise_when_api_error(response)
         except Exception as error:
             print(f"Error: {error}")
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Не удалось подключиться к базе данных",
+            )
 
     def get_all(self, table_name: str) -> List[dict]:
         """
