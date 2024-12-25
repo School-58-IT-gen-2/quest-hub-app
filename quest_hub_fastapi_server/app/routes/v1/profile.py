@@ -8,14 +8,15 @@ from quest_hub_fastapi_server.modules.profile.models import (
     ProfilePutRequest,
 )
 
+profile_route = APIRouter(prefix="/profiles", tags=["profiles"])
 
-@route.post(path="/user")
+@profile_route.post(path="/user")
 def create_user(
-    body: UserRequest
+    body: ProfileRequest
 ):
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
-    new_user = User(
+    new_user = Profile(
         body.tg_id,
         new_db_source,
         body.first_name,
@@ -34,25 +35,25 @@ def create_user(
 def get_user(tg_id: int):
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
-    new_user = User(tg_id, new_db_source)
+    new_user = Profile(tg_id, new_db_source)
     new_user.insert()
     return new_user.__dict__()
     
-@route.delete(path="/user")
+@profile_route.delete(path="/user")
 def delete_user(tg_id: int):
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key) 
     new_db_source.connect()       
-    new_user = User(tg_id, new_db_source)
+    new_user = Profile(tg_id, new_db_source)
     new_user.insert()
     return new_user.delete()
 
-@route.put(path="/user")
+@profile_route.put(path="/user")
 def edit_user(
-    body: UserPutRequest
+    body: ProfilePutRequest
     ):
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
-    new_user = User(body.tg_id, new_db_source)
+    new_user = Profile(body.tg_id, new_db_source)
     new_user.insert()
     return new_user.update({
                 "first_name": body.first_name,
