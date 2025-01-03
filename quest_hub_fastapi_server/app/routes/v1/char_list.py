@@ -22,7 +22,7 @@ def add_character(character: CharListRequestModel):
         new_character = character.model_dump(exclude_unset=True)
         result = new_db_source.insert("character_list", new_character)
         if result:
-            return result
+            return result[0]
         else:
             raise ServiceUnavailableException()
     except BadRequestException as e:
@@ -42,7 +42,7 @@ def update_character(character_id: int, character: CharListRequestModel):
         updated_character = character.model_dump(exclude_unset=True)
         result = new_db_source.update("character_list", updated_character, character_id)
         if result:
-            return result
+            return result[0]
         else:
             raise HTTPException(status_code=404, detail="Character not found")
     except BadRequestException as e:
