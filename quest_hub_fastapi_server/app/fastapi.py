@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi import Request, status
 
-
+from quest_hub_fastapi_server.modules.settings import settings
+from quest_hub_fastapi_server.adapters.db_source import DBSource
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
@@ -14,6 +15,12 @@ def lifespan(app: FastAPI):
 
 # Инициализация приложения
 app = FastAPI(lifespan=lifespan, title="QuestHub")
+
+@app.get(path="/health")
+def health():
+    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+    new_db_source.connect()
+    return {"status": "ok"}
 
 
 #Обработка исключений
