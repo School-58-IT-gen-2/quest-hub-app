@@ -5,7 +5,7 @@ from quest_hub_fastapi_server.modules.abstract_model import AbstractModel
 
 
 class CharacterList(AbstractModel):
-    """Класс листа персонажа"""
+    """Класс листа персонажа."""
 
     def __init__(
         self,
@@ -47,42 +47,43 @@ class CharacterList(AbstractModel):
         stat_modifiers: dict = None,
     ) -> None:
         """
-        :param str user_id: id пользователя в базе данных
-        :param DBSource db_source: Объект класса базы данных
-        :param int id: id листа персонажа в базе данных
-        :param str name: Имя персонажа
-        :param str race: Раса персонажа
-        :param str character_class: Класс персонажа
-        :param dict stats: Начальное распределение характеристик персонажа
-        :param int hp: Начальное значение здоровья персонажа
-        :param str allignment: Мировозрение персонажа
-        :param dict skills: Навыки персонажа
-        :param dict weapons_and_equipment: Оружие и снаряжение персонажа
-        :param dict ability_saving_throws: Спасброски способностей персонажа
-        :param dict death_saving_throws: Смертельные спасброски персонажа
-        :param dict attacks: Атаки персонажа
-        :param dict spells: Заклинания персонажа
-        :param int passive_perception: Пассивное восприятие персонажа
-        :param dict traits_and_abilities: Черты и способности персонажа
-        :param int initiative: Инициатива персонажа
-        :param int lvl: Уровень персонажа
-        :param int speed: Скорость перемещения персонажа
-        :param str backstory: Предыстория персонажа
-        :param int experience: Опыт персонажа
-        :param dict valuables: Ценности, принадлежащие персонажу
-        :param str diary: Дневник персонажа
-        :param str notes: Дополнительные заметки к персонажу
-        :param dict languages: Языки, известные персонажу
-        :param dict npc_relations: Отношения персонажа с NPC
-        :param bool inspiration: Вдохновение персонажа
-        :param bool interference: Вмешательство
-        :param int ownership_bonus: Бонус владения персонажа
-        :param bool advantages: Преимущества персонажа
-        :param int attribute_points: Очки навыков персонажа
-        :param dict special_features: Особые способности
-        :param dict weaknesses: Слабости персонажа
-        :param dict damage: Урон от атак персонажа
-        :param dict stat_modifiers: Модификаторы к характеристикам персонажа
+        Args:
+            user_id (str): id пользователя в базе данных.
+            db_source (DBSource): Объект класса базы данных.
+            id (int): id листа персонажа в базе данных.
+            name (str): Имя персонажа.
+            race (str): Раса персонажа.
+            character_class (str): Класс персонажа.
+            stats (dict): Начальное распределение характеристик персонажа.
+            hp (int): Начальное значение здоровья персонажа.
+            allignment (str): Мировозрение персонажа.
+            skills (dict): Навыки персонажа.
+            weapons_and_equipment (dict): Оружие и снаряжение персонажа.
+            ability_saving_throws (dict): Спасброски способностей персонажа.
+            death_saving_throws (dict): Смертельные спасброски персонажа.
+            attacks (dict): Атаки персонажа.
+            spells (dict): Заклинания персонажа.
+            passive_perception (int): Пассивное восприятие персонажа.
+            traits_and_abilities (dict): Черты и способности персонажа.
+            initiative (int): Инициатива персонажа.
+            lvl (int): Уровень персонажа.
+            speed (int): Скорость перемещения персонажа.
+            backstory (str): Предыстория персонажа.
+            experience (int): Опыт персонажа.
+            valuables (dict): Ценности, принадлежащие персонажу.
+            diary (str): Дневник персонажа.
+            notes (str): Дополнительные заметки к персонажу.
+            languages (dict): Языки, известные персонажу.
+            npc_relations (dict): Отношения персонажа с NPC.
+            inspiration (bool): Вдохновение персонажа.
+            interference (bool): Вмешательство.
+            ownership_bonus (int): Бонус владения персонажа.
+            advantages (bool): Преимущества персонажа.
+            attribute_points (int): Очки навыков персонажа.
+            special_features (dict): Особые способности.
+            weaknesses (dict): Слабости персонажа.
+            damage (dict): Урон от атак персонажа.
+            stat_modifiers (dict): Модификаторы к характеристикам персонажа.
         """
         self.user_id = user_id
         self.db_source = db_source
@@ -124,9 +125,10 @@ class CharacterList(AbstractModel):
 
     def insert(self) -> dict:
         """
-        Сохранение листа персонажа в базу данных
+        Сохранение листа персонажа в базу данных.
 
-        :return dict: Словарь с данными листа персонажа
+        Returns:
+            dict: Словарь с данными листа персонажа.
         """
         if self.id:
             self.synchronize(self.id)
@@ -138,10 +140,13 @@ class CharacterList(AbstractModel):
 
     def update(self, dict: dict) -> List[dict]:
         """
-        Изменение листа персонажа
+        Изменение листа персонажа.
 
-        :param dict dict: Словарь с новыми данными листа персонажа
-        :return List[dict]: Список из словаря с новой строкой
+        Args:
+            dict (dict): Словарь с новыми данными листа персонажа.
+
+        Returns:
+            List[dict]: Список из словаря с новой строкой.
         """
         data_list = self.db_source.update(self.table_name, dict, self.id)
         self.synchronize(self.id)
@@ -149,36 +154,44 @@ class CharacterList(AbstractModel):
 
     def delete(self) -> List[dict]:
         """
-        Удаление листа персонажа из базы данных
+        Удаление листа персонажа из базы данных.
 
-        :return List[dict]: Список из словаря с удалённой строкой
+        Returns:
+            List[dict]: Список из словаря с удалённой строкой.
         """
         return self.db_source.delete(self.table_name, self.id)
 
     def get_by_id(self, id: int) -> List[dict]:
         """
-        Получение листа персонажа по id
+        Получение листа персонажа по id.
 
-        :param str id: id листа персонажа
-        :return List[dict]: Список из словаря со строкой таблицы
+        Args:
+            id (str): id листа персонажа.
+        
+        Returns:
+            List[dict]: Список из словаря со строкой таблицы.
         """
         return self.db_source.get_by_id(self.table_name, id)
 
     def get_by_value(self, parameter: str, parameter_value: any) -> List[dict]:
         """
-        Получение листа персонажа по значению определенного параметра
+        Получение листа персонажа по значению определенного параметра.
 
-        :param str parameter: Столбец, по которому происходит сравнение
-        :param str / int / list parameter_value: Значение, по которому происходит сравнение
-        :return List[dict]: Список из словаря со строкой таблицы
+        Args:
+            parameter (str): Столбец, по которому происходит сравнение.
+            parameter_value (str / int / list): Значение, по которому происходит сравнение.
+
+        Returns:
+            List[dict]: Список из словаря со строкой таблицы.
         """
         return self.db_source.get_by_value(self.table_name, parameter, parameter_value)
 
     def synchronize(self, id: int) -> None:
         """
-        Синхронизация объекта класса и данных в таблицах
+        Синхронизация объекта класса и данных в таблицах.
 
-        :param int id: id листа персонажа в таблице
+        Returns:
+            id (int): id листа персонажа в таблице.
         """
         data_list = self.get_by_id(id)
         if len(data_list) == 0:
@@ -189,9 +202,10 @@ class CharacterList(AbstractModel):
 
     def __dict__(self) -> dict:
         """
-        Вывод всех параметров листа персонажа в формате словаря
+        Вывод всех параметров листа персонажа в формате словаря.
 
-        :return dict: Словарь с данными листа персонажа
+        Returns:
+            dict: Словарь с данными листа персонажа.
         """
         return {
             "id": self.id,
@@ -233,9 +247,10 @@ class CharacterList(AbstractModel):
 
     def set_attributes(self, attr_dict: dict) -> None:
         """
-        Установка параметров листа персонажа, заданных в словаре
+        Установка параметров листа персонажа, заданных в словаре.
 
-        :param dict attr_dict: Словарь с параметрами, которые нужно установить листу персонажа
+        Args:
+            attr_dict (dict): Словарь с параметрами, которые нужно установить листу персонажа.
         """
         for key in attr_dict:
             setattr(self, key, attr_dict[key])
