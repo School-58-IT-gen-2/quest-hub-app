@@ -5,12 +5,12 @@ on:
     branches:
       - master
   workflow_dispatch:
+
 jobs:
   ansible:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-
         uses: actions/checkout@v4
 
       - name: Install Ansible
@@ -30,9 +30,47 @@ jobs:
 
       - name: Run Ansible playbook
         env:
-
-            ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
-
-            ANSIBLE_HOST_KEY_CHECKING: False
+          ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
+          ANSIBLE_HOST_KEY_CHECKING: False
         run: |
           ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+
+      - name: Wait for container to start
+        run: |
+          sleep 30
+
+      - name: Check container health
+        id: healthcheck
+        run: |
+          CONTAINER_ID=$(ssh -i private_key.pem -p ${{ secrets.SSH_PORT }} ${{ secrets.ANSIBLE_USER }}@${{ secrets.SSH_HOST }} "docker ps -q --filter 'name=quest_hub_app'")
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Container is not running!"
+            exit 1
+          fi
+
+          HEALTH_STATUS=$(ssh -i private_key.pem -p ${{ secrets.SSH_PORT }} ${{ secrets.ANSIBLE_USER }}@${{ secrets.SSH_HOST }} "docker inspect --format='{{.State.Health.Status}}' $CONTAINER_ID")
+          if [ "$HEALTH_STATUS" != "healthy" ]; then
+            echo "Container healthcheck failed!"
+            exit 1
+          fi
+
+      - name: Set up Python
+        if: failure() && steps.healthcheck.outcome == 'failure'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: failure() && steps.healthcheck.outcome == 'failure'
+        run: |
+          python -m pip install --upgrade pip
+          pip install aiogram
+
+      - name: Send Telegram alert
+        if: failure() && steps.healthcheck.outcome == 'failure'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MESSAGE_TEXT: "Healthcheck failed: ${{ github.workflow }} workflow in ${{ github.repository }}. Container is not healthy."
+        run: |
+          python scripts/send_telegram_alert.py
