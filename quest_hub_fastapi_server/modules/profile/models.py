@@ -3,6 +3,7 @@ from typing import Optional
 
 
 class ProfileRequest(BaseModel):
+    """Класс для работы с профилем пользователя. (общий вид)"""
     tg_id: int
     first_name: str
     role: str = "player"
@@ -15,6 +16,7 @@ class ProfileRequest(BaseModel):
 
 
 class ProfilePutRequest(BaseModel):
+    """Класс для работы с профилем пользователя. (только для обновления данных)"""
     tg_id: int
     first_name: str
     username: Optional[str] = None

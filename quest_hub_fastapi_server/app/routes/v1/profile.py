@@ -14,6 +14,13 @@ profile_route = APIRouter(prefix="/profiles", tags=["profiles"])
 def create_user(
     body: ProfileRequest
 ):
+    """
+        Создание пользователя.
+        Args:
+            body (ProfileRequest): Данные пользователя.
+        Returns:
+            response (dict): Данные пользователя.
+    """
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
     new_user = Profile(
@@ -33,6 +40,14 @@ def create_user(
 
 @profile_route.get(path="/profile")
 def get_user(tg_id: int):
+    """
+        Получение данных пользователя.
+
+        Args:
+            tg_id (int): ID пользователя.
+        Returns:
+            response (dict): Данные пользователя.
+    """
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
     new_user = Profile(tg_id, new_db_source)
@@ -41,6 +56,14 @@ def get_user(tg_id: int):
     
 @profile_route.delete(path="/user")
 def delete_user(tg_id: int):
+    """
+        Удаление пользователя.
+
+        Args:
+            tg_id (int): ID пользователя.
+        Returns:
+            response (dict): Данные пользователя.
+    """
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key) 
     new_db_source.connect()       
     new_user = Profile(tg_id, new_db_source)
@@ -51,6 +74,13 @@ def delete_user(tg_id: int):
 def edit_user(
     body: ProfilePutRequest
     ):
+    """
+        Редактирование данных пользователя.
+        Args:
+            body (ProfilePutRequest): Данные пользователя.
+        Returns:
+            response (dict): Данные пользователя.
+    """
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
     new_user = Profile(body.tg_id, new_db_source)
