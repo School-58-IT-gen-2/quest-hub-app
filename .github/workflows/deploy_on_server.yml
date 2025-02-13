@@ -36,7 +36,7 @@ jobs:
 
       - name: Wait for service to start
         run: |
-          sleep 30  # Даем время сервису запуститься
+          sleep 30  
 
       - name: Check health endpoint
         id: healthcheck
@@ -70,7 +70,7 @@ jobs:
           THREAD_ID: ${{ secrets.THREAD_ID }}  
           MESSAGE_TEXT: "Healthcheck failed: ${{ github.workflow }} workflow in ${{ github.repository }}. Healthcheck returned status code: $HEALTH_STATUS."
         run: |
-          python .\scripts\send_telegram_alert.py
+          python /projects/dnd/quest-hub-app/scripts/send_telegram_alert.py
 
       - name: Clean up
         run: |
