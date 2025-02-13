@@ -10,7 +10,6 @@ MESSAGE_TEXT = os.getenv('MESSAGE_TEXT')
 if not all([TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, MESSAGE_TEXT]):
     raise ValueError("Не все переменные окружения заданы!")
 
-# Инициализируем бота
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
 async def send_alert():
