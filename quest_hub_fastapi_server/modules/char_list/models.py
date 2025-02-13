@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any, List
 
 
 class CharListRequestModel(BaseModel):
+    """Класс для работы с персонажами."""
     race: Optional[str] = None  # text
     character_class: Optional[str] = None  # text
     backstory: Optional[str] = None  # text
@@ -40,8 +41,10 @@ class CharListRequestModel(BaseModel):
     age: Optional[int] = None # int8
     worldview: Optional[str] = None # text
 
+class ItemForChar(BaseModel):
+    pass
 
-
+#Обработчик ошибок
 class BadRequestException(HTTPException):
     def __init__(self, detail: str = "Некорректный формат запроса"):
         super().__init__(status_code=400, detail=detail)

@@ -1,6 +1,6 @@
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
-
+# тут лежат все настройки, которые мы используем в проекте
 
 class EnvirementsSettings(BaseSettings):
     FASTAPI_HOST: str
