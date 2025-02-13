@@ -1,0 +1,8 @@
+- name: Run alert_bot
+  hosts: all
+  tasks:
+  - name: Install_aiogram
+    command: pip install aiogram
+
+  - name: Run_alert_script
+    command: python3 scripts\send_telegram_alert.py

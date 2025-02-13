@@ -56,12 +56,6 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        if: failure() && steps.healthcheck.outcome == 'failure'
-        run: |
-          python -m pip install --upgrade pip
-          pip install aiogram
-
       - name: Send Telegram alert
         if: failure() && steps.healthcheck.outcome == 'failure'
         env:
@@ -70,7 +64,7 @@ jobs:
           THREAD_ID: ${{ secrets.THREAD_ID }}  
           MESSAGE_TEXT: "Healthcheck failed: ${{ github.workflow }} workflow in ${{ github.repository }}. Healthcheck returned status code: $HEALTH_STATUS."
         run: |
-          python /projects/dnd/quest-hub-app/scripts/send_telegram_alert.py
+          ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
 
       - name: Clean up
         run: |
