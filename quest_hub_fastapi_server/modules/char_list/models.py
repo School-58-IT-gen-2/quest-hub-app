@@ -42,7 +42,8 @@ class CharListRequestModel(BaseModel):
     worldview: Optional[str] = None # text
 
 class ItemForChar(BaseModel):
-    pass
+    weapons_and_equipment: Optional[Dict[str, Any]] = None  # json
+    inventory: Optional[List[Any]] = None # json
 
 #Обработчик ошибок
 class BadRequestException(HTTPException):
