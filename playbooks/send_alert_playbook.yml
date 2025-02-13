@@ -4,6 +4,9 @@
   
   - name: Entering virtual environment
     shell: source /projects/dnd/ansible_env/bin/activate
+    args:
+      executable: /bin/bash
+
 
   - name: Run_alert_script
     command: python3 /projects/dnd/quest-hub-app/scripts/send_telegram_alert.py
