@@ -41,6 +41,8 @@ class CharListRequestModel(BaseModel):
     age: Optional[int] = None # int8
     worldview: Optional[str] = None # text
 
+class ItemForChar(BaseModel):
+    pass
 
 #Обработчик ошибок
 class BadRequestException(HTTPException):

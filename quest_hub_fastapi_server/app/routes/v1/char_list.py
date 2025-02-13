@@ -3,6 +3,7 @@ from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.char_list.models import (
     CharListRequestModel,
+    ItemForChar,
     BadRequestException,
     InternalServerErrorException,
     ServiceUnavailableException
@@ -137,6 +138,21 @@ def delete_character(character_id: int):
         print(error)
         raise InternalServerErrorException()
 
+@char_route.post(path="/char-list/{character_id}/inventory")
+async def add_item_to_inventory(character_id: int, item: ItemForChar):
+    """
+        Добавление предмета в инвентарь персонажа.
+        Args:
+            character_id (int): ID персонажа.
+            item_id (int): ID предмета.
+        Returns:
+            response (dict): Данные персонажа.
+        Raises:
+            BadRequestException: Некорректный запрос.
+            NotFoundException: Персонаж или предмет не найдены.
+            InternalServerErrorException: Внутренняя ошибка сервера.
+    """
+    pass
 
 @char_route.get(path="/char-list/{user_id}/")
 def get_characters_by_user(user_id: str):
