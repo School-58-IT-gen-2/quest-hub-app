@@ -7,6 +7,7 @@
       name:
         - aiogram
         - asyncio
+        - python-dotenv
       virtualenv: /projects/dnd/ansible_env
       virtualenv_command: python3 -m venv
 
