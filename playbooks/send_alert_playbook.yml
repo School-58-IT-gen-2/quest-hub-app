@@ -1,8 +1,9 @@
 - name: Run alert_bot
   hosts: all
   tasks:
-  - name: Install_aiogram
-    command: pip install aiogram
+  
+  - name: Entering virtual environment
+    command: source /projects/dnd/ansible_env/bin/activate
 
   - name: Run_alert_script
-    command: python3 scripts\send_telegram_alert.py
+    command: python3 /projects/dnd/quest-hub-app/scripts/send_telegram_alert.py
