@@ -14,10 +14,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Ansible
-        shell: bash
         run: |
           sudo apt update
-          sudo apt install ansible
+          sudo apt install -y ansible
 
       - name: Set up SSH
         run: |
@@ -35,22 +34,19 @@ jobs:
         run: |
           ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
 
-      - name: Wait for container to start
+      - name: Wait for service to start
         run: |
-          sleep 30
+          sleep 30  
 
-      - name: Check container health
+      - name: Check health endpoint
         id: healthcheck
         run: |
-          CONTAINER_ID=$(ssh -i private_key.pem -p ${{ secrets.SSH_PORT }} ${{ secrets.ANSIBLE_USER }}@${{ secrets.SSH_HOST }} "docker ps -q --filter 'name=quest_hub_app'")
-          if [ -z "$CONTAINER_ID" ]; then
-            echo "Container is not running!"
-            exit 1
-          fi
-
-          HEALTH_STATUS=$(ssh -i private_key.pem -p ${{ secrets.SSH_PORT }} ${{ secrets.ANSIBLE_USER }}@${{ secrets.SSH_HOST }} "docker inspect --format='{{.State.Health.Status}}' $CONTAINER_ID")
-          if [ "$HEALTH_STATUS" != "healthy" ]; then
-            echo "Container healthcheck failed!"
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://questhub.pro/health)
+          if [ "$HEALTH_STATUS" -eq 200 ]; then
+            echo "Healthcheck passed!"
+            exit 0
+          else
+            echo "Healthcheck failed! Status code: $HEALTH_STATUS"
             exit 1
           fi
 
@@ -60,18 +56,16 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        if: failure() && steps.healthcheck.outcome == 'failure'
-        run: |
-          python -m pip install --upgrade pip
-          pip install aiogram
-
       - name: Send Telegram alert
         if: failure() && steps.healthcheck.outcome == 'failure'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}  
           THREAD_ID: ${{ secrets.THREAD_ID }}  
-          MESSAGE_TEXT: "Healthcheck failed: ${{ github.workflow }} workflow in ${{ github.repository }}. Container is not healthy."
+          MESSAGE_TEXT: "Healthcheck failed: ${{ github.workflow }} workflow in ${{ github.repository }}. Healthcheck returned status code: $HEALTH_STATUS."
         run: |
-          python scripts/send_telegram_alert.py
+          ansible-playbook -i inventory.ini playbooks/send_alert_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+
+      - name: Clean up
+        run: |
+          rm -f private_key.pem inventory.ini
