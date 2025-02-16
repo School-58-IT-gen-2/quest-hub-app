@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.char_list.models import (
@@ -14,7 +15,7 @@ char_route = APIRouter(prefix="/characters", tags=["characters"])
 
 
 @char_route.post(path="/char-list", response_model=CharListRequestModel)
-def add_character(character: CharListRequestModel):
+async def add_character(character: CharListRequestModel):
     """
         Создание персонажа.
 
@@ -46,7 +47,7 @@ def add_character(character: CharListRequestModel):
 
 
 @char_route.put(path="/char-list", response_model=CharListRequestModel)
-def update_character(character_id: int, character: CharListRequestModel):
+async def update_character(character_id: int, character: CharListRequestModel):
     """
         Обновление данных персонажа.
 
@@ -79,7 +80,7 @@ def update_character(character_id: int, character: CharListRequestModel):
 
 
 @char_route.get(path="/char-list/{character_id}")
-def get_character(character_id: int):
+async def get_character(character_id: int):
     """
         Получение данных персонажа по ID.
         Args:
@@ -109,7 +110,7 @@ def get_character(character_id: int):
 
 
 @char_route.delete(path="/char-list/{character_id}")
-def delete_character(character_id: int):
+async def delete_character(character_id: int):
     """
         Удаление персонажа по ID.
         Args:
@@ -144,7 +145,7 @@ async def add_item_to_inventory(character_id: int, item: ItemForChar):
         Добавление предмета в инвентарь персонажа.
         Args:
             character_id (int): ID персонажа.
-            item_id (int): ID предмета.
+            item (ItemForChar): то, что добавляем персонажу.
         Returns:
             response (dict): Данные персонажа.
         Raises:
@@ -152,10 +153,25 @@ async def add_item_to_inventory(character_id: int, item: ItemForChar):
             NotFoundException: Персонаж или предмет не найдены.
             InternalServerErrorException: Внутренняя ошибка сервера.
     """
-    pass
+    try:
+        if item.inventory == None and item.weapons_and_equipment == None:
+            return JSONResponse(content={"message": "Необходимо добавить предметы в инвентарь"}, status_code=400)
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)[0]
+        if item.weapons_and_equipment != None:
+            character["weapons_and_equipment"] = {**character["weapons_and_equipment"], **item.weapons_and_equipment}
+            new_db_source.update("character_list", character, character_id)
+        if item.inventory != None:
+            for i in item.inventory:
+                character["inventory"].append(i)
+            new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content={"message": "Предмет успешно добавлен в инвентарь"}, status_code=200)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
 @char_route.get(path="/char-list/{user_id}/")
-def get_characters_by_user(user_id: str):
+async def get_characters_by_user(user_id: str):
     """
         Получение персонажей по ID пользователя.
         Args:
@@ -173,12 +189,12 @@ def get_characters_by_user(user_id: str):
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         characters = new_db_source.get_by_value("character_list", "user_id", user_id)
-        if characters:
-            return characters
-        else:
-            raise HTTPException(
-                status_code=404, detail="No characters found for this user"
-            )
+        #if characters:
+        return characters
+        #else:
+        #    raise HTTPException(
+        #        status_code=404, detail="No characters found for this user"
+        #    )
     except BadRequestException as e:
         raise e
     except Exception as error:

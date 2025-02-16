@@ -18,10 +18,9 @@ app = FastAPI(lifespan=lifespan, title="QuestHub")
 
 @app.get(path="/health")
 def health():
-    #new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-    #new_db_source.connect()
-    return 1/0
-    #return {"status": "ok"}
+    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+    new_db_source.connect()
+    return {"status": "ok"}
 
 
 #Обработка исключений
