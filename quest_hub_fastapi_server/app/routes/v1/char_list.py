@@ -15,7 +15,7 @@ char_route = APIRouter(prefix="/characters", tags=["characters"])
 
 
 @char_route.post(path="/char-list", response_model=CharListRequestModel)
-def add_character(character: CharListRequestModel):
+async def add_character(character: CharListRequestModel):
     """
         Создание персонажа.
 
@@ -47,7 +47,7 @@ def add_character(character: CharListRequestModel):
 
 
 @char_route.put(path="/char-list", response_model=CharListRequestModel)
-def update_character(character_id: int, character: CharListRequestModel):
+async def update_character(character_id: int, character: CharListRequestModel):
     """
         Обновление данных персонажа.
 
@@ -80,7 +80,7 @@ def update_character(character_id: int, character: CharListRequestModel):
 
 
 @char_route.get(path="/char-list/{character_id}")
-def get_character(character_id: int):
+async def get_character(character_id: int):
     """
         Получение данных персонажа по ID.
         Args:
@@ -110,7 +110,7 @@ def get_character(character_id: int):
 
 
 @char_route.delete(path="/char-list/{character_id}")
-def delete_character(character_id: int):
+async def delete_character(character_id: int):
     """
         Удаление персонажа по ID.
         Args:
@@ -171,7 +171,7 @@ async def add_item_to_inventory(character_id: int, item: ItemForChar):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
 @char_route.get(path="/char-list/{user_id}/")
-def get_characters_by_user(user_id: str):
+async def get_characters_by_user(user_id: str):
     """
         Получение персонажей по ID пользователя.
         Args:
@@ -189,12 +189,12 @@ def get_characters_by_user(user_id: str):
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         characters = new_db_source.get_by_value("character_list", "user_id", user_id)
-        if characters:
-            return characters
-        else:
-            raise HTTPException(
-                status_code=404, detail="No characters found for this user"
-            )
+        #if characters:
+        return characters
+        #else:
+        #    raise HTTPException(
+        #        status_code=404, detail="No characters found for this user"
+        #    )
     except BadRequestException as e:
         raise e
     except Exception as error:
