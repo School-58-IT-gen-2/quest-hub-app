@@ -41,7 +41,7 @@ class CharListRequestModel(BaseModel):
     age: Optional[int] = None # int8
     worldview: Optional[str] = None # text
 
-class ItemForChar(BaseModel):
+class AddItem(BaseModel):
     weapons_and_equipment: Optional[Dict[str, Any]] = None  # json
     inventory: Optional[List[Any]] = None # json
 

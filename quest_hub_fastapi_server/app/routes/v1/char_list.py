@@ -4,7 +4,7 @@ from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.char_list.models import (
     CharListRequestModel,
-    ItemForChar,
+    AddItem,
     BadRequestException,
     InternalServerErrorException,
     ServiceUnavailableException
@@ -140,25 +140,27 @@ async def delete_character(character_id: int):
         raise InternalServerErrorException()
 
 @char_route.post(path="/char-list/{character_id}/inventory")
-async def add_item_to_inventory(character_id: int, item: ItemForChar):
+async def add_item_to_inventory(character_id: int, item: AddItem):
     """
         Добавление предмета в инвентарь персонажа.
         Args:
             character_id (int): ID персонажа.
             item (ItemForChar): то, что добавляем персонажу.
         Returns:
-            response (dict): Данные персонажа.
+            response (dict): Уведомление об успешном добавлении предмета.
         Raises:
             BadRequestException: Некорректный запрос.
             NotFoundException: Персонаж или предмет не найдены.
-            InternalServerErrorException: Внутренняя ошибка сервера.
     """
     try:
-        if item.inventory == None and item.weapons_and_equipment == None:
+        if (item.inventory == None or item.inventory == []) and (item.weapons_and_equipment == None or item.weapons_and_equipment == {}):
             return JSONResponse(content={"message": "Необходимо добавить предметы в инвентарь"}, status_code=400)
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)[0]
+        try:
+            character = new_db_source.get_by_id("character_list", character_id)[0]
+        except:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         if item.weapons_and_equipment != None:
             character["weapons_and_equipment"] = {**character["weapons_and_equipment"], **item.weapons_and_equipment}
             new_db_source.update("character_list", character, character_id)
@@ -167,6 +169,39 @@ async def add_item_to_inventory(character_id: int, item: ItemForChar):
                 character["inventory"].append(i)
             new_db_source.update("character_list", character, character_id)
         return JSONResponse(content={"message": "Предмет успешно добавлен в инвентарь"}, status_code=200)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+
+@char_route.delete(path="/char-list/{character_id}/inventory")
+async def delete_item_from_inventory(character_id: int, item: AddItem):
+    """
+        Удаление предмета из инвентаря персонажа.
+        Args:
+            character_id (int): ID персонажа.
+            item (ItemForChar): то, что удаляем персонажу.
+        Returns:
+            response (dict): Уведомление об успешном удалении предмета.
+        Raises:
+            BadRequestException: Некорректный запрос.
+            NotFoundException: Персонаж или предмет не найдены.
+    """
+    try:
+        if (item.inventory == None or item.inventory == []) and (item.weapons_and_equipment == None or item.weapons_and_equipment == {}):
+            return JSONResponse(content={"message": "Необходимо указать предметы для удаления"}, status_code=400)
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        try:
+            character = new_db_source.get_by_id("character_list", character_id)[0]
+        except:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        for i in item.inventory:
+            try:
+                character["inventory"].remove(i)
+            except:
+                pass
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content={"message": "Предмет успешно удален"}, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
