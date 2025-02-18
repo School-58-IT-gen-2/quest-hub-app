@@ -4,7 +4,8 @@ from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.char_list.models import (
     CharListRequestModel,
-    ItemForChar,
+    InventoryItems,
+    AmmunitionItems,
     BadRequestException,
     InternalServerErrorException,
     ServiceUnavailableException
@@ -140,33 +141,56 @@ async def delete_character(character_id: int):
         raise InternalServerErrorException()
 
 @char_route.post(path="/char-list/{character_id}/inventory")
-async def add_item_to_inventory(character_id: int, item: ItemForChar):
-    """
-        Добавление предмета в инвентарь персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            item (ItemForChar): то, что добавляем персонажу.
-        Returns:
-            response (dict): Данные персонажа.
-        Raises:
-            BadRequestException: Некорректный запрос.
-            NotFoundException: Персонаж или предмет не найдены.
-            InternalServerErrorException: Внутренняя ошибка сервера.
-    """
+async def add_item_to_inventory(character_id: int, item: InventoryItems):
     try:
-        if item.inventory == None and item.weapons_and_equipment == None:
-            return JSONResponse(content={"message": "Необходимо добавить предметы в инвентарь"}, status_code=400)
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)[0]
-        if item.weapons_and_equipment != None:
-            character["weapons_and_equipment"] = {**character["weapons_and_equipment"], **item.weapons_and_equipment}
-            new_db_source.update("character_list", character, character_id)
-        if item.inventory != None:
-            for i in item.inventory:
-                character["inventory"].append(i)
-            new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content={"message": "Предмет успешно добавлен в инвентарь"}, status_code=200)
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        for i in item.items:
+            character["inventory"].append(i)
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content={"message": "Предмет добавлен в инвентарь"}, status_code=200)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+@char_route.delete(path="/char-list/{character_id}/inventory")
+async def delete_item_from_inventory(character_id: int, item: InventoryItems):
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        for i in item.items:
+            character["inventory"].remove(i)
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content={"message": "Предмет удален из инвентаря"}, status_code=200)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+@char_route.post(path="/char-list/{character_id}/ammunition")
+async def add_item_to_ammunition(character_id: int, item: AmmunitionItems):
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        character["weapons_and_equipmrnt"] = {**character["weapons_and_equipmrnt"], **item.ammunition_items}
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content={"message": "Добавлен предмет в аммуницию"}, status_code=200)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+@char_route.delete(path="/char-list/{character_id}/ammunition")
+async def delete_item_from_ammunition(character_id: int, item: AmmunitionItems):
+    try:
+        pass
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
