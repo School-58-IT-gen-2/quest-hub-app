@@ -41,6 +41,9 @@ class CharListRequestModel(BaseModel):
     age: Optional[int] = None # int8
     worldview: Optional[str] = None # text
 
+class Note(BaseModel):
+    note: Dict[str, Any]
+
 class InventoryItems(BaseModel):
     items: List[str]
 
