@@ -6,6 +6,7 @@ from quest_hub_fastapi_server.modules.char_list.models import (
     CharListRequestModel,
     InventoryItems,
     AmmunitionItems,
+    Note,
     BadRequestException,
     InternalServerErrorException,
     ServiceUnavailableException
@@ -139,7 +140,38 @@ async def delete_character(character_id: int):
     except Exception as error:
         print(error)
         raise InternalServerErrorException()
-
+    
+@char_route.get(path="/char-list/{user_id}/")
+async def get_characters_by_user(user_id: str):
+    """
+        Получение персонажей по ID пользователя.
+        Args:
+            user_id (str): ID пользователя.
+        Returns:
+            response (list): Список персонажей.
+        Raises:
+            BadRequestException: Некорректный запрос.
+            NotFoundException: Персонажи не найдены.
+            InternalServerErrorException: Внутренняя ошибка сервера.
+    """
+    try:
+        if not user_id:
+            raise BadRequestException()
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        characters = new_db_source.get_by_value("character_list", "user_id", user_id)
+        #if characters:
+        return characters
+        #else:
+        #    raise HTTPException(
+        #        status_code=404, detail="No characters found for this user"
+        #    )
+    except BadRequestException as e:
+        raise e
+    except Exception as error:
+        print(error)
+        raise InternalServerErrorException()
+    
 @char_route.post(path="/char-list/{character_id}/inventory")
 async def add_item_to_inventory(character_id: int, item: InventoryItems):
     try:
@@ -172,6 +204,14 @@ async def delete_item_from_inventory(character_id: int, item: InventoryItems):
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
+@char_route.put(path="/char-list/{character_id}/inventory")
+async def update_item_in_inventory(character_id: int, item: InventoryItems):
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
 @char_route.post(path="/char-list/{character_id}/ammunition")
 async def add_item_to_ammunition(character_id: int, item: AmmunitionItems):
     try:
@@ -190,37 +230,38 @@ async def add_item_to_ammunition(character_id: int, item: AmmunitionItems):
 @char_route.delete(path="/char-list/{character_id}/ammunition")
 async def delete_item_from_ammunition(character_id: int, item: AmmunitionItems):
     try:
-        pass
+        pass # потом допишу
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-
-@char_route.get(path="/char-list/{user_id}/")
-async def get_characters_by_user(user_id: str):
-    """
-        Получение персонажей по ID пользователя.
-        Args:
-            user_id (str): ID пользователя.
-        Returns:
-            response (list): Список персонажей.
-        Raises:
-            BadRequestException: Некорректный запрос.
-            NotFoundException: Персонажи не найдены.
-            InternalServerErrorException: Внутренняя ошибка сервера.
-    """
+    
+@char_route.put(path="/char-list/{character_id}/ammunition")
+async def update_item_in_ammunition(character_id: int, item: AmmunitionItems):
     try:
-        if not user_id:
-            raise BadRequestException()
+        pass # потом допишу
+    except:
+        return JSONResponse(content={"message":"Что-то пошло не так"}, status_code=400)
+
+@char_route.post(path="/char-list/{character_id}/notes")
+async def add_note_to_character(character_id: int, note: Note):
+    try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
-        characters = new_db_source.get_by_value("character_list", "user_id", user_id)
-        #if characters:
-        return characters
-        #else:
-        #    raise HTTPException(
-        #        status_code=404, detail="No characters found for this user"
-        #    )
-    except BadRequestException as e:
-        raise e
-    except Exception as error:
-        print(error)
-        raise InternalServerErrorException()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+@char_route.delete(path="/char-list/{character_id}/notes")
+async def delete_note_from_character(character_id: int, note: Note):
+    try:
+        pass # потом допишу
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+@char_route.put(path="/char-list/{character_id}/notes")
+async def update_note_from_character(character_id: int, note: Note):
+    try:
+        pass # потом допишу
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
