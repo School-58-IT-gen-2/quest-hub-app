@@ -296,7 +296,7 @@ async def update_note_from_character(character_id: int, note: Note):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @char_route.put(path="/char-list/{character_id}/gold")
-async def update_gold_from_character(character_id: int, gold: str):
+async def update_gold_from_character(character_id: int, gold: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -304,17 +304,14 @@ async def update_gold_from_character(character_id: int, gold: str):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        if "+" in gold:
-            character["gold"] += int(gold.split("+")[1])
-        if "-" in gold:
-            character["gold"] -= int(gold.split("-")[1])
+        character["gold"] += gold
         new_db_source.update("character_list", character, character_id)
         return JSONResponse(content={"message": "Золото обновлено"}, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @char_route.put(path="/char-list/{character_id}/experience")
-async def update_experience_from_character(character_id: int, experience: str):
+async def update_experience_from_character(character_id: int, experience: int):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -322,11 +319,8 @@ async def update_experience_from_character(character_id: int, experience: str):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        if "+" in experience:
-            character["experience"] += int(experience.split("+")[1])
-        if "-" in experience:
-            character["experience"] -= int(experience.split("-")[1])
+        character["experience"] += experience
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content={"message": "Золото обновлено"}, status_code=200)
+        return JSONResponse(content={"message": "Опыт изменен"}, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
