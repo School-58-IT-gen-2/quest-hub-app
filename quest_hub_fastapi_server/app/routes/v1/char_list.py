@@ -211,7 +211,7 @@ async def delete_item_from_inventory(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        character["inventory"].remove(item.model_dump())
+        character["inventory"] = [i for i in character["inventory"] if i["name"] != item.name]
         new_db_source.update("character_list", character, character_id)
         return JSONResponse(content=item.model_dump(), status_code=200)
     except:
@@ -230,6 +230,13 @@ async def update_item_in_inventory(character_id: int, item: Item):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        character["inventory"] = [item.model_dump() if i["name"] == item.name else i for i in character["inventory"]]
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content=item.model_dump(), status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
@@ -267,7 +274,15 @@ async def delete_item_from_ammunition(character_id: int, item: Item):
             response (dict): Удаленный предмет.
     """
     try:
-        pass # потом допишу
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        character["weapons_and_equipment"] = [i for i in character["weapons_and_equipment"] if i["name"] != item.name]
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content=item.model_dump(), status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
@@ -282,7 +297,15 @@ async def update_item_in_ammunition(character_id: int, item: Item):
             response (dict): Обновленный предмет.
     """
     try:
-        pass # потом допишу
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        character["weapons_and_equipment"] = [item.model_dump() if i["name"] == item.name else i for i in character["weapons_and_equipment"]]
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content=item.model_dump(), status_code=200)
     except:
         return JSONResponse(content={"message":"Что-то пошло не так"}, status_code=400)
 
