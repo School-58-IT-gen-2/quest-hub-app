@@ -6,9 +6,9 @@ from aiogram.exceptions import TelegramRetryAfter
 
 load_dotenv()
 
-TELEGRAM_BOT_TOKEN = os.getenv('ALERT_TELEGRAM_BOT_TOKEN')
-TELEGRAM_CHAT_ID = os.getenv('ALERT_TELEGRAM_CHAT_ID') 
-THREAD_ID = os.getenv('ALERT_THREAD_ID')  
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID') 
+THREAD_ID = os.getenv('THREAD_ID')  
 MESSAGE_TEXT = "Healthcheck failed: Deploy project on server workflow in master"
 
 
