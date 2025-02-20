@@ -4,6 +4,7 @@ from typing import Optional, Dict, Any, List
 
 
 class Item(BaseModel):
+    """Класс для работы с предметами."""
     count: Optional[int] = 1
     name: str
     description: Optional[str] = None
@@ -17,6 +18,7 @@ class Item(BaseModel):
     stealth_disadvantage: Optional[bool] = None
 
 class Note(BaseModel):
+    """Класс для работы с заметками."""
     note: Dict[str, Any]
 
 class CharListRequestModel(BaseModel):
