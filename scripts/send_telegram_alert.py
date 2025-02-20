@@ -10,7 +10,7 @@ TELEGRAM_BOT_TOKEN = os.getenv('ALERT_TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('ALERT_TELEGRAM_CHAT_ID') 
 THREAD_ID = os.getenv('ALERT_THREAD_ID')  
 MESSAGE_TEXT = "Healthcheck failed: Deploy project on server workflow in master"
-print(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, MESSAGE_TEXT)
+
 
 if not all([TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, MESSAGE_TEXT]):
     raise ValueError("Не все переменные окружения заданы!")

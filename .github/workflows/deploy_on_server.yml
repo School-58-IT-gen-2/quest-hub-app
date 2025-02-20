@@ -56,6 +56,12 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install dependencies
+        if: failure() && steps.healthcheck.outcome == 'failure'
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install aiogram asyncio python-dotenv
+      
       - name: Send Telegram alert
         if: failure() && steps.healthcheck.outcome == 'failure'
         env:
