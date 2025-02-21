@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("./src")
+sys.path.append(".")
 import unittest
 import time
 from datetime import datetime, timezone
