@@ -1,4 +1,4 @@
-import json
+import uuid
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from quest_hub_fastapi_server.adapters.db_source import DBSource
@@ -326,22 +326,21 @@ async def add_note_to_character(character_id: int, note: Note):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        if character["notes"] == None:
-            character["notes"] = note.note
-        else:
-            character["notes"] = {**character["notes"], **note.note}
+        new_note = note.model_dump()
+        new_note["id"] = str(uuid.uuid4())
+        character["notes"].append(new_note)
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=note.model_dump(), status_code=200)
+        return JSONResponse(content=new_note, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @char_route.delete(path="/char-list/{character_id}/notes")
-async def delete_note_from_character(character_id: int, note: Note):
+async def delete_note_from_character(character_id: int, note_id: str):
     """
         Удаление заметки у персонажа.
         Args:
             character_id (int): ID персонажа.
-            note (Note): Заметка для удаления.
+            notee_id (uuid/str): ID заметки для удаления.
         Returns:
             response (dict): Удаленная заметка.
     """
@@ -352,13 +351,10 @@ async def delete_note_from_character(character_id: int, note: Note):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        try:
-            for i in note.note.keys():
-                character["notes"].pop(i)
-        except:
-            pass
+        note = [i for i in character["notes"] if i["id"] == note_id][0]
+        character["notes"] = [i for i in character["notes"] if i["id"] != note_id]
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=note.model_dump(), status_code=200)
+        return JSONResponse(content=note, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
@@ -379,13 +375,18 @@ async def update_note_from_character(character_id: int, note: Note):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        try:
-            for i in note.note.keys():
-                character["notes"][i] = note.note[i]
-        except:
-            pass
+        if note.id == None:
+            return JSONResponse(content={"message": "ID заметки не указан"}, status_code=400)
+        #new_note = [i for i in character["notes"] if i["id"] == note.id][0]
+        new_note = {}
+        for i in character["notes"]:
+            if str(i["id"]) == str(note.id):
+                i["text"] = note.text
+                i["title"] = note.title
+                new_note = i
+                break
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=note.model_dump(), status_code=200)
+        return JSONResponse(content=new_note, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     

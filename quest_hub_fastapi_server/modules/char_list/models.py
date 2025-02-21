@@ -1,11 +1,12 @@
 from fastapi import HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
-
+import uuid
 
 class Item(BaseModel):
     """Класс для работы с предметами."""
     count: Optional[int] = 1
+    type: Optional[str] = None
     name: str
     description: Optional[str] = None
     weight: Optional[int] = None
@@ -15,11 +16,14 @@ class Item(BaseModel):
     properties: Optional[List[str]] = None
     ac_base: Optional[int] = None
     dex_bonus: Optional[bool] = None
+    max_dex_bonus: Optional[int] = None
     stealth_disadvantage: Optional[bool] = None
 
 class Note(BaseModel):
     """Класс для работы с заметками."""
-    note: Dict[str, Any]
+    title: str
+    text: str
+    id: Optional[uuid.UUID] = None
 
 class CharListRequestModel(BaseModel):
     """Класс для работы с персонажами."""
@@ -51,11 +55,13 @@ class CharListRequestModel(BaseModel):
     stat_modifiers: Optional[Dict[str, Any]] = None  # json
     stats: Optional[Dict[str, Any]] = None  # json
     user_id: Optional[str] = None  # text
-    inspiration: bool = True  # bool
+    inspiration: Optional[bool] = True  # bool
     surname: Optional[str] = None # text
     inventory: Optional[List[Item]] = None # json
     age: Optional[int] = None # int8
     worldview: Optional[str] = None # text
+    subrace: Optional[str] = None # text
+    gender: Optional[str] = None # text
 
 
 #Обработчик ошибок
