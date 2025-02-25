@@ -435,3 +435,68 @@ async def update_experience_from_character(character_id: int, experience: int):
         return JSONResponse(content={"new_exp": character["experience"]}, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+@char_route.put(path="/char-list/{character_id}/level_up")
+async def update_experience_from_character(character_id: int):
+    """
+        Повышение уровня персонажа.
+    """
+    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+    new_db_source.connect()
+    character = new_db_source.get_by_id("character_list", character_id)
+    if character == []:
+        return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+    character = character[0]
+    level_info  = new_db_source.get_by_value("levels_capabilities","character_class",character["character_class"])
+    character["lvl"] += 1
+    character["hp"] = level_info["health_formula"] + character["stat_modifiers"]["constitution"] * character["lvl"] + (level_info["health_formula"]//2 + 1) * (character["lvl"] - 1)
+    character["ownership_bonus"] = character["lvl"] //  4 + 1
+    if str(character["lvl"]) in list(level_info["traits_and_abilities"].keys()):
+        abilities = level_info["traits_and_abilities"][str(character["lvl"])].split("|")
+        for ability in abilities:   
+            ability = ability.split(":")
+            character["traits_and_abilities"][ability[0]] = ability[1]
+    if level_info["lvl_to_choose_archetype"] == character["lvl"]:
+        #Выбор архетипа
+        pass
+    if level_info["lvl_to_choose_archetype"] >= character["lvl"]:
+        if str(character["lvl"]) in list(level_info["traits_and_abilities"].keys()):
+            #нужен архетип,но пока не знаю,откуда его брать 
+            abilities = level_info["archetypes"]["archetype"][str(character["lvl"])].split("|")
+            for ability in abilities:   
+                ability = ability.split(":")
+                character["traits_and_abilities"][ability[0]] = ability[1]
+    pass
+
+@char_route.put(path="/char-list/{character_id}/level_down")
+async def update_experience_from_character(character_id: int):
+    """
+        Понижение уровня персонажа.
+    """
+    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+    new_db_source.connect()
+    character = new_db_source.get_by_id("character_list", character_id)
+    if character == []:
+        return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+    character = character[0]
+    level_info  = new_db_source.get_by_value("levels_capabilities","character_class",character["character_class"])
+    if str(character["lvl"]) in list(level_info["traits_and_abilities"].keys()):
+        abilities = level_info["traits_and_abilities"][str(character["lvl"])].split("|")
+        for ability in abilities:   
+            ability = ability.split(":")
+            del character["traits_and_abilities"][ability[0]]
+    if level_info["lvl_to_choose_archetype"] >= character["lvl"]:
+        if str(character["lvl"]) in list(level_info["traits_and_abilities"].keys()):
+            #нужен архетип,но пока не знаю,откуда его брать 
+            abilities = level_info["archetypes"]["archetype"][str(character["lvl"])].split("|")
+            for ability in abilities:   
+                ability = ability.split(":")
+                del character["traits_and_abilities"][ability[0]]
+    if level_info["lvl_to_choose_archetype"] == character["lvl"]:
+        #удаление архетипа
+        pass  
+    character["lvl"] -= 1
+    character["hp"] = level_info["health_formula"] + character["stat_modifiers"]["constitution"] * character["lvl"] + (level_info["health_formula"]//2 + 1) * (character["lvl"] - 1)
+    character["ownership_bonus"] = character["lvl"] //  4 + 1
+
+    pass
