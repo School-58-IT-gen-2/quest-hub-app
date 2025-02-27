@@ -188,19 +188,30 @@ async def add_item_to_inventory(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        character["inventory"].append(item.model_dump())
+        _item = item.model_dump()
+        if item.name == None:
+            return JSONResponse(content={"message": "Нет названия предмета"}, status_code=400)
+        _item["id"] = str(uuid.uuid4())
+        _is_uniq = True
+        for i in character["inventory"]:
+            if [{j:i[j]} for j in i.keys() if j not in ["id","count"]] == [{j:_item[j]} for j in _item.keys() if j not in ["id","count"]]:
+                i["count"] += _item["count"]
+                _is_uniq = False
+                break
+        if _is_uniq:
+            character["inventory"].append(_item)
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
+        return JSONResponse(content=_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @char_route.delete(path="/char-list/{character_id}/inventory")
-async def delete_item_from_inventory(character_id: int, item: Item):
+async def delete_item_from_inventory(character_id: int, item_id: str):
     """
         Удаление предмета из инвентаря персонажа.
         Args:
             character_id (int): ID персонажа.
-            item (Item): Предмет для удаления из инвентаря.
+            item_id (uuid): айди предмета для удаления из иннвентаря.
         Returns:
             response (dict): Удаленный предмет.
     """
@@ -211,9 +222,17 @@ async def delete_item_from_inventory(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        character["inventory"] = [i for i in character["inventory"] if i["name"] != item.name]
+        for i in character["inventory"]:
+            if i["id"] == item_id:
+                deleted_item = i
+                i["count"] -= 1
+                if i["count"] <= 0:
+                    character["inventory"].remove(i)
+                break
+        if item_id not in [i["id"] for i in character["inventory"]]:
+            return JSONResponse(content={"message": "Предмет не найден"}, status_code=404)
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
+        return JSONResponse(content=deleted_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
@@ -234,9 +253,13 @@ async def update_item_in_inventory(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        character["inventory"] = [item.model_dump() if i["name"] == item.name else i for i in character["inventory"]]
+        item = item.model_dump()
+        for i in character["inventory"]:
+            if str(i["id"]) == str(item["id"]):
+                i.update(item)
+                break
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
+        return JSONResponse(content=item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
@@ -257,19 +280,30 @@ async def add_item_to_ammunition(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        character["weapons_and_equipment"].append(item.model_dump())
+        _item = item.model_dump()
+        if item.name == None:
+            return JSONResponse(content={"message": "Нет названия предмета"}, status_code=400)
+        _item["id"] = str(uuid.uuid4())
+        _is_uniq = True
+        for i in character["weapons_and_equipment"]:
+            if [{j:i[j]} for j in i.keys() if j not in ["id","count"]] == [{j:_item[j]} for j in _item.keys() if j not in ["id","count"]]:
+                i["count"] += _item["count"]
+                _is_uniq = False
+                break
+        if _is_uniq:
+            character["weapons_and_equipment"].append(_item)
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
+        return JSONResponse(content=_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @char_route.delete(path="/char-list/{character_id}/ammunition")
-async def delete_item_from_ammunition(character_id: int, item: Item):
+async def delete_item_from_ammunition(character_id: int, item_id: str):
     """
         Удаление предмета из аммуниции персонажа.
         Args:
             character_id (int): ID персонажа.
-            item (Item): Предмет для удаления из аммуниции.
+            item_id (uuid): айди предмета для удаления из аммуниции.
         Returns:
             response (dict): Удаленный предмет.
     """
@@ -280,11 +314,18 @@ async def delete_item_from_ammunition(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        character["weapons_and_equipment"] = [i for i in character["weapons_and_equipment"] if i["name"] != item.name]
+        deleted_item = {}
+        for i in character["weapons_and_equipment"]:
+            if i["id"] == item_id:
+                deleted_item = i
+                i["count"] -= 1
+                if i["count"] <= 0:
+                    character["weapons_and_equipment"].remove(i)
+                break
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
+        return JSONResponse(content=deleted_item, status_code=200)
     except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+       return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @char_route.put(path="/char-list/{character_id}/ammunition")
 async def update_item_in_ammunition(character_id: int, item: Item):
@@ -303,7 +344,10 @@ async def update_item_in_ammunition(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
-        character["weapons_and_equipment"] = [item.model_dump() if i["name"] == item.name else i for i in character["weapons_and_equipment"]]
+        for i in character["weapons_and_equipment"]:
+            if i["id"] == item.id:
+                i.update(item.model_dump())
+                break
         new_db_source.update("character_list", character, character_id)
         return JSONResponse(content=item.model_dump(), status_code=200)
     except:
@@ -326,8 +370,12 @@ async def add_note_to_character(character_id: int, note: Note):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
+        if note.title == None and note.text == None:
+            return JSONResponse(content={"message": "Заметка не может быть пустой"}, status_code=400)
         new_note = note.model_dump()
         new_note["id"] = str(uuid.uuid4())
+        if character["notes"] == None:
+            character["notes"] = []
         character["notes"].append(new_note)
         new_db_source.update("character_list", character, character_id)
         return JSONResponse(content=new_note, status_code=200)
@@ -377,12 +425,13 @@ async def update_note_from_character(character_id: int, note: Note):
         character = character[0]
         if note.id == None:
             return JSONResponse(content={"message": "ID заметки не указан"}, status_code=400)
-        #new_note = [i for i in character["notes"] if i["id"] == note.id][0]
+        if note.title == None and note.text == None:
+            return JSONResponse(content={"message": "Заметка не может быть пустой"}, status_code=400)
         new_note = {}
         for i in character["notes"]:
             if str(i["id"]) == str(note.id):
-                i["text"] = note.text
-                i["title"] = note.title
+                i["text"] = note.text if note.text != None else i["text"]
+                i["title"] = note.title if note.title != None else i["title"]
                 new_note = i
                 break
         new_db_source.update("character_list", character, character_id)
@@ -396,7 +445,7 @@ async def update_gold_from_character(character_id: int, gold: int):
         Обновление золота у персонажа.
         Args:
             character_id (int): ID персонажа.
-            gold (int): Количество золота для обновления.
+            gold (int): Количество золота для обновления (+200 или -100, например).
         Returns:
             response (dict): Обновленное количество золота.
     """
@@ -419,7 +468,7 @@ async def update_experience_from_character(character_id: int, experience: int):
         Обновление опыта у персонажа.
         Args:
             character_id (int): ID персонажа.
-            experience (int): Количество опыта для обновления.
+            experience (int): Количество опыта для обновления (+100 или -200, например ).
         Returns:
             response (dict): Обновленное количество опыта.
     """
