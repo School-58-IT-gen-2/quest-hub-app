@@ -8,6 +8,7 @@ on:
       - feature/ci
       - tryflake8
       - git_actions_test
+      - ceo_testirovki_branch
 
 jobs:
   test:

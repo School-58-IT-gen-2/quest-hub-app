@@ -5,19 +5,18 @@ on:
     branches:
       - master
   workflow_dispatch:
+
 jobs:
   ansible:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-
         uses: actions/checkout@v4
 
       - name: Install Ansible
-        shell: bash
         run: |
           sudo apt update
-          sudo apt install ansible
+          sudo apt install -y ansible
 
       - name: Set up SSH
         run: |
@@ -30,9 +29,43 @@ jobs:
 
       - name: Run Ansible playbook
         env:
-
-            ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
-
-            ANSIBLE_HOST_KEY_CHECKING: False
+          ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
+          ANSIBLE_HOST_KEY_CHECKING: False
         run: |
           ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+
+      - name: Wait for service to start
+        run: |
+          sleep 30  
+
+      - name: Check health endpoint
+        id: healthcheck
+        run: |
+          HEALTH_STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://questhub.pro/health)
+          if [ "$HEALTH_STATUS" -eq 200 ]; then
+            echo "Healthcheck passed!"
+            exit 0
+          else
+            echo "Healthcheck failed! Status code: $HEALTH_STATUS"
+            exit 1
+          fi
+
+      - name: Set up Python
+        if: failure() && steps.healthcheck.outcome == 'failure'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Send Telegram alert
+        if: failure() && steps.healthcheck.outcome == 'failure'
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}  
+          THREAD_ID: ${{ secrets.THREAD_ID }}  
+          MESSAGE_TEXT: "Healthcheck failed: ${{ github.workflow }} workflow in ${{ github.repository }}. Healthcheck returned status code: $HEALTH_STATUS."
+        run: |
+          ansible-playbook -i inventory.ini playbooks/send_alert_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+
+      - name: Clean up
+        run: |
+          rm -f private_key.pem inventory.ini

@@ -24,17 +24,18 @@ class Profile(AbstractModel):
         is_premium: bool = None,
     ) -> None:
         """
-        :param int tg_id: id пользователя в Telegram
-        :param DBSource db_source: Объект класса базы данных
-        :param str first_name: Имя
-        :param str username: Имя пользователя в Telegram
-        :param str last_name: Фамилия
-        :param str role: Роль (игрок или мастер)
-        :param str id: id пользователя в supabase
-        :param int age: Возраст
-        :param bool is_bot: Является ли пользователь ботом
-        :param str language_code: Язык системы пользователя
-        :param bool is_premium: Есть ли Telegram Premium
+        Args:
+            tg_id (int): id пользователя в Telegram.
+            db_source (DBSource): Объект класса базы данных.
+            first_name (str): Имя.
+            username (str): Имя пользователя в Telegram.
+            last_name (str): Фамилия.
+            role (str): Роль (игрок или мастер).
+            id (str): id пользователя в supabase.
+            age (int): Возраст.
+            is_bot (bool): Является ли пользователь ботом.
+            language_code (str): Язык системы пользователя.
+            is_premium (bool): Есть ли Telegram Premium.
         """
         self.__tg_id = tg_id
         self.__db_source = db_source
@@ -52,9 +53,10 @@ class Profile(AbstractModel):
 
     def insert(self) -> dict:
         """
-        Сохранение пользователя в базу данных
+        Сохранение пользователя в базу данных.
 
-        :return dict: Словарь с данными пользователя
+        Returns:
+            dict: Словарь с данными пользователя.
         """
         data_list = self.get_by_value("tg_id", self.__tg_id)
         if len(data_list) == 0:
@@ -66,10 +68,13 @@ class Profile(AbstractModel):
 
     def update(self, dict: dict) -> List[dict]:
         """
-        Изменение данных о пользователе
+        Изменение данных о пользователе.
 
-        :param dict dict: Словарь новыми данными пользователя
-        :return List[dict]: Список из словаря с новой строкой
+        Args:
+            dict (dict): Словарь новыми данными пользователя.
+
+        Returns:
+            List[dict]: Список из словаря с новой строкой.
         """
         if self.__id == None:
             raise Exception(
@@ -81,35 +86,42 @@ class Profile(AbstractModel):
 
     def delete(self) -> List[dict]:
         """
-        Удаление пользователя из базы данных
+        Удаление пользователя из базы данных.
 
-        :return List[dict]: Список из словаря с удалённой строкой
+        Returns:
+            List[dict]: Список из словаря с удалённой строкой.
         """
         return self.__db_source.delete(self.table_name, self.__id)
 
     def get_by_id(self, id: str) -> List[dict]:
         """
-        Получение пользователя по id
+        Получение пользователя по id.
 
-        :param str id: id пользователя
-        :return List[dict]: Список из словаря со строкой таблицы
+        Args:
+            id (str): id пользователя.
+
+        Returns:
+            List[dict]: Список из словаря со строкой таблицы.
         """
         return self.__db_source.get_by_id(self.table_name, id)
 
     def get_by_value(self, parameter: str, parameter_value: any) -> List[dict]:
         """
-        Получение пользователя по значению определенного параметра
+        Получение пользователя по значению определенного параметра.
 
-        :param str parameter: Столбец, по которому происходит сравнение
-        :param str / int / list parameter_value: Значение, по которому происходит сравнение
-        :return List[dict]: Список из словаря со строкой таблицы
+        Args:
+            parameter (str): Столбец, по которому происходит сравнение.
+            parameter_value (str / int / list): Значение, по которому происходит сравнение.
+        
+        Returns:
+            List[dict]: Список из словаря со строкой таблицы.
         """
         return self.__db_source.get_by_value(
             self.table_name, parameter, parameter_value
         )
 
     def synchronize(self) -> None:
-        """Синхронизация объекта класса и данных в таблицах"""
+        """Синхронизация объекта класса и данных в таблицах."""
         data_list = self.get_by_value("tg_id", self.__tg_id)
         if len(data_list) == 0:
             self.insert()
@@ -159,7 +171,7 @@ class Profile(AbstractModel):
         damage: dict = None,
         stat_modifiers: dict = None,
     ) -> None:
-        """Создание листа персонажа пользователя"""
+        """Создание листа персонажа пользователя."""
         if self.__id == None:
             raise Exception(
                 "id пользователя не может быть None. Добавьте пользователя в базу данных методом insert."
@@ -207,17 +219,19 @@ class Profile(AbstractModel):
 
     def get_char_lists(self) -> dict:
         """
-        Получение листов персонажей пользователя
+        Получение листов персонажей пользователя.
 
-        :return dict: Словарь с листами персонажей пользователя
+        Returns:
+            dict: Словарь с листами персонажей пользователя.
         """
         return self.__char_lists
 
     def __dict__(self) -> dict:
         """
-        Вывод всех параметров пользователя в формате словаря
+        Вывод всех параметров пользователя в формате словаря.
 
-        :return dict: Словарь с данными пользователя
+        Returns:
+            dict: Словарь с данными пользователя.
         """
         return {
             "id": self.__id,
@@ -234,9 +248,10 @@ class Profile(AbstractModel):
 
     def set_attributes(self, attr_dict: dict) -> None:
         """
-        Установка параметров пользователя, заданных в словаре
+        Установка параметров пользователя, заданных в словаре.
 
-        :param dict attr_dict: Словарь с параметрами, которые нужно установить пользователю
+        Args:
+            attr_dict (dict): Словарь с параметрами, которые нужно установить пользователю.
         """
         for key in attr_dict:
             setattr(self, "_" + self.__class__.__name__ + "__" + key, attr_dict[key])
