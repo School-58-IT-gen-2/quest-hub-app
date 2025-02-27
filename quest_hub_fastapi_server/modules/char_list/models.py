@@ -5,9 +5,10 @@ import uuid
 
 class Item(BaseModel):
     """Класс для работы с предметами."""
+    id: Optional[str] = None
     count: Optional[int] = 1
     type: Optional[str] = None
-    name: str
+    name: Optional[str] = None
     description: Optional[str] = None
     weight: Optional[int] = None
     cost: Optional[int] = None
@@ -17,13 +18,13 @@ class Item(BaseModel):
     ac_base: Optional[int] = None
     dex_bonus: Optional[bool] = None
     max_dex_bonus: Optional[int] = None
-    stealth_disadvantage: Optional[bool] = None
+    stealth_disadvantage: Optional[bool] = None # зарефакторить тут для апдейта
 
 class Note(BaseModel):
     """Класс для работы с заметками."""
-    title: str
-    text: str
-    id: Optional[uuid.UUID] = None
+    title: Optional[str] = None
+    text: Optional[str] = None
+    id: Optional[str] = None # зарефакторить тут для апдейта
 
 class CharListRequestModel(BaseModel):
     """Класс для работы с персонажами."""
