@@ -28,6 +28,7 @@ class Note(BaseModel):
 
 class CharListRequestModel(BaseModel):
     """Класс для работы с персонажами."""
+    id: Optional[int] = None
     race: Optional[str] = None  # text
     character_class: Optional[str] = None  # text
     backstory: Optional[str] = None  # text

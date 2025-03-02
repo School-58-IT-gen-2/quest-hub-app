@@ -29,21 +29,21 @@ async def add_character(character: CharListRequestModel):
             InternalServerErrorException: Внутренняя ошибка сервера.
             ServiceUnavailableException: Сервис временно недоступен.
     """
-    try:
-        if not character:
-            raise BadRequestException()
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        new_character = character.model_dump(exclude_unset=True)
-        result = new_db_source.insert("character_list", new_character)
-        if result:
-            return result[0]
-        else:
-            raise ServiceUnavailableException()
-    except BadRequestException as e:
-        raise e
-    except Exception as error:
-        raise InternalServerErrorException()
+    #try:
+    if not character:
+        raise BadRequestException()
+    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+    new_db_source.connect()
+    new_character = character.model_dump(exclude_unset=True)
+    result = new_db_source.insert("character_list", new_character)
+    if result:
+        return result[0]
+    else:
+        raise ServiceUnavailableException()
+    #except BadRequestException as e:
+    #    raise e
+    #except Exception as error:
+    #    raise InternalServerErrorException()
 
 
 @char_route.put(path="/char-list", response_model=CharListRequestModel)
