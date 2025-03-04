@@ -232,8 +232,10 @@ async def get_inventory(character_id: int, item_id: str):
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
         for i in character["inventory"]:
-            if i["id"] == item_id:
-                return JSONResponse(content=i, status_code=200)
+            if str(i["id"]) == str(item_id):
+                res = i.copy()
+                res = {j: res[j] for j in res if res[j] is not None}
+                return JSONResponse(content=res, status_code=200)
         return JSONResponse(content={"message": "Предмет не найден"}, status_code=404)
     except Exception as error:
         raise InternalServerErrorException()
@@ -268,6 +270,7 @@ async def add_item_to_inventory(character_id: int, item: Item):
         if _is_uniq:
             character["inventory"].append(_item)
         new_db_source.update("character_list", character, character_id)
+        _item = {j: _item[j] for j in _item if _item[j] is not None}
         return JSONResponse(content=_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
@@ -299,6 +302,7 @@ async def delete_item_from_inventory(character_id: int, item_id: str):
         if item_id not in [i["id"] for i in character["inventory"]]:
             return JSONResponse(content={"message": "Предмет не найден"}, status_code=404)
         new_db_source.update("character_list", character, character_id)
+        deleted_item = {j: deleted_item[j] for j in deleted_item if deleted_item[j] is not None}
         return JSONResponse(content=deleted_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
@@ -321,12 +325,14 @@ async def update_item_in_inventory(character_id: int, item: Item):
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
         item = item.model_dump()
+        res = {}
         for i in character["inventory"]:
             if str(i["id"]) == str(item["id"]):
-                i.update(item)
+                res = {j: item[j] for j in item if item[j] is not None}
+                i.update(res)
                 break
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item, status_code=200)
+        return JSONResponse(content=res, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
@@ -350,13 +356,15 @@ async def get_ammunition(character_id: int, item_id: str):
         character = character[0]
         for i in character["weapons_and_equipment"]:
             if i["id"] == item_id:
-                return JSONResponse(content=i, status_code=200)
+                res = i.copy()
+                res = {j: res[j] for j in res if res[j] is not None}
+                return JSONResponse(content=res, status_code=200)
         return JSONResponse(content={"message": "Предмет не найден"}, status_code=404)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
 
-@ammunition_route.post(path="/char-list/{character_id}/ammunition")
+@ammunition_route.post(path="/{character_id}/ammunition")
 async def add_item_to_ammunition(character_id: int, item: Item):
     """
         Добавление предмета в аммуницию персонажа.
@@ -386,6 +394,7 @@ async def add_item_to_ammunition(character_id: int, item: Item):
         if _is_uniq:
             character["weapons_and_equipment"].append(_item)
         new_db_source.update("character_list", character, character_id)
+        _item = {j: _item[j] for j in _item if _item[j] is not None}
         return JSONResponse(content=_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
@@ -416,6 +425,7 @@ async def delete_item_from_ammunition(character_id: int, item_id: str):
                     character["weapons_and_equipment"].remove(i)
                 break
         new_db_source.update("character_list", character, character_id)
+        deleted_item = {j: deleted_item[j] for j in deleted_item if deleted_item[j] is not None}
         return JSONResponse(content=deleted_item, status_code=200)
     except:
        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
@@ -437,12 +447,14 @@ async def update_item_in_ammunition(character_id: int, item: Item):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
+        item = item.model_dump()
         for i in character["weapons_and_equipment"]:
-            if i["id"] == item.id:
-                i.update(item.model_dump())
+            if i["id"] == item["id"]:
+                res = {j: item[j] for j in item if item[j] is not None}
+                i.update(res)
                 break
         new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
+        return JSONResponse(content=res, status_code=200)
     except:
         return JSONResponse(content={"message":"Что-то пошло не так"}, status_code=400)
 
