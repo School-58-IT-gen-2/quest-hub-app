@@ -161,7 +161,10 @@ async def delete_character_language(character_id: int, language: str):
         if character == []:
             raise HTTPException(status_code=404, detail="Нету такого персонажа")
         character = character[0]
-        character["languages"].remove(language)
+        try:
+            character["languages"].remove(language)
+        except:
+            raise HTTPException(status_code=404, detail="Нету такого языка")
         result = new_db_source.update("character_list",character, character_id)
         if result:
             return JSONResponse(content={"removed_languages": language})
@@ -169,3 +172,49 @@ async def delete_character_language(character_id: int, language: str):
             raise ServiceUnavailableException()
     except Exception as error:
             raise InternalServerErrorException()
+    
+@char_info_route.put(path="/{character_id}/experience")
+async def update_experience_from_character(character_id: int, experience: int):
+    """
+        Обновление опыта у персонажа.
+        Args:
+            character_id (int): ID персонажа.
+            experience (int): Количество опыта для обновления (+100 или -200, например ).
+        Returns:
+            response (dict): Обновленное количество опыта.
+    """
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        character["experience"] += experience
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content={"new_exp": character["experience"]}, status_code=200)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
+    
+@char_info_route.put(path="/{character_id}/gold")
+async def update_gold_from_character(character_id: int, gold: int):
+    """
+        Обновление золота у персонажа.
+        Args:
+            character_id (int): ID персонажа.
+            gold (int): Количество золота для обновления (+200 или -100, например).
+        Returns:
+            response (dict): Обновленное количество золота.
+    """
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        character = new_db_source.get_by_id("character_list", character_id)
+        if character == []:
+            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+        character = character[0]
+        character["gold"] += gold
+        new_db_source.update("character_list", character, character_id)
+        return JSONResponse(content={"updated_gold": character["gold"]}, status_code=200)
+    except:
+        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
