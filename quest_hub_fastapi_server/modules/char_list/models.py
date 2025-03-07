@@ -63,6 +63,9 @@ class CharListRequestModel(BaseModel):
     subrace: Optional[str] = None # text
     gender: Optional[str] = None # text
 
+class LevelUp(BaseModel):
+    archetype:str = None
+    stats:list = None
 
 #Обработчик ошибок
 class BadRequestException(HTTPException):
