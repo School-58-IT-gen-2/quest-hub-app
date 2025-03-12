@@ -45,7 +45,7 @@ async def add_character(character: CharListRequestModel):
 
 
 @char_route.put(path="/char-list", response_model=CharListRequestModel)
-async def update_character(character_id: int, character: CharListRequestModel):
+async def update_character(character_id: uuid.UUID|str, character: CharListRequestModel):
     """
         Обновление данных персонажа.
 
@@ -77,7 +77,7 @@ async def update_character(character_id: int, character: CharListRequestModel):
 
 
 @char_route.get(path="/char-list/{character_id}")
-async def get_character(character_id: int):
+async def get_character(character_id: uuid.UUID|str):
     """
         Получение данных персонажа по ID.
         Args:
@@ -106,7 +106,7 @@ async def get_character(character_id: int):
 
 
 @char_route.delete(path="/char-list/{character_id}")
-async def delete_character(character_id: int):
+async def delete_character(character_id: uuid.UUID|str):
     """
         Удаление персонажа по ID.
         Args:
