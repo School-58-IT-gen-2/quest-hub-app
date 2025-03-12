@@ -14,7 +14,7 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 char_info_route = APIRouter(prefix="/characters", tags=["character information"])
 
 @char_info_route.put(path="/{character_id}/name")
-async def update_character_name(character_id: int, new_name: str):
+async def update_character_name(character_id: uuid.UUID|str, new_name: str):
     """
         Обновление имени персонажа.
 
@@ -41,7 +41,7 @@ async def update_character_name(character_id: int, new_name: str):
         raise InternalServerErrorException()
 
 @char_info_route.put(path="/{character_id}/surname")
-async def update_character_surname(character_id: int, new_surname: str):
+async def update_character_surname(character_id: uuid.UUID|str, new_surname: str):
     """
         Обновление фамилии персонажа.
         Args:
@@ -67,7 +67,7 @@ async def update_character_surname(character_id: int, new_surname: str):
         raise InternalServerErrorException()
 
 @char_info_route.put(path="/{character_id}/age")
-async def update_character_age(character_id: int, new_age: int):
+async def update_character_age(character_id: uuid.UUID|str, new_age: int):
     """
         Обновление возраста персонажа.
         Args:
@@ -93,7 +93,7 @@ async def update_character_age(character_id: int, new_age: int):
             raise InternalServerErrorException()
     
 @char_info_route.put(path="/{character_id}/backstory")
-async def update_character_backstory(character_id: int, new_backstory: str):
+async def update_character_backstory(character_id: uuid.UUID|str, new_backstory: str):
     """
         Обновление биографии персонажа.
         Args:
@@ -119,7 +119,7 @@ async def update_character_backstory(character_id: int, new_backstory: str):
             raise InternalServerErrorException()
     
 @char_info_route.post(path="/{character_id}/languages")
-async def add_character_language(character_id: int, language: str):
+async def add_character_language(character_id: uuid.UUID|str, language: str):
     """
         Добавление языка персонажа.
         Args:
@@ -145,7 +145,7 @@ async def add_character_language(character_id: int, language: str):
             raise InternalServerErrorException()
     
 @char_info_route.delete(path="/{character_id}/languages")
-async def delete_character_language(character_id: int, language: str):
+async def delete_character_language(character_id: uuid.UUID|str, language: str):
     """
         Удаление языка персонажа.
         Args:
@@ -174,7 +174,7 @@ async def delete_character_language(character_id: int, language: str):
             raise InternalServerErrorException()
     
 @char_info_route.put(path="/{character_id}/experience")
-async def update_experience_from_character(character_id: int, experience: int):
+async def update_experience_from_character(character_id: uuid.UUID|str, experience: int):
     """
         Обновление опыта у персонажа.
         Args:
@@ -197,7 +197,7 @@ async def update_experience_from_character(character_id: int, experience: int):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @char_info_route.put(path="/{character_id}/gold")
-async def update_gold_from_character(character_id: int, gold: int):
+async def update_gold_from_character(character_id: uuid.UUID|str, gold: int):
     """
         Обновление золота у персонажа.
         Args:

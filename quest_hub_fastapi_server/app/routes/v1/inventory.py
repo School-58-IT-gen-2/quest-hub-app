@@ -14,7 +14,7 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 inventory_route = APIRouter(prefix="/characters", tags=["inventory"])
 
 @inventory_route.get(path="/{character_id}/inventory")
-async def get_inventory(character_id: int, item_id: str):
+async def get_inventory(character_id: uuid.UUID|str, item_id: str):
     """
         Получение инвентаря персонажа.
         Args:
@@ -40,7 +40,7 @@ async def get_inventory(character_id: int, item_id: str):
         raise InternalServerErrorException()
 
 @inventory_route.post(path="/{character_id}/inventory")
-async def add_item_to_inventory(character_id: int, item: Item):
+async def add_item_to_inventory(character_id: uuid.UUID|str, item: Item):
     """
         Добавление предмета в инвентарь персонажа.
         Args:
@@ -75,7 +75,7 @@ async def add_item_to_inventory(character_id: int, item: Item):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @inventory_route.delete(path="/{character_id}/inventory")
-async def delete_item_from_inventory(character_id: int, item_id: str):
+async def delete_item_from_inventory(character_id: uuid.UUID|str, item_id: str):
     """
         Удаление предмета из инвентаря персонажа.
         Args:
@@ -107,7 +107,7 @@ async def delete_item_from_inventory(character_id: int, item_id: str):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @inventory_route.put(path="/{character_id}/inventory")
-async def update_item_in_inventory(character_id: int, item: Item):
+async def update_item_in_inventory(character_id: uuid.UUID|str, item: Item):
     """
         Обновление предмета в инвентаре персонажа.
         Args:
