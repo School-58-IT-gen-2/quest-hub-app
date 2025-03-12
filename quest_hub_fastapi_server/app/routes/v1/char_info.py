@@ -55,7 +55,7 @@ async def update_character_surname(character_id: int, new_surname: str):
         new_db_source.connect()
         character = new_db_source.get_by_id("character_list", character_id)
         if character == []:
-             raise HTTPException(status_code=404, detail="Нету такого персонажа")
+            raise HTTPException(status_code=404, detail="Нету такого персонажа")
         character = character[0]
         character["surname"] = new_surname
         result = new_db_source.update("character_list",character, character_id)
