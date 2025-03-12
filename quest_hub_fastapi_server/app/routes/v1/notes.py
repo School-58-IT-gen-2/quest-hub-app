@@ -14,7 +14,7 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 note_route = APIRouter(prefix="/characters", tags=["notes"])
 
 @note_route.get(path="/{character_id}/notes")
-async def get_notes_of_character(character_id: int, note_id: str):
+async def get_notes_of_character(character_id: uuid.UUID|str, note_id: str):
     """
         Получение заметок персонажа.
         Args:
@@ -39,7 +39,7 @@ async def get_notes_of_character(character_id: int, note_id: str):
 
 
 @note_route.post(path="/{character_id}/notes")
-async def add_note_to_character(character_id: int, note: Note):
+async def add_note_to_character(character_id: uuid.UUID|str, note: Note):
     """
         Добавление заметки к персонажу.
         Args:
@@ -68,7 +68,7 @@ async def add_note_to_character(character_id: int, note: Note):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @note_route.delete(path="/{character_id}/notes")
-async def delete_note_from_character(character_id: int, note_id: str):
+async def delete_note_from_character(character_id: uuid.UUID|str, note_id: str):
     """
         Удаление заметки у персонажа.
         Args:
@@ -92,7 +92,7 @@ async def delete_note_from_character(character_id: int, note_id: str):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @note_route.put(path="/{character_id}/notes")
-async def update_note_from_character(character_id: int, note: Note):
+async def update_note_from_character(character_id: uuid.UUID|str, note: Note):
     """
         Обновление заметки у персонажа.
         Args:

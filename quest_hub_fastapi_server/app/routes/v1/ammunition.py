@@ -14,7 +14,7 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 ammunition_route = APIRouter(prefix="/characters", tags=["ammunition"])
 
 @ammunition_route.get(path="/{character_id}/ammunition")
-async def get_ammunition(character_id: int, item_id: str):
+async def get_ammunition(character_id: uuid.UUID|str, item_id: str):
     """
         Получение аммуниции персонажа.
         Args:
@@ -41,7 +41,7 @@ async def get_ammunition(character_id: int, item_id: str):
 
 
 @ammunition_route.post(path="/{character_id}/ammunition")
-async def add_item_to_ammunition(character_id: int, item: Item):
+async def add_item_to_ammunition(character_id: uuid.UUID|str, item: Item):
     """
         Добавление предмета в аммуницию персонажа.
         Args:
@@ -76,7 +76,7 @@ async def add_item_to_ammunition(character_id: int, item: Item):
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @ammunition_route.delete(path="/{character_id}/ammunition")
-async def delete_item_from_ammunition(character_id: int, item_id: str):
+async def delete_item_from_ammunition(character_id: uuid.UUID|str, item_id: str):
     """
         Удаление предмета из аммуниции персонажа.
         Args:
@@ -107,7 +107,7 @@ async def delete_item_from_ammunition(character_id: int, item_id: str):
        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
     
 @ammunition_route.put(path="/{character_id}/ammunition")
-async def update_item_in_ammunition(character_id: int, item: Item):
+async def update_item_in_ammunition(character_id: uuid.UUID|str, item: Item):
     """
         Обновление предмета в аммуниции персонажа.
         Args:
