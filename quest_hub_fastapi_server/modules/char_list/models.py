@@ -26,6 +26,22 @@ class Note(BaseModel):
     text: Optional[str] = None
     id: Optional[str] = None # зарефакторить тут для апдейта
 
+class Spell(BaseModel):
+    """Класс для работы со заклинаниями."""
+    id: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    range: Optional[str] = None
+    duration: Optional[str] = None
+    casting_time: Optional[str] = None
+    components: Optional[str] = None
+
+class TraitsAndAbilities(BaseModel):
+    """Класс для работы с характеристиками и способностями."""
+    id: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+
 class CharListRequestModel(BaseModel):
     """Класс для работы с персонажами."""
     id: Optional[uuid.UUID] = None
@@ -45,8 +61,8 @@ class CharListRequestModel(BaseModel):
     interference: Optional[bool] = None  # bool
     advantages: Optional[bool] = None  # bool
     weapons_and_equipment: Optional[List[Item]] = None  # json
-    spells: Optional[Dict[str, Any]] = None  # json
-    traits_and_abilities: Optional[Dict[str, Any]] = None  # json
+    spells: Optional[List[Spell]] = None  # json
+    traits_and_abilities: Optional[List[TraitsAndAbilities]] = None  # json
     languages: Optional[List[Any]] = None  # json
     special_features: Optional[Dict[str, Any]] = None  # json
     weaknesses: Optional[Dict[str, Any]] = None  # json

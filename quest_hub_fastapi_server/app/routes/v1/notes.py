@@ -1,6 +1,7 @@
 import uuid
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
+from typing import Optional
 from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.char_list.models import (
@@ -14,7 +15,7 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 note_route = APIRouter(prefix="/characters", tags=["notes"])
 
 @note_route.get(path="/{character_id}/notes")
-async def get_notes_of_character(character_id: uuid.UUID|str, note_id: str):
+async def get_notes_of_character(character_id: uuid.UUID|str, note_id: Optional[str] = None):
     """
         Получение заметок персонажа.
         Args:
@@ -30,6 +31,8 @@ async def get_notes_of_character(character_id: uuid.UUID|str, note_id: str):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
+        if note_id is None:
+            return JSONResponse(content=character["notes"], status_code=200)
         for i in character["notes"]:
             if i["id"] == note_id:
                 return JSONResponse(content=i, status_code=200)
