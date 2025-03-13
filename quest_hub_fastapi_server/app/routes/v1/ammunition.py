@@ -1,6 +1,7 @@
 import uuid
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
+from typing import Optional
 from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.char_list.models import (
@@ -14,7 +15,7 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 ammunition_route = APIRouter(prefix="/characters", tags=["ammunition"])
 
 @ammunition_route.get(path="/{character_id}/ammunition")
-async def get_ammunition(character_id: uuid.UUID|str, item_id: str):
+async def get_ammunition(character_id: uuid.UUID|str, item_id: Optional[str] = None):
     """
         Получение аммуниции персонажа.
         Args:
@@ -30,6 +31,8 @@ async def get_ammunition(character_id: uuid.UUID|str, item_id: str):
         if character == []:
             return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
         character = character[0]
+        if item_id is None:
+            return JSONResponse(content=character["ammunition"], status_code=200)
         for i in character["weapons_and_equipment"]:
             if i["id"] == item_id:
                 res = i.copy()
