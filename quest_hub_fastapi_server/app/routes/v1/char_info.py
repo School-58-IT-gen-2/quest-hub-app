@@ -5,9 +5,11 @@ from pydantic import BaseModel
 from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.char_list.models import *
+from logs.log import function_log
 
 char_info_route = APIRouter(prefix="/characters", tags=["character information"])
 
+@function_log
 @char_info_route.put(path="/{character_id}/name")
 async def update_character_name(character_id: uuid.UUID|str, update: UpdateCharacterName):
     try:
@@ -26,6 +28,7 @@ async def update_character_name(character_id: uuid.UUID|str, update: UpdateChara
     except Exception as error:
         raise InternalServerErrorException()
 
+@function_log
 @char_info_route.put(path="/{character_id}/surname")
 async def update_character_surname(character_id: uuid.UUID|str, update: UpdateCharacterSurname):
     try:
@@ -44,6 +47,7 @@ async def update_character_surname(character_id: uuid.UUID|str, update: UpdateCh
     except:
         raise InternalServerErrorException()
 
+@function_log
 @char_info_route.put(path="/{character_id}/age")
 async def update_character_age(character_id: uuid.UUID|str, update: UpdateCharacterAge):
     try:
@@ -62,6 +66,7 @@ async def update_character_age(character_id: uuid.UUID|str, update: UpdateCharac
     except Exception as error:
         raise InternalServerErrorException()
 
+@function_log
 @char_info_route.put(path="/{character_id}/backstory")
 async def update_character_backstory(character_id: uuid.UUID|str, update: UpdateCharacterBackstory):
     try:
@@ -80,6 +85,7 @@ async def update_character_backstory(character_id: uuid.UUID|str, update: Update
     except Exception as error:
         raise InternalServerErrorException()
 
+@function_log
 @char_info_route.post(path="/{character_id}/languages")
 async def add_character_language(character_id: uuid.UUID|str, update: AddCharacterLanguage):
     try:
@@ -98,6 +104,7 @@ async def add_character_language(character_id: uuid.UUID|str, update: AddCharact
     except Exception as error:
         raise InternalServerErrorException()
 
+@function_log
 @char_info_route.delete(path="/{character_id}/languages")
 async def delete_character_language(character_id: uuid.UUID|str, update: DeleteCharacterLanguage):
     try:
@@ -119,6 +126,7 @@ async def delete_character_language(character_id: uuid.UUID|str, update: DeleteC
     except Exception as error:
         raise InternalServerErrorException()
 
+@function_log
 @char_info_route.put(path="/{character_id}/experience")
 async def update_experience_from_character(character_id: uuid.UUID|str, update: UpdateExperience):
     try:
@@ -134,6 +142,7 @@ async def update_experience_from_character(character_id: uuid.UUID|str, update: 
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
+@function_log
 @char_info_route.put(path="/{character_id}/gold")
 async def update_gold_from_character(character_id: uuid.UUID|str, update: UpdateGold):
     try:
