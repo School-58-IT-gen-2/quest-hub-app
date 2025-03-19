@@ -3,6 +3,22 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 import uuid
 
+class UpdateCharacterName(BaseModel):
+    new_name: str
+class UpdateCharacterSurname(BaseModel):
+    new_surname: str
+class UpdateCharacterAge(BaseModel):
+    new_age: int
+class UpdateCharacterBackstory(BaseModel):
+    new_backstory: str
+class AddCharacterLanguage(BaseModel):
+    language: str
+class DeleteCharacterLanguage(BaseModel):
+    language: str
+class UpdateExperience(BaseModel):
+    experience: int
+class UpdateGold(BaseModel):
+    gold: int
 class Item(BaseModel):
     """Класс для работы с предметами."""
     id: Optional[str] = None
