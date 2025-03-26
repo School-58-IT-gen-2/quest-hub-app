@@ -99,7 +99,7 @@ async def add_character_language(character_id: uuid.UUID|str, update: AddCharact
         raise InternalServerErrorException()
 
 @char_info_route.delete(path="/{character_id}/languages")
-async def delete_character_language(character_id: uuid.UUID|str, update: DeleteCharacterLanguage):
+async def delete_character_language(character_id: uuid.UUID|str, language: str):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -108,12 +108,12 @@ async def delete_character_language(character_id: uuid.UUID|str, update: DeleteC
             raise HTTPException(status_code=404, detail="Нету такого персонажа")
         character = character[0]
         try:
-            character["languages"].remove(update.language)
+            character["languages"].remove(language)
         except:
             raise HTTPException(status_code=404, detail="Нету такого языка")
         result = new_db_source.update("character_list", character, character_id)
         if result:
-            return JSONResponse(content={"removed_languages": update.language})
+            return JSONResponse(content={"removed_languages": language})
         else:
             raise ServiceUnavailableException()
     except Exception as error:
