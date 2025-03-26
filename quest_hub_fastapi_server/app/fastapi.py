@@ -20,8 +20,8 @@ app = FastAPI(lifespan=lifespan, title="QuestHub")
 def health():
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
     new_db_source.connect()
-    print("Ищи себя в телеграм канале 'опсёры москва'")
-    print(52/0)
+    # print("Ищи себя в телеграм канале 'опсёры москва'")
+    # print(52/0)
     return {"status": "ok"}
 
 
