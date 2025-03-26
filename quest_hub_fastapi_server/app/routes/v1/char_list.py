@@ -13,8 +13,6 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 
 char_route = APIRouter(prefix="/characters", tags=["characters"])
 
-
-
 @char_route.post(path="/char-list", response_model=CharListRequestModel)
 async def add_character(character: CharListRequestModel):
     """
@@ -29,26 +27,25 @@ async def add_character(character: CharListRequestModel):
             InternalServerErrorException: Внутренняя ошибка сервера.
             ServiceUnavailableException: Сервис временно недоступен.
     """
-    try:
-        if not character:
-            raise BadRequestException()
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        new_character = character.model_dump(exclude_unset=True)
-        result = new_db_source.insert("character_list", new_character)
-        if result:
-            return result[0]
-        else:
-            raise ServiceUnavailableException()
-    except BadRequestException as e:
-        raise e
-    except Exception as error:
-        print(error)
-        raise InternalServerErrorException()
+    #try:
+    if not character:
+        raise BadRequestException()
+    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+    new_db_source.connect()
+    new_character = character.model_dump(exclude_unset=True)
+    result = new_db_source.insert("character_list", new_character)
+    if result:
+        return result[0]
+    else:
+        raise ServiceUnavailableException()
+    #except BadRequestException as e:
+    #    raise e
+    #except Exception as error:
+    #    raise InternalServerErrorException()
 
 
 @char_route.put(path="/char-list", response_model=CharListRequestModel)
-async def update_character(character_id: int, character: CharListRequestModel):
+async def update_character(character_id: uuid.UUID|str, character: CharListRequestModel):
     """
         Обновление данных персонажа.
 
@@ -76,12 +73,11 @@ async def update_character(character_id: int, character: CharListRequestModel):
     except BadRequestException as e:
         raise e
     except Exception as error:
-        print(error)
         raise InternalServerErrorException()
 
 
 @char_route.get(path="/char-list/{character_id}")
-async def get_character(character_id: int):
+async def get_character(character_id: uuid.UUID|str):
     """
         Получение данных персонажа по ID.
         Args:
@@ -106,12 +102,11 @@ async def get_character(character_id: int):
     except BadRequestException as e:
         raise e
     except Exception as error:
-        print(error)
         raise InternalServerErrorException()
 
 
 @char_route.delete(path="/char-list/{character_id}")
-async def delete_character(character_id: int):
+async def delete_character(character_id: uuid.UUID|str):
     """
         Удаление персонажа по ID.
         Args:
@@ -137,7 +132,6 @@ async def delete_character(character_id: int):
     except BadRequestException as e:
         raise e
     except Exception as error:
-        print(error)
         raise InternalServerErrorException()
     
 @char_route.get(path="/char-list/{user_id}/")
@@ -168,270 +162,5 @@ async def get_characters_by_user(user_id: str):
     except BadRequestException as e:
         raise e
     except Exception as error:
-        print(error)
         raise InternalServerErrorException()
     
-@char_route.post(path="/char-list/{character_id}/inventory")
-async def add_item_to_inventory(character_id: int, item: Item):
-    """
-        Добавление предмета в инвентарь персонажа.
-        Args:
-            character_id (int): ID персонажа.
-                item (Item): Предмет для добавления в инвентарь.
-        Returns:
-            response (dict): Добавленный предмет.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["inventory"].append(item.model_dump())
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.delete(path="/char-list/{character_id}/inventory")
-async def delete_item_from_inventory(character_id: int, item: Item):
-    """
-        Удаление предмета из инвентаря персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            item (Item): Предмет для удаления из инвентаря.
-        Returns:
-            response (dict): Удаленный предмет.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["inventory"] = [i for i in character["inventory"] if i["name"] != item.name]
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.put(path="/char-list/{character_id}/inventory")
-async def update_item_in_inventory(character_id: int, item: Item):
-    """
-        Обновление предмета в инвентаре персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            item (Item): Предмет для обновления в инвентаре.
-        Returns:
-            response (dict): Обновленный предмет.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["inventory"] = [item.model_dump() if i["name"] == item.name else i for i in character["inventory"]]
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.post(path="/char-list/{character_id}/ammunition")
-async def add_item_to_ammunition(character_id: int, item: Item):
-    """
-        Добавление предмета в аммуницию персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            item (Item): Предмет для добавления в аммуницию.
-        Returns:
-            response (dict): Добавленный предмет.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["weapons_and_equipment"].append(item.model_dump())
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.delete(path="/char-list/{character_id}/ammunition")
-async def delete_item_from_ammunition(character_id: int, item: Item):
-    """
-        Удаление предмета из аммуниции персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            item (Item): Предмет для удаления из аммуниции.
-        Returns:
-            response (dict): Удаленный предмет.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["weapons_and_equipment"] = [i for i in character["weapons_and_equipment"] if i["name"] != item.name]
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.put(path="/char-list/{character_id}/ammunition")
-async def update_item_in_ammunition(character_id: int, item: Item):
-    """
-        Обновление предмета в аммуниции персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            item (Item): Предмет для обновления в аммуниции.
-        Returns:
-            response (dict): Обновленный предмет.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["weapons_and_equipment"] = [item.model_dump() if i["name"] == item.name else i for i in character["weapons_and_equipment"]]
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=item.model_dump(), status_code=200)
-    except:
-        return JSONResponse(content={"message":"Что-то пошло не так"}, status_code=400)
-
-@char_route.post(path="/char-list/{character_id}/notes")
-async def add_note_to_character(character_id: int, note: Note):
-    """
-        Добавление заметки к персонажу.
-        Args:
-            character_id (int): ID персонажа.
-            note (Note): Заметка для добавления.
-        Returns:
-            response (dict): Добавленная заметка.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        new_note = note.model_dump()
-        new_note["id"] = str(uuid.uuid4())
-        character["notes"].append(new_note)
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=new_note, status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.delete(path="/char-list/{character_id}/notes")
-async def delete_note_from_character(character_id: int, note_id: str):
-    """
-        Удаление заметки у персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            notee_id (uuid/str): ID заметки для удаления.
-        Returns:
-            response (dict): Удаленная заметка.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        note = [i for i in character["notes"] if i["id"] == note_id][0]
-        character["notes"] = [i for i in character["notes"] if i["id"] != note_id]
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=note, status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.put(path="/char-list/{character_id}/notes")
-async def update_note_from_character(character_id: int, note: Note):
-    """
-        Обновление заметки у персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            note (Note): Заметка для обновления.
-        Returns:
-            response (dict): Обновленная заметка.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        if note.id == None:
-            return JSONResponse(content={"message": "ID заметки не указан"}, status_code=400)
-        #new_note = [i for i in character["notes"] if i["id"] == note.id][0]
-        new_note = {}
-        for i in character["notes"]:
-            if str(i["id"]) == str(note.id):
-                i["text"] = note.text
-                i["title"] = note.title
-                new_note = i
-                break
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content=new_note, status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.put(path="/char-list/{character_id}/gold")
-async def update_gold_from_character(character_id: int, gold: int):
-    """
-        Обновление золота у персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            gold (int): Количество золота для обновления.
-        Returns:
-            response (dict): Обновленное количество золота.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["gold"] += gold
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content={"updated_gold": character["gold"]}, status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
-@char_route.put(path="/char-list/{character_id}/experience")
-async def update_experience_from_character(character_id: int, experience: int):
-    """
-        Обновление опыта у персонажа.
-        Args:
-            character_id (int): ID персонажа.
-            experience (int): Количество опыта для обновления.
-        Returns:
-            response (dict): Обновленное количество опыта.
-    """
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        character = new_db_source.get_by_id("character_list", character_id)
-        if character == []:
-            return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
-        character = character[0]
-        character["experience"] += experience
-        new_db_source.update("character_list", character, character_id)
-        return JSONResponse(content={"new_exp": character["experience"]}, status_code=200)
-    except:
-        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)

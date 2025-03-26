@@ -4,6 +4,7 @@ from fastapi.exceptions import HTTPException
 from pydantic import SecretStr
 from supabase.client import ClientOptions
 from supabase import create_client, Client
+import uuid
 
 from quest_hub_fastapi_server.adapters.abstract_source import AbstractSource
 
@@ -54,7 +55,7 @@ class DBSource(AbstractSource):
         """
         return dict(self.__supabase.table(table_name).select().execute())["data"]
 
-    def get_by_id(self, table_name: str, id: str | int) -> List[dict]:
+    def get_by_id(self, table_name: str, id: str | uuid.UUID) -> List[dict]:
         """
         Получение объекта по id.
 
@@ -108,7 +109,7 @@ class DBSource(AbstractSource):
             "data"
         ]
 
-    def update(self, table_name: str, update_dict: dict, id: int) -> List[dict]:
+    def update(self, table_name: str, update_dict: dict, id: str| uuid.UUID) -> List[dict]:
         """
         Изменение строки в таблице.
 
@@ -124,7 +125,7 @@ class DBSource(AbstractSource):
             self.__supabase.table(table_name).update(update_dict).eq("id", id).execute()
         )["data"]
 
-    def delete(self, table_name: str, id: int) -> List[dict]:
+    def delete(self, table_name: str, id: uuid.UUID) -> List[dict]:
         """
         Удаление строки из таблицы.
 

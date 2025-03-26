@@ -3,11 +3,28 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 import uuid
 
+class UpdateCharacterName(BaseModel):
+    new_name: str
+class UpdateCharacterSurname(BaseModel):
+    new_surname: str
+class UpdateCharacterAge(BaseModel):
+    new_age: int
+class UpdateCharacterBackstory(BaseModel):
+    new_backstory: str
+class AddCharacterLanguage(BaseModel):
+    language: str
+class DeleteCharacterLanguage(BaseModel):
+    language: str
+class UpdateExperience(BaseModel):
+    experience: int
+class UpdateGold(BaseModel):
+    gold: int
 class Item(BaseModel):
     """Класс для работы с предметами."""
+    id: Optional[str] = None
     count: Optional[int] = 1
     type: Optional[str] = None
-    name: str
+    name: Optional[str] = None
     description: Optional[str] = None
     weight: Optional[int] = None
     cost: Optional[int] = None
@@ -17,16 +34,33 @@ class Item(BaseModel):
     ac_base: Optional[int] = None
     dex_bonus: Optional[bool] = None
     max_dex_bonus: Optional[int] = None
-    stealth_disadvantage: Optional[bool] = None
+    stealth_disadvantage: Optional[bool] = None # зарефакторить тут для апдейта
 
 class Note(BaseModel):
     """Класс для работы с заметками."""
-    title: str
-    text: str
-    id: Optional[uuid.UUID] = None
+    title: Optional[str] = None
+    text: Optional[str] = None
+    id: Optional[str] = None # зарефакторить тут для апдейта
+
+class Spell(BaseModel):
+    """Класс для работы со заклинаниями."""
+    id: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    range: Optional[str] = None
+    duration: Optional[str] = None
+    casting_time: Optional[str] = None
+    components: Optional[str] = None
+
+class TraitsAndAbilities(BaseModel):
+    """Класс для работы с характеристиками и способностями."""
+    id: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 class CharListRequestModel(BaseModel):
     """Класс для работы с персонажами."""
+    id: Optional[uuid.UUID] = None
     race: Optional[str] = None  # text
     character_class: Optional[str] = None  # text
     backstory: Optional[str] = None  # text
@@ -43,8 +77,8 @@ class CharListRequestModel(BaseModel):
     interference: Optional[bool] = None  # bool
     advantages: Optional[bool] = None  # bool
     weapons_and_equipment: Optional[List[Item]] = None  # json
-    spells: Optional[Dict[str, Any]] = None  # json
-    traits_and_abilities: Optional[Dict[str, Any]] = None  # json
+    spells: Optional[List[Spell]] = None  # json
+    traits_and_abilities: Optional[List[TraitsAndAbilities]] = None  # json
     languages: Optional[List[Any]] = None  # json
     special_features: Optional[Dict[str, Any]] = None  # json
     weaknesses: Optional[Dict[str, Any]] = None  # json
