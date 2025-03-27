@@ -3,17 +3,20 @@ WORKDIR /app
 
 COPY poetry.lock pyproject.toml ./
 RUN poetry config virtualenvs.in-project true \
-	&& poetry install --only main
-
+    && poetry install --only main
 
 FROM python:3.12-slim
 WORKDIR /app
+
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 COPY --from=poetry-base /app /app
 ENV PATH="/app/.venv/bin:$PATH"
-
 
 COPY main.py main.py
 COPY adapters/ adapters/
 COPY model/ model/
 COPY tests/ tests/
 COPY quest_hub_fastapi_server/ quest_hub_fastapi_server/
+
+ENTRYPOINT [ "python3", "main.py" ]

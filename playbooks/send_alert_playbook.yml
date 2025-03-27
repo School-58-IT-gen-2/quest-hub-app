@@ -1,0 +1,19 @@
+- name: Run alert_bot
+  hosts: all
+  tasks:
+  
+  - name: Install dependencies
+    pip:
+      name:
+        - aiogram
+        - asyncio
+        - python-dotenv
+      virtualenv: /projects/dnd/ansible_env
+      virtualenv_command: python3 -m venv
+
+  - name: Run alert script
+    shell: |
+      source /projects/dnd/ansible_env/bin/activate
+      python3 /projects/dnd/quest-hub-app/scripts/send_telegram_alert.py
+    args:
+      executable: /bin/bash
