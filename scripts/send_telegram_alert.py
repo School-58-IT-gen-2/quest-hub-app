@@ -4,6 +4,10 @@ import os
 from dotenv import load_dotenv
 from aiogram.exceptions import TelegramRetryAfter
 
+from logs.log import function_log
+
+
+
 load_dotenv()
 
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
@@ -17,7 +21,7 @@ if not all([TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, MESSAGE_TEXT]):
 
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
-
+@function_log
 async def send_alert():
     try:
         if THREAD_ID:

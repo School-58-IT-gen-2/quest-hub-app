@@ -6,7 +6,9 @@ from quest_hub_fastapi_server.adapters.db_source import DBSource
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
+from logs.log import function_log
 
+@function_log
 def lifespan(app: FastAPI):
     print("Server started")
     yield
@@ -16,6 +18,7 @@ def lifespan(app: FastAPI):
 # Инициализация приложения
 app = FastAPI(lifespan=lifespan, title="QuestHub")
 
+@function_log
 @app.get(path="/health")
 def health():
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
@@ -26,6 +29,7 @@ def health():
 
 
 #Обработка исключений
+@function_log
 @app.exception_handler(RequestValidationError)
 async def handle_400_error(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -33,7 +37,7 @@ async def handle_400_error(request: Request, exc: RequestValidationError):
         content={"error": "Invalid request", 
                  "message": "Некорректный формат запроса"},
     )
-
+@function_log
 @app.exception_handler(500)
 def handle_500_error(request: Request, exception: Exception) -> JSONResponse:
     return JSONResponse(
@@ -42,6 +46,7 @@ def handle_500_error(request: Request, exception: Exception) -> JSONResponse:
                  "message": "Неизвестная ошибка на сервере. Обратитесь к администратору."},
     )
 
+# @function_log
 # @app.exception_handler(503)
 # def handle_503_error(request: Request, exception: Exception) -> JSONResponse:
 #     return JSONResponse(

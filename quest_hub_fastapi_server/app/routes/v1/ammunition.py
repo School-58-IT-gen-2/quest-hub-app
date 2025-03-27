@@ -11,9 +11,14 @@ from quest_hub_fastapi_server.modules.char_list.models import (
     InternalServerErrorException,
     ServiceUnavailableException
 )
+from logs.log import function_log
+
+
 
 ammunition_route = APIRouter(prefix="/characters", tags=["ammunition"])
 
+
+@function_log
 @ammunition_route.get(path="/{character_id}/ammunition")
 async def get_ammunition(character_id: uuid.UUID|str, item_id: Optional[str] = None):
     """
@@ -43,6 +48,7 @@ async def get_ammunition(character_id: uuid.UUID|str, item_id: Optional[str] = N
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
 
+@function_log
 @ammunition_route.post(path="/{character_id}/ammunition")
 async def add_item_to_ammunition(character_id: uuid.UUID|str, item: Item):
     """
@@ -77,7 +83,8 @@ async def add_item_to_ammunition(character_id: uuid.UUID|str, item: Item):
         return JSONResponse(content=_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
+
+@function_log
 @ammunition_route.delete(path="/{character_id}/ammunition")
 async def delete_item_from_ammunition(character_id: uuid.UUID|str, item_id: str):
     """
@@ -108,7 +115,8 @@ async def delete_item_from_ammunition(character_id: uuid.UUID|str, item_id: str)
         return JSONResponse(content=deleted_item, status_code=200)
     except:
        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
-    
+
+@function_log   
 @ammunition_route.put(path="/{character_id}/ammunition")
 async def update_item_in_ammunition(character_id: uuid.UUID|str, item: Item):
     """

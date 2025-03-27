@@ -10,9 +10,11 @@ from quest_hub_fastapi_server.modules.char_list.models import (
     InternalServerErrorException,
     ServiceUnavailableException
 )
+from logs.log import function_log
 
 char_route = APIRouter(prefix="/characters", tags=["characters"])
 
+@function_log
 @char_route.post(path="/char-list", response_model=CharListRequestModel)
 async def add_character(character: CharListRequestModel):
     """
@@ -44,6 +46,7 @@ async def add_character(character: CharListRequestModel):
     #    raise InternalServerErrorException()
 
 
+@function_log
 @char_route.put(path="/char-list", response_model=CharListRequestModel)
 async def update_character(character_id: uuid.UUID|str, character: CharListRequestModel):
     """
@@ -76,6 +79,7 @@ async def update_character(character_id: uuid.UUID|str, character: CharListReque
         raise InternalServerErrorException()
 
 
+@function_log
 @char_route.get(path="/char-list/{character_id}")
 async def get_character(character_id: uuid.UUID|str):
     """
@@ -105,6 +109,7 @@ async def get_character(character_id: uuid.UUID|str):
         raise InternalServerErrorException()
 
 
+@function_log
 @char_route.delete(path="/char-list/{character_id}")
 async def delete_character(character_id: uuid.UUID|str):
     """
@@ -133,7 +138,9 @@ async def delete_character(character_id: uuid.UUID|str):
         raise e
     except Exception as error:
         raise InternalServerErrorException()
-    
+
+
+@function_log
 @char_route.get(path="/char-list/{user_id}/")
 async def get_characters_by_user(user_id: str):
     """
