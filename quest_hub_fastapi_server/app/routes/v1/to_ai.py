@@ -103,3 +103,15 @@ async def ask_gemini(prompt: Prompt, char: Char):
     res = prompt.question + str(json.dumps(char.char, ensure_ascii=False))
     response = deepseek(res)
     return JSONResponse(content=response,status_code=200)
+
+@to_ai.post("/ask_deepseek_about_about_info")
+async def ask_gemini(char: Char):
+    res = "Представь, что ты профессиональный игрок в D&D и хорошо разбираешься в механике игры,опирайся на данные с этого сайта  https://dnd.su/class/99-rogue/. У меня есть персонаж, которому нужно повысить уровень. Все данные о нём приведены в формате JSON далее. Проанализируй их и скажи мне,какие данные мне надо предоставить,чтобы корректно повысить уровень персонажа на 1 вверх.Если надо выбрать архетип или умение,то дай мне варианты выбора.ТЫ не должен ничего мне рекомендоавать,только дать варианты выбора.Предоставь ВСЕ варианты выбора в формате: '<характеристика,которую надо выбрать1:вариант1,вариант2,вариант3>,<характеристика,которую надо выбрать1:вариант1,вариант2,вариант3>,<характеристика,которую надо выбрать1:вариант1,вариант2,вариант3>'.Если ничего выбирать не надо,то верни <Я могу повысить уровень!> Вот данные о персонаже:" + str(json.dumps(char.char, ensure_ascii=False)) + " "
+    response = deepseek(res)
+    return JSONResponse(content=response,status_code=200)
+
+@to_ai.post("/ask_deepseek_to_upgrade")
+async def ask_gemini(char: Char,choices:str):
+    res = f"Представь, что ты профессиональный игрок в D&D и хорошо разбираешься в механике игры,опирайся на данные с этого сайта  https://dnd.su/class/99-rogue/. У меня есть персонаж, которому нужно повысить уровень. Все данные о нём приведены в формате JSON ниже. Проанализируй их и повысь уровень моего персонажа на 1 вот данные,которые пригодятся тебе при повышении:{choices}.Верни ТОЛЬКО измененный json во входном формате,который я смогу использовать в коде.Кроме JSON ничего не возвращай.Вот данные о персонаже:" + str(json.dumps(char.char, ensure_ascii=False))
+    response = deepseek(res)
+    return JSONResponse(content=response,status_code=200)
