@@ -1,86 +1,84 @@
 import os
-import time
-import functools
+import logging
+import asyncio
 import sys
 import traceback
-import asyncio
 from datetime import datetime, timezone, timedelta
-from supabase import create_client, Client
 
-# Подключение к базе данных Supabase
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Настройка логирования
+log_file = "app_activity.log"
+log_separator = " ||| "  # Уникальный разделитель для удобного разбора логов
 
-# Функция для удаления логов старше 30 дней
-async def delete_old_logs():
-    one_month_ago = datetime.now(timezone.utc) - timedelta(days=30)  # Вычисляем дату 30 дней назад
-    response = supabase.table("logs").select("id, timestamp").execute()  # Запрашиваем все логи из базы данных
-    
-    if response.data:
-        for record in response.data:
-            log_time = datetime.fromisoformat(record["timestamp"])  # Преобразуем строку в объект datetime
-            if log_time < one_month_ago:  # Если запись старше 30 дней, удаляем её
-                supabase.table("logs").delete().eq("id", record["id"]).execute()
+# Проверяем, существует ли файл, если нет — записываем заголовок
+if not os.path.exists(log_file) or os.stat(log_file).st_size == 0:
+    with open(log_file, "w") as f:
+        f.write(
+            "FORMAT: timestamp ||| level ||| function_name ||| context (args, kwargs) ||| result ||| error ||| error_code ||| traceback\n"
+            "----------------------------------------------------------------------------------------------\n"
+        )
 
-# Асинхронная функция для отправки логов в Supabase
-async def log_to_supabase(data):
-    await delete_old_logs()  # Удаляем старые логи перед добавлением нового
-    await asyncio.to_thread(supabase.table("logs").insert(data).execute)  # Вставляем новый лог в базу данных
+logging.basicConfig(
+    filename=log_file,
+    level=logging.INFO,
+    format="%(message)s",  # Отключаем стандартный формат, будем писать кастомные строки
+)
 
-# Декоратор для логирования с обработкой ошибок
+# Функция удаления логов старше 30 дней
+def delete_old_logs():
+    try:
+        with open(log_file, "r") as f:
+            logs = f.readlines()
+
+        one_month_ago = datetime.now(timezone.utc) - timedelta(days=30)
+        new_logs = [logs[0], logs[1]]  # Сохраняем заголовки
+
+        for log in logs[2:]:  # Пропускаем первые две строки с описанием формата
+            try:
+                timestamp_str = log.split(log_separator)[0]
+                log_time = datetime.fromisoformat(timestamp_str)
+                if log_time >= one_month_ago:
+                    new_logs.append(log)
+            except ValueError:
+                continue  # Пропускаем строки с некорректным форматом времени
+
+        with open(log_file, "w") as f:
+            f.writelines(new_logs)
+
+    except Exception as e:
+        logging.error(f"Ошибка при удалении старых логов: {e}")
+
+# Функция записи логов в файл
+def log_to_file(level, function_name, context, result=None, error=None, error_code=None, traceback_info=None):
+    timestamp = datetime.now(timezone.utc).isoformat()
+    log_message = f"{timestamp}{log_separator}{level}{log_separator}{function_name}{log_separator}{context}{log_separator}{result if result is not None else ''}{log_separator}{error if error else ''}{log_separator}{error_code if error_code else ''}{log_separator}{traceback_info if traceback_info else ''}\n"
+    logging.info(log_message)
+
+# Декоратор логирования
 def function_log(func):
-    @functools.wraps(func)
     async def async_wrapper(*args, **kwargs):
-        timestamp = datetime.now(timezone.utc).isoformat()  # Фиксируем текущее время
-        function_name = func.__name__  # Получаем имя декорируемой функции
-        level = "INFO"  # По умолчанию уровень логирования INFO
-        context = {"args": args, "kwargs": kwargs}  # Записываем переданные аргументы
-
+        context = f"{args}, {kwargs}"
         try:
-            result = await func(*args, **kwargs)  # Выполняем асинхронную функцию
-            message = f"Функция {function_name} выполнена успешно"
+            result = await func(*args, **kwargs)
+            log_to_file("INFO", func.__name__, context, result=result)
+            return result
         except Exception as e:
-            level = "ERROR"  # При ошибке меняем уровень логирования на ERROR
-            message = f"Ошибка в {function_name}: {str(e)}"  # Формируем сообщение об ошибке
-            error_type, error_value, error_traceback = sys.exc_info()  # Получаем информацию об ошибке
-            error_trace = "".join(traceback.format_tb(error_traceback))  # Форматируем трассировку ошибки
-            context.update({
-                "error_type": str(error_type),
-                "error_message": str(error_value),
-                "error_trace": error_trace
-            })
-            await log_to_supabase({"timestamp": timestamp, "level": level, "message": message, "context": context})
-            return None  # Возвращаем None в случае ошибки
-
-        await log_to_supabase({"timestamp": timestamp, "level": level, "message": message, "context": context})
-        return result  # Возвращаем результат работы функции
+            error_type = e.__class__.__name__  # Получаем название ошибки (например, ValueError)
+            tb = traceback.TracebackException.from_exception(e)
+            traceback_info = "".join(tb.format())  # Чистая трассировка ошибки без декоратора
+            log_to_file("ERROR", func.__name__, context, error=str(e), error_code=error_type, traceback_info=traceback_info)
+            return None
 
     def sync_wrapper(*args, **kwargs):
-        timestamp = datetime.now(timezone.utc).isoformat()  # Фиксируем текущее время
-        function_name = func.__name__  # Получаем имя функции
-        level = "INFO"  # По умолчанию уровень INFO
-        context = {"args": args, "kwargs": kwargs}  # Записываем аргументы функции
-
+        context = f"{args}, {kwargs}"
         try:
-            result = func(*args, **kwargs)  # Выполняем синхронную функцию
-            message = f"Функция {function_name} выполнена успешно"
+            result = func(*args, **kwargs)
+            log_to_file("INFO", func.__name__, context, result=result)
+            return result
         except Exception as e:
-            level = "ERROR"  # Если произошла ошибка, меняем уровень логирования
-            message = f"Ошибка в {function_name}: {str(e)}"
-            error_type, error_value, error_traceback = sys.exc_info()
-            error_trace = "".join(traceback.format_tb(error_traceback))
-            context.update({
-                "error_type": str(error_type),
-                "error_message": str(error_value),
-                "error_trace": error_trace
-            })
-            asyncio.ensure_future(log_to_supabase({"timestamp": timestamp, "level": level, "message": message, "context": context}))
-            return None  # Возвращаем None при ошибке
+            error_type = e.__class__.__name__
+            tb = traceback.TracebackException.from_exception(e)
+            traceback_info = "".join(tb.format())
+            log_to_file("ERROR", func.__name__, context, error=str(e), error_code=error_type, traceback_info=traceback_info)
+            return None
 
-        asyncio.ensure_future(log_to_supabase({"timestamp": timestamp, "level": level, "message": message, "context": context}))
-        return result  # Возвращаем результат функции
-
-    return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper  # Определяем, какую версию использовать
-
-
+    return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
