@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from logs.log import function_log
 
-@function_log
+
 def lifespan(app: FastAPI):
     print("Server started")
     yield
