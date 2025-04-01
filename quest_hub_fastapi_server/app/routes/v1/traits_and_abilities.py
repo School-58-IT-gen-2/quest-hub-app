@@ -15,7 +15,7 @@ from logs.log import function_log
 
 traits_and_abilities_route = APIRouter(prefix="/characters",tags=["traits_and_abilities"])
 
-# @function_log
+@function_log
 @traits_and_abilities_route.get("/{character_id}/traits_and_abilities")
 async def get_traits_and_abilities(character_id: uuid.UUID,trait_id: Optional[str] = None):
     """
@@ -43,7 +43,7 @@ async def get_traits_and_abilities(character_id: uuid.UUID,trait_id: Optional[st
     except Exception as e:
         raise InternalServerErrorException(str(e))
     
-# @function_log
+@function_log
 @traits_and_abilities_route.post("/{character_id}/traits_and_abilities")
 async def create_traits_and_abilities(character_id: uuid.UUID,traits_and_abilities: TraitsAndAbilities):
     """
@@ -69,7 +69,7 @@ async def create_traits_and_abilities(character_id: uuid.UUID,traits_and_abiliti
     except Exception as e:
         raise InternalServerErrorException(str(e))
 
-# @function_log   
+@function_log   
 @traits_and_abilities_route.put("/{character_id}/traits_and_abilities")
 async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abilities: TraitsAndAbilities):
     """
@@ -95,7 +95,7 @@ async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abiliti
     except:
         raise BadRequestException("Неправильный запрос")
     
-# @function_log
+@function_log
 @traits_and_abilities_route.delete("/{character_id}/traits_and_abilities")
 async def delete_traits_and_abilities(character_id: uuid.UUID,trait_id: str):
     """

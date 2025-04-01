@@ -12,7 +12,7 @@ from quest_hub_fastapi_server.adapters.abstract_source import AbstractSource
 
 class DBSource(AbstractSource):
     """Адаптер для работы с базой данных."""
-    # @function_log
+    @function_log
     def __init__(self, url: str, key: SecretStr) -> None:
         """
         Args:
@@ -22,7 +22,7 @@ class DBSource(AbstractSource):
         self.__url = url
         self.__key = key.get_secret_value()
 
-    # @function_log
+    @function_log
     def connect(self) -> None:
         """Подключение к базе данных."""
         try:
@@ -45,7 +45,7 @@ class DBSource(AbstractSource):
                 detail="Не удалось подключиться к базе данных",
             )
 
-    # @function_log
+    @function_log
     def get_all(self, table_name: str) -> List[dict]:
         """
         Получение всех данных таблицы.
@@ -58,7 +58,7 @@ class DBSource(AbstractSource):
         """
         return dict(self.__supabase.table(table_name).select().execute())["data"]
 
-    # @function_log
+    @function_log
     def get_by_id(self, table_name: str, id: str | uuid.UUID) -> List[dict]:
         """
         Получение объекта по id.
@@ -74,7 +74,7 @@ class DBSource(AbstractSource):
             "data"
         ]
 
-    # @function_log
+    @function_log
     def get_by_value(
         self,
         table_name: str,
@@ -99,7 +99,7 @@ class DBSource(AbstractSource):
             .execute()
         )["data"]
 
-    # @function_log
+    @function_log
     def insert(self, table_name: str, insert_dict: dict) -> List[dict]:
         """
         Вставка строки в таблицу.
@@ -115,7 +115,7 @@ class DBSource(AbstractSource):
             "data"
         ]
 
-    # @function_log
+    @function_log
     def update(self, table_name: str, update_dict: dict, id: str| uuid.UUID) -> List[dict]:
         """
         Изменение строки в таблице.
@@ -132,7 +132,7 @@ class DBSource(AbstractSource):
             self.__supabase.table(table_name).update(update_dict).eq("id", id).execute()
         )["data"]
 
-    # @function_log
+    @function_log
     def delete(self, table_name: str, id: uuid.UUID) -> List[dict]:
         """
         Удаление строки из таблицы.

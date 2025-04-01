@@ -18,7 +18,7 @@ from logs.log import function_log
 ammunition_route = APIRouter(prefix="/characters", tags=["ammunition"])
 
 
-# @function_log
+@function_log
 @ammunition_route.get(path="/{character_id}/ammunition")
 async def get_ammunition(character_id: uuid.UUID|str, item_id: Optional[str] = None):
     """
@@ -48,7 +48,7 @@ async def get_ammunition(character_id: uuid.UUID|str, item_id: Optional[str] = N
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
 
-# @function_log
+@function_log
 @ammunition_route.post(path="/{character_id}/ammunition")
 async def add_item_to_ammunition(character_id: uuid.UUID|str, item: Item):
     """
@@ -84,7 +84,7 @@ async def add_item_to_ammunition(character_id: uuid.UUID|str, item: Item):
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
-# @function_log
+@function_log
 @ammunition_route.delete(path="/{character_id}/ammunition")
 async def delete_item_from_ammunition(character_id: uuid.UUID|str, item_id: str):
     """
@@ -116,7 +116,7 @@ async def delete_item_from_ammunition(character_id: uuid.UUID|str, item_id: str)
     except:
        return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
-# @function_log   
+@function_log   
 @ammunition_route.put(path="/{character_id}/ammunition")
 async def update_item_in_ammunition(character_id: uuid.UUID|str, item: Item):
     """

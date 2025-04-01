@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from logs.log import function_log
 
-# @function_log
+@function_log
 def lifespan(app: FastAPI):
     print("Server started")
     yield
@@ -18,7 +18,7 @@ def lifespan(app: FastAPI):
 # Инициализация приложения
 app = FastAPI(lifespan=lifespan, title="QuestHub")
 
-# @function_log
+@function_log
 @app.get(path="/health")
 def health():
     new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
@@ -29,7 +29,7 @@ def health():
 
 
 #Обработка исключений
-# @function_log
+@function_log
 @app.exception_handler(RequestValidationError)
 async def handle_400_error(request: Request, exc: RequestValidationError):
     return JSONResponse(

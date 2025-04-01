@@ -26,6 +26,7 @@ COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 COPY quest_hub_fastapi_server ./quest_hub_fastapi_server
 COPY main.py ./main.py
+COPY logs ./logs
 
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
   CMD curl -f https://questhub.pro/health || exit 1

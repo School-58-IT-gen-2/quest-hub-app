@@ -16,7 +16,7 @@ from logs.log import function_log
 
 spell_route = APIRouter(prefix="/characters",tags=["spell"])
 
-# @function_log
+@function_log
 @spell_route.get("/{character_id}/spells")
 async def get_spells(character_id: uuid.UUID,spell_id: Optional[str] = None):
     """
@@ -43,7 +43,7 @@ async def get_spells(character_id: uuid.UUID,spell_id: Optional[str] = None):
     except Exception as e:
         raise InternalServerErrorException(str(e))
 
-# @function_log
+@function_log
 @spell_route.post("/{character_id}/spells")
 async def create_spell(character_id: uuid.UUID,spell: Spell):
     """
@@ -71,7 +71,7 @@ async def create_spell(character_id: uuid.UUID,spell: Spell):
     except Exception as e:
         raise InternalServerErrorException(str(e))
 
-# @function_log
+@function_log
 @spell_route.put("/{character_id}/spells")
 async def update_spell(character_id: uuid.UUID,spell: Spell):
     """
@@ -99,7 +99,7 @@ async def update_spell(character_id: uuid.UUID,spell: Spell):
     except Exception as e:
         raise InternalServerErrorException(str(e))
     
-# @function_log
+@function_log
 @spell_route.delete("/{character_id}/spells")
 async def delete_spell(character_id: uuid.UUID,spell_id: str):
     """

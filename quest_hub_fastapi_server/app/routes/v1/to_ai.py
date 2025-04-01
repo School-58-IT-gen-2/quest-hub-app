@@ -86,21 +86,21 @@ class Char(BaseModel):
 #     response = ask_llama(res)
 #     return JSONResponse(content=response, status_code=200)
 
-# @function_log
+@function_log
 @to_ai.post("/ask_gpt")
 async def ask_gpt(prompt: Prompt, char: Char):
     res = prompt.question + str(json.dumps(char.char, ensure_ascii=False))
     response = ask_g4f(res)
     return JSONResponse(content=response, status_code=200)
 
-# @function_log
+@function_log
 @to_ai.post("/ask_claude")
 async def ask_gemini(prompt: Prompt, char: Char):
     res = prompt.question + str(json.dumps(char.char, ensure_ascii=False))
     response = claude(res)
     return JSONResponse(content=response,status_code=200)
 
-# @function_log
+@function_log
 @to_ai.post("/ask_deepseek")
 async def ask_gemini(prompt: Prompt, char: Char):
     res = prompt.question + str(json.dumps(char.char, ensure_ascii=False))

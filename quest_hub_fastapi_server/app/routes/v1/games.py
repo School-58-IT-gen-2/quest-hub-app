@@ -4,10 +4,12 @@ from fastapi.responses import JSONResponse
 from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.games.models import *
+from logs.log import function_log
+
 
 games_route = APIRouter(prefix="/games", tags=["games"])
 
-
+@function_log
 @games_route.post(path="/create")
 async def create_game(game_data: Game):
     try:
@@ -28,8 +30,7 @@ async def create_game(game_data: Game):
     except Exception as error:
         return JSONResponse(content={"error": "Ошибка при создании игры"}, status_code=500)
     
-#put, get/get all, delete
-
+@function_log
 @games_route.get(path="/view_game")
 async def view_part_game(game_id: Optional[uuid.UUID|str] = None):
     try:
@@ -45,7 +46,8 @@ async def view_part_game(game_id: Optional[uuid.UUID|str] = None):
             return JSONResponse(content=game[0], status_code=200)
     except:
         return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=500)
-    
+
+@function_log 
 @games_route.delete(path="/delete_game")
 async def delete_game(game_id: uuid.UUID|str):
     try:
@@ -58,6 +60,7 @@ async def delete_game(game_id: uuid.UUID|str):
     except:
         return JSONResponse(content={"error": "Ошибка при удалении игры"}, status_code=500)
     
+@function_log
 @games_route.put(path="/update_game")
 async def update_game(new_game_data: Game):
     try:
