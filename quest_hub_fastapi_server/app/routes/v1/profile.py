@@ -12,7 +12,7 @@ from logs.log import function_log
 
 profile_route = APIRouter(prefix="/profiles", tags=["profiles"])
 
-@function_log
+# @function_log
 @profile_route.post(path="/user")
 def create_user(
     body: ProfileRequest
@@ -41,7 +41,7 @@ def create_user(
     user = new_user.insert()
     return user
 
-@function_log
+# @function_log
 @profile_route.get(path="/profile")
 def get_user(tg_id: int):
     """
@@ -58,7 +58,7 @@ def get_user(tg_id: int):
     new_user.insert()
     return new_user.__dict__()
 
-@function_log
+# @function_log
 @profile_route.delete(path="/user")
 def delete_user(tg_id: int):
     """
@@ -75,7 +75,7 @@ def delete_user(tg_id: int):
     new_user.insert()
     return new_user.delete()
 
-@function_log
+# @function_log
 @profile_route.put(path="/user")
 def edit_user(
     body: ProfilePutRequest

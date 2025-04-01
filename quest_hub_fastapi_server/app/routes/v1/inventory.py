@@ -16,7 +16,7 @@ from logs.log import function_log
 
 inventory_route = APIRouter(prefix="/characters", tags=["inventory"])
 
-@function_log
+# @function_log
 @inventory_route.get(path="/{character_id}/inventory")
 async def get_inventory(character_id: uuid.UUID|str, item_id: Optional[str] = None):
     """
@@ -45,7 +45,7 @@ async def get_inventory(character_id: uuid.UUID|str, item_id: Optional[str] = No
     except Exception as error:
         raise InternalServerErrorException()
 
-@function_log
+# @function_log
 @inventory_route.post(path="/{character_id}/inventory")
 async def add_item_to_inventory(character_id: uuid.UUID|str, item: Item):
     """
@@ -81,7 +81,7 @@ async def add_item_to_inventory(character_id: uuid.UUID|str, item: Item):
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
-@function_log
+# @function_log
 @inventory_route.delete(path="/{character_id}/inventory")
 async def delete_item_from_inventory(character_id: uuid.UUID|str, item_id: str):
     """
@@ -114,7 +114,7 @@ async def delete_item_from_inventory(character_id: uuid.UUID|str, item_id: str):
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
-@function_log
+# @function_log
 @inventory_route.put(path="/{character_id}/inventory")
 async def update_item_in_inventory(character_id: uuid.UUID|str, item: Item):
     """

@@ -11,7 +11,7 @@ from logs.log import function_log
 
 
 class TestSupabaseAdapter(unittest.TestCase):
-    @function_log
+    # @function_log
     def test_get_all_users(self):
         try:
             supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
@@ -20,7 +20,7 @@ class TestSupabaseAdapter(unittest.TestCase):
         except:
             self.fail("Failed to get all :(")
 
-    @function_log
+    # @function_log
     def test_get_by_id(self):
         try:
             supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
@@ -29,7 +29,7 @@ class TestSupabaseAdapter(unittest.TestCase):
         except:
             self.fail("Failed to get by id :(")
 
-    @function_log
+    # @function_log
     def test_get_by_value(self):
         try:
             supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
@@ -38,7 +38,7 @@ class TestSupabaseAdapter(unittest.TestCase):
         except:
             self.fail("Failed to get by value :(")
 
-    @function_log
+    # @function_log
     def test_insert(self):
         try:
             supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
@@ -56,7 +56,7 @@ class TestSupabaseAdapter(unittest.TestCase):
         except:
             self.fail("Failed to insert :(")
 
-    @function_log
+    # @function_log
     def test_update(self):
         try:
             supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)
@@ -69,7 +69,7 @@ class TestSupabaseAdapter(unittest.TestCase):
         except:
             self.fail("Failed to update :(")
 
-    @function_log
+    # @function_log
     def test_delete(self):
         try:
             supa = DBSource(url=envirements.SUPABASE_URL, key=envirements.SUPABASE_KEY)

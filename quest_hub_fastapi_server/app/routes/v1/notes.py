@@ -17,7 +17,7 @@ from logs.log import function_log
 note_route = APIRouter(prefix="/characters", tags=["notes"])
 
 
-@function_log
+# @function_log
 @note_route.get(path="/{character_id}/notes")
 async def get_notes_of_character(character_id: uuid.UUID|str, note_id: Optional[str] = None):
     """
@@ -44,7 +44,7 @@ async def get_notes_of_character(character_id: uuid.UUID|str, note_id: Optional[
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
-@function_log
+# @function_log
 @note_route.post(path="/{character_id}/notes")
 async def add_note_to_character(character_id: uuid.UUID|str, note: Note):
     """
@@ -74,7 +74,7 @@ async def add_note_to_character(character_id: uuid.UUID|str, note: Note):
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
-@function_log
+# @function_log
 @note_route.delete(path="/{character_id}/notes")
 async def delete_note_from_character(character_id: uuid.UUID|str, note_id: str):
     """
@@ -99,7 +99,7 @@ async def delete_note_from_character(character_id: uuid.UUID|str, note_id: str):
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
 
-@function_log
+# @function_log
 @note_route.put(path="/{character_id}/notes")
 async def update_note_from_character(character_id: uuid.UUID|str, note: Note):
     """
