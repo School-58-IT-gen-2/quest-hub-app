@@ -2,3 +2,4 @@
 .venv/
 __pycache__/
 har_and_cookies
+app_activity.log

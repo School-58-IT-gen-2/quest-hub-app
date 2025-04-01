@@ -73,7 +73,7 @@ async def create_spell(character_id: uuid.UUID,spell: Spell):
 
 @function_log
 @spell_route.put("/{character_id}/spells")
-async def update_spell(character_id: uuid.UUID,spell: Spell,spell_id: str):
+async def update_spell(character_id: uuid.UUID,spell: Spell):
     """
     Обновить заклинание персонажа.
     Args:
@@ -92,7 +92,7 @@ async def update_spell(character_id: uuid.UUID,spell: Spell,spell_id: str):
         if character["spells"] == None:
             character["spells"] = []
         _spell = spell.model_dump()
-        _spell["id"] = str(spell_id)
+        spell_id = str(_spell["id"])
         character["spells"] = [i if i["id"] != str(spell_id) else _spell for i in character["spells"]]
         db_source.update("character_list",character,character_id)
         return JSONResponse(content=_spell, status_code=200)

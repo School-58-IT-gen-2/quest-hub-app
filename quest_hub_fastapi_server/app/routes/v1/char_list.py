@@ -170,4 +170,23 @@ async def get_characters_by_user(user_id: str):
         raise e
     except Exception as error:
         raise InternalServerErrorException()
-    
+
+@function_log
+@char_route.get(path="/char-list/{character_id}/archetypes")
+async def get_archetypes(character_id: int):
+    """
+        Получение архтипов персонажа.
+    """
+    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+    new_db_source.connect()
+    character = new_db_source.get_by_id("character_list", character_id)
+    if character == []:
+        return JSONResponse(content={"message": "Персонаж не найден"}, status_code=404)
+    character = character[0]              
+    level_info  = new_db_source.get_by_value("levels_capabilities","character_class",character["character_class"])[0]
+    levels = [3,7,11,15,18]
+    if character["lvl"] in levels:
+        choose_stats = True
+    if character["lvl"] == level_info["lvl_to_choose_archetype"] - 1:
+        archetypes = list(level_info["archetypes"].keys()) 
+    return {"archetypes": archetypes,"choose_stats" : choose_stats}
