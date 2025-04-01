@@ -20,7 +20,6 @@ async def create_game(game_data: Game):
         game["players_id"] = [str(i) for i in  game["players_id"]]
         game["master_id"] = str(game["master_id"])
         game["game_level"] = str(game["game_level"].value)
-        print(game)
         result = new_db_source.insert("games", game)
         if result != []:
             return JSONResponse(content=result[0],status_code=201)
