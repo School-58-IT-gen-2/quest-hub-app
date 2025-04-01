@@ -173,7 +173,7 @@ async def get_characters_by_user(user_id: str):
 
 @function_log
 @char_route.get(path="/char-list/{character_id}/archetypes")
-async def get_archetypes(character_id: int):
+async def get_archetypes(character_id: uuid.UUID|str):
     """
         Получение архтипов персонажа.
     """
