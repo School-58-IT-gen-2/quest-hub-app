@@ -12,8 +12,11 @@ from quest_hub_fastapi_server.modules.char_list.models import (
     ServiceUnavailableException
 )
 
+from logs.log import function_log
+
 traits_and_abilities_route = APIRouter(prefix="/characters",tags=["traits_and_abilities"])
 
+@function_log
 @traits_and_abilities_route.get("/{character_id}/traits_and_abilities")
 async def get_traits_and_abilities(character_id: uuid.UUID,ability_id: Optional[str] = None):
     """
@@ -40,7 +43,8 @@ async def get_traits_and_abilities(character_id: uuid.UUID,ability_id: Optional[
         return JSONResponse(content=ability, status_code=200)
     except Exception as e:
         raise InternalServerErrorException(str(e))
-    
+
+@function_log
 @traits_and_abilities_route.post("/{character_id}/traits_and_abilities")
 async def create_traits_and_abilities(character_id: uuid.UUID,traits_and_abilities: TraitsAndAbilities):
     """
@@ -65,7 +69,8 @@ async def create_traits_and_abilities(character_id: uuid.UUID,traits_and_abiliti
         return JSONResponse(content=_tnb, status_code=201)
     except Exception as e:
         raise InternalServerErrorException(str(e))
-    
+
+@function_log
 @traits_and_abilities_route.put("/{character_id}/traits_and_abilities")
 async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abilities: TraitsAndAbilities,ability_id: str):
     """
@@ -91,7 +96,7 @@ async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abiliti
     except:
         raise BadRequestException("Неправильный запрос")
     
-
+@function_log
 @traits_and_abilities_route.delete("/{character_id}/traits_and_abilities")
 async def delete_traits_and_abilities(character_id: uuid.UUID,ability_id: str):
     """
