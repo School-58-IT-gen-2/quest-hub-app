@@ -60,11 +60,12 @@ async def delete_game(game_id: uuid.UUID|str):
         return JSONResponse(content={"error": "Ошибка при удалении игры"}, status_code=500)
     
 @games_route.put(path="/update_game")
-async def update_game(game_id: uuid.UUID|str, new_game_data: Game):
+async def update_game(new_game_data: Game):
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         game = new_game_data.model_dump()
+        game_id = game["id"]
         game.pop("id")
         game.pop("created_at")
         #game["game_level"] = game["game_level"].value

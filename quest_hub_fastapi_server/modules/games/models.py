@@ -25,6 +25,6 @@ class Game(BaseModel):
     place: str
     game_level: Optional[Game_Level] = None
     number_of_players: int
-    master_id: uuid.UUID
-    players_id: Optional[List[uuid.UUID]] = None
+    master_id: str
+    players_id: Optional[List[str]] = None
     seed: Optional[str] = None
