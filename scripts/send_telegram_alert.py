@@ -21,7 +21,6 @@ if not all([TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, MESSAGE_TEXT]):
 
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
-@function_log
 async def send_alert():
     try:
         if THREAD_ID:
