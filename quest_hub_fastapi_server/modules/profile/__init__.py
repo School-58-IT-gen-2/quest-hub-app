@@ -10,7 +10,7 @@ from logs.log import function_log
 
 class Profile(AbstractModel):
 
-    @function_log
+    # @function_log
     def __init__(
         self,
         tg_id: str,
@@ -53,7 +53,7 @@ class Profile(AbstractModel):
         self.__char_lists = {}
         self.table_name = "profiles"
 
-    @function_log
+    # @function_log
     def insert(self) -> dict:
         """
         Сохранение пользователя в базу данных.
@@ -69,7 +69,7 @@ class Profile(AbstractModel):
         self.synchronize()
         return self.__dict__()
 
-    @function_log
+    # @function_log
     def update(self, dict: dict) -> List[dict]:
         """
         Изменение данных о пользователе.
@@ -88,7 +88,7 @@ class Profile(AbstractModel):
         self.synchronize()
         return data_list
 
-    @function_log
+    # @function_log
     def delete(self) -> List[dict]:
         """
         Удаление пользователя из базы данных.
@@ -98,7 +98,7 @@ class Profile(AbstractModel):
         """
         return self.__db_source.delete(self.table_name, self.__id)
 
-    @function_log
+    # @function_log
     def get_by_id(self, id: str) -> List[dict]:
         """
         Получение пользователя по id.
@@ -111,7 +111,7 @@ class Profile(AbstractModel):
         """
         return self.__db_source.get_by_id(self.table_name, id)
 
-    @function_log
+    # @function_log
     def get_by_value(self, parameter: str, parameter_value: any) -> List[dict]:
         """
         Получение пользователя по значению определенного параметра.
@@ -127,7 +127,7 @@ class Profile(AbstractModel):
             self.table_name, parameter, parameter_value
         )
 
-    @function_log
+    # @function_log
     def synchronize(self) -> None:
         """Синхронизация объекта класса и данных в таблицах."""
         data_list = self.get_by_value("tg_id", self.__tg_id)
@@ -225,7 +225,7 @@ class Profile(AbstractModel):
         char_list.insert()
         self.__char_lists[char_list.id] = char_list
 
-    @function_log
+    # @function_log
     def get_char_lists(self) -> dict:
         """
         Получение листов персонажей пользователя.
@@ -235,7 +235,7 @@ class Profile(AbstractModel):
         """
         return self.__char_lists
 
-    @function_log
+    # @function_log
     def __dict__(self) -> dict:
         """
         Вывод всех параметров пользователя в формате словаря.
@@ -256,7 +256,7 @@ class Profile(AbstractModel):
             "tg_id": self.__tg_id,
         }
 
-    @function_log
+    # @function_log
     def set_attributes(self, attr_dict: dict) -> None:
         """
         Установка параметров пользователя, заданных в словаре.

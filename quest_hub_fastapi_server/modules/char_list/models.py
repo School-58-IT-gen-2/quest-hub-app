@@ -102,18 +102,18 @@ class CharListRequestModel(BaseModel):
 
 #Обработчик ошибок
 class BadRequestException(HTTPException):
-    @function_log
+    # @function_log
     def __init__(self, detail: str = "Некорректный формат запроса"):
         super().__init__(status_code=400, detail=detail)
 
 
 class InternalServerErrorException(HTTPException):
-    @function_log
+    # @function_log
     def __init__(self, detail: str = "Неизвестная ошибка на сервере. Обратитесь к администратору."):
         super().__init__(status_code=500, detail=detail)
 
 
 class ServiceUnavailableException(HTTPException):
-    @function_log
+    # @function_log
     def __init__(self, detail: str = "Запрашиваемый сервис или ресурс временно недоступен. Обратитесь к администратору."):
         super().__init__(status_code=503, detail=detail)

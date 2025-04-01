@@ -9,7 +9,7 @@ from logs.log import function_log
 class CharacterList(AbstractModel):
     """Класс листа персонажа."""
 
-    @function_log
+    # @function_log
     def __init__(
         self,
         user_id: str,
@@ -126,7 +126,7 @@ class CharacterList(AbstractModel):
         self.stat_modifiers = stat_modifiers
         self.table_name = "character_list"
 
-    @function_log
+    # @function_log
     def insert(self) -> dict:
         """
         Сохранение листа персонажа в базу данных.
@@ -142,7 +142,7 @@ class CharacterList(AbstractModel):
             self.id = self.db_source.insert(self.table_name, insert_dict)[0]["id"]
         return self.__dict__()
 
-    @function_log
+    # @function_log
     def update(self, dict: dict) -> List[dict]:
         """
         Изменение листа персонажа.
@@ -157,7 +157,7 @@ class CharacterList(AbstractModel):
         self.synchronize(self.id)
         return data_list
 
-    @function_log
+    # @function_log
     def delete(self) -> List[dict]:
         """
         Удаление листа персонажа из базы данных.
@@ -167,7 +167,7 @@ class CharacterList(AbstractModel):
         """
         return self.db_source.delete(self.table_name, self.id)
 
-    @function_log
+    # @function_log
     def get_by_id(self, id: int) -> List[dict]:
         """
         Получение листа персонажа по id.
@@ -180,7 +180,7 @@ class CharacterList(AbstractModel):
         """
         return self.db_source.get_by_id(self.table_name, id)
 
-    @function_log
+    # @function_log
     def get_by_value(self, parameter: str, parameter_value: any) -> List[dict]:
         """
         Получение листа персонажа по значению определенного параметра.
@@ -194,7 +194,7 @@ class CharacterList(AbstractModel):
         """
         return self.db_source.get_by_value(self.table_name, parameter, parameter_value)
 
-    @function_log
+    # @function_log
     def synchronize(self, id: int) -> None:
         """
         Синхронизация объекта класса и данных в таблицах.
@@ -209,7 +209,7 @@ class CharacterList(AbstractModel):
             data_dict = data_list[0]
             self.set_attributes(data_dict)
 
-    @function_log
+    # @function_log
     def __dict__(self) -> dict:
         """
         Вывод всех параметров листа персонажа в формате словаря.
@@ -255,7 +255,7 @@ class CharacterList(AbstractModel):
             "stat_modifiers": self.stat_modifiers,
         }
 
-    @function_log
+    # @function_log
     def set_attributes(self, attr_dict: dict) -> None:
         """
         Установка параметров листа персонажа, заданных в словаре.
