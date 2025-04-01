@@ -20,9 +20,14 @@ WORKDIR /app
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
 
+RUN apk add --no-cache curl
+
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
 COPY quest_hub_fastapi_server ./quest_hub_fastapi_server
 COPY main.py ./main.py
+
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD curl -f https://questhub.pro/health || exit 1
 
 ENTRYPOINT [ "python3", "main.py" ]

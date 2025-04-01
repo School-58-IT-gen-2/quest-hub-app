@@ -15,12 +15,12 @@ from quest_hub_fastapi_server.modules.char_list.models import (
 traits_and_abilities_route = APIRouter(prefix="/characters",tags=["traits_and_abilities"])
 
 @traits_and_abilities_route.get("/{character_id}/traits_and_abilities")
-async def get_traits_and_abilities(character_id: uuid.UUID,ability_id: Optional[str] = None):
+async def get_traits_and_abilities(character_id: uuid.UUID,trait_id: Optional[str] = None):
     """
     Получить список характеристик и способностей для персонажа.
     Args:
         character_id (uuid.UUID): Идентификатор персонажа.
-        ability_id (str): Идентификатор способности.
+        trait_id (str): Идентификатор способности.
     Returns:
         JSONResponse: Список характеристик и способностей для персонажа.
     """
@@ -31,9 +31,9 @@ async def get_traits_and_abilities(character_id: uuid.UUID,ability_id: Optional[
         if character == []:
             raise HTTPException(status_code=404, detail="Персонаж не найден")
         character = character[0]
-        if ability_id is None:
+        if trait_id is None:
             return JSONResponse(content=character["traits_and_abilities"], status_code=200)
-        ability = [i if i["id"] == ability_id else None for i in character["traits_and_abilities"]]
+        ability = [i if i["id"] == trait_id else None for i in character["traits_and_abilities"]]
         if ability == []:
             raise HTTPException(status_code=404, detail="Не нашли способность")
         ability = ability[0]
@@ -67,7 +67,7 @@ async def create_traits_and_abilities(character_id: uuid.UUID,traits_and_abiliti
         raise InternalServerErrorException(str(e))
     
 @traits_and_abilities_route.put("/{character_id}/traits_and_abilities")
-async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abilities: TraitsAndAbilities,ability_id: str):
+async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abilities: TraitsAndAbilities):
     """
     Обновить характеристику или способность персонажа.
     Args:
@@ -84,8 +84,8 @@ async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abiliti
             raise HTTPException(status_code=404, detail="Персонаж не найден")
         character = character[0]
         _tnb = traits_and_abilities.model_dump()
-        _tnb["id"] = ability_id
-        character["traits_and_abilities"] = [i if i["id"] != ability_id else _tnb for i in character["traits_and_abilities"]]
+        trait_id = _tnb["id"]
+        character["traits_and_abilities"] = [i if i["id"] != trait_id else _tnb for i in character["traits_and_abilities"]]
         db_source.update("character_list",character, character_id)
         return JSONResponse(content=_tnb, status_code=200)
     except:
@@ -93,12 +93,12 @@ async def update_traits_and_abilities(character_id: uuid.UUID,traits_and_abiliti
     
 
 @traits_and_abilities_route.delete("/{character_id}/traits_and_abilities")
-async def delete_traits_and_abilities(character_id: uuid.UUID,ability_id: str):
+async def delete_traits_and_abilities(character_id: uuid.UUID,trait_id: str):
     """
     Удалить характеристику или способность персонажа.
     Args:
         character_id (uuid.UUID): Идентификатор персонажа.
-        ability_id (str): Идентификатор способности.
+        trait_id (str): Идентификатор способности.
     Returns:
         JSONResponse: Сообщение об успешном удалении.
     """
@@ -109,8 +109,8 @@ async def delete_traits_and_abilities(character_id: uuid.UUID,ability_id: str):
         if character == []:
             raise HTTPException(status_code=404, detail="Персонаж не найден")
         character = character[0]
-        ability =  [i for i in character["traits_and_abilities"] if i["id"] == str(ability_id)]
-        character["traits_and_abilities"] = [i for i in character["traits_and_abilities"] if i["id"] != str(ability_id)]
+        ability =  [i for i in character["traits_and_abilities"] if i["id"] == str(trait_id)]
+        character["traits_and_abilities"] = [i for i in character["traits_and_abilities"] if i["id"] != str(trait_id)]
         db_source.update("character_list",character, character_id)
         return JSONResponse(content=ability[0], status_code=200)
     except Exception as e:
