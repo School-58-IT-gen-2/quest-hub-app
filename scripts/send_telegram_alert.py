@@ -4,9 +4,6 @@ import os
 from dotenv import load_dotenv
 from aiogram.exceptions import TelegramRetryAfter
 
-from logs.log import function_log
-
-
 
 load_dotenv()
 
