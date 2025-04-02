@@ -49,6 +49,8 @@ def delete_old_logs():
 
 # Функция записи логов в файл
 def log_to_file(level, function_name, context, result=None, error=None, error_code=None, traceback_info=None):
+    if traceback_info != None:
+        traceback_info = traceback_info.split('\n')[-1] + traceback_info.split('\n')[-2] + traceback_info.split('\n')[-3] + traceback_info.split('\n')[-4]
     timestamp = datetime.now(timezone.utc).isoformat()
     log_message = f"{timestamp}{log_separator}{level}{log_separator}{function_name}{log_separator}{context}{log_separator}{result if result is not None else ''}{log_separator}{error if error else ''}{log_separator}{error_code if error_code else ''}{log_separator}{traceback_info if traceback_info else ''}\n"
     logging.info(log_message)
