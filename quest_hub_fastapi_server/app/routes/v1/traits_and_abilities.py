@@ -35,11 +35,10 @@ async def get_traits_and_abilities(character_id: uuid.UUID,trait_id: Optional[st
         character = character[0]
         if trait_id is None:
             return JSONResponse(content=character["traits_and_abilities"], status_code=200)
-        ability = [i if i["id"] == trait_id else None for i in character["traits_and_abilities"]]
-        if ability == []:
-            raise HTTPException(status_code=404, detail="Не нашли способность")
-        ability = ability[0]
-        return JSONResponse(content=ability, status_code=200)
+        for i in character["traits_and_abilities"]:
+            if i["id"] == trait_id:
+                return JSONResponse(content=i, status_code=200)
+        return JSONResponse(content="не нашли :(", status_code=404)
     except Exception as e:
         raise InternalServerErrorException(str(e))
     
