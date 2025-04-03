@@ -36,9 +36,9 @@ file_handler = logging.FileHandler(log_file)
 file_handler.setLevel(logging.INFO)  # Только INFO и выше
 file_formatter = logging.Formatter("%(message)s")
 file_handler.setFormatter(file_formatter)
-'''
+
 # --- 2. LokiHandler (логи в Grafana Loki) ---
-loki_handler = LokiHandler(
+'''loki_handler = LokiHandler(
     url="http://localhost:3100/loki/api/v1/push",  # URL Loki
     tags={"app": "my_app"},  # Метки для Loki 
 )
