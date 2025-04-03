@@ -32,7 +32,7 @@ logger = logging.getLogger("my_app")
 logger.setLevel(logging.DEBUG)  # Уровень логирования
 
 # --- 1. FileHandler (логи в файл) ---
-file_handler = logging.FileHandler("app_activity.log")
+file_handler = logging.FileHandler(log_file)
 file_handler.setLevel(logging.INFO)  # Только INFO и выше
 file_formatter = logging.Formatter("%(message)s")
 file_handler.setFormatter(file_formatter)
