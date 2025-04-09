@@ -39,7 +39,7 @@ file_handler.setFormatter(file_formatter)
 
 # --- 2. LokiHandler (логи в Grafana Loki) ---
 loki_handler = LokiHandler(
-    url="http://loki-stack-loki-1:3100/loki/api/v1/push",  # URL Loki
+    url="http://loki:3100/loki/api/v1/push",  # URL Loki
     tags={"app": "my_app"},  # Метки для Loki 
 )
 loki_handler.setLevel(logging.INFO) 
