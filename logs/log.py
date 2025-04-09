@@ -4,8 +4,9 @@ import asyncio
 import sys
 import traceback
 from datetime import datetime, timezone, timedelta
+import queue
 from logging_loki import LokiQueueHandler
-
+log_queue = queue.Queue(maxsize=1000)
 # Настройка логирования
 log_file = "app_activity.log"
 log_separator = " ||| "  # Уникальный разделитель для удобного разбора логов
@@ -41,7 +42,7 @@ file_handler.setFormatter(file_formatter)
 loki_handler = LokiQueueHandler(
     url="http://loki:3100/loki/api/v1/push",
     tags={"app": "my_app", "src": "api"},
-    queue_size=1000  # Буфер для асинхронной отправки
+    queue=log_queue
 )
 loki_handler.setLevel(logging.INFO) 
 loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
