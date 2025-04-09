@@ -4,7 +4,7 @@ import asyncio
 import sys
 import traceback
 from datetime import datetime, timezone, timedelta
-from logging_loki import LokiHandler
+from logging_loki import LokiQueueHandler
 
 # Настройка логирования
 log_file = "app_activity.log"
@@ -38,9 +38,10 @@ file_formatter = logging.Formatter("%(message)s")
 file_handler.setFormatter(file_formatter)
 
 # --- 2. LokiHandler (логи в Grafana Loki) ---
-loki_handler = LokiHandler(
-    url="http://loki:3100/loki/api/v1/push",  # URL Loki
-    tags={"app": "my_app", "src": "api_script"},  # Метки для Loki 
+loki_handler = LokiQueueHandler(
+    url="http://loki:3100/loki/api/v1/push",
+    tags={"app": "my_app", "src": "api"},
+    queue_size=1000  # Буфер для асинхронной отправки
 )
 loki_handler.setLevel(logging.INFO) 
 loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
