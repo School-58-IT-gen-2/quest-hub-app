@@ -26,7 +26,7 @@ if not os.path.exists(log_file) or os.stat(log_file).st_size == 0:
     format="%(message)s",  # Отключаем стандартный формат, будем писать кастомные строки
 )
 '''
-
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 # Создаем логгер
 logger = logging.getLogger("my_app")
 logger.setLevel(logging.DEBUG)  # Уровень логирования
@@ -40,7 +40,7 @@ file_handler.setFormatter(file_formatter)
 # --- 2. LokiHandler (логи в Grafana Loki) ---
 loki_handler = LokiHandler(
     url="http://loki:3100/loki/api/v1/push",  # URL Loki
-    tags={"app": "my_app"},  # Метки для Loki 
+    tags={"app": "my_app", "src": "api_script"},  # Метки для Loki 
 )
 loki_handler.setLevel(logging.INFO) 
 loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
