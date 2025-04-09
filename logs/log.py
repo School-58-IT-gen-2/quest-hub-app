@@ -48,7 +48,7 @@ loki_handler.setFormatter(loki_formatter)
 
 # Добавляем оба обработчика к логгеру
 logger.addHandler(file_handler)
-#logger.addHandler(loki_handler)
+logger.addHandler(loki_handler)
 
 # Функция удаления логов старше 30 дней
 def delete_old_logs():
