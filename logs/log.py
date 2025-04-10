@@ -40,7 +40,7 @@ file_handler.setFormatter(file_formatter)
 loki_handler = LokiHandler(
     url="http://loki:3100/loki/api/v1/push",
     tags={"application": "my-app"},
-    version="2"
+    version="1"
 )
 loki_handler.setLevel(logging.INFO) 
 loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
