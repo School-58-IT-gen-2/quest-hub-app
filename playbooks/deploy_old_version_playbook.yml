@@ -1,0 +1,9 @@
+- name: Stop test container and create production container from old image
+  hosts: all
+  tasks:
+    - name: Stop old container
+      command: docker compose -f /projects/dnd/quest-hub-app/tests/docker-compose.yml down --remove-orphans
+
+    - name: Run docker-compose up
+      command: docker compose -f /projects/dnd/quest-hub-app/docker-compose.yml up -d --force-recreate
+

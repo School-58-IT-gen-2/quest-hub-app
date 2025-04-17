@@ -1,0 +1,12 @@
+- name: Rename test image to master image and start production container from it
+  hosts: all
+  tasks:
+    - name: Mark new image
+      command: docker image tag quest_hub_app:test quest_hub_app:master
+
+    - name: Stop old container
+      command: docker compose -f /projects/dnd/quest-hub-app/tests/docker-compose.yml down --remove-orphans
+
+    - name: Run docker-compose up
+      command: docker compose -f /projects/dnd/quest-hub-app/docker-compose.yml up -d --force-recreate
+
