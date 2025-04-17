@@ -5,7 +5,7 @@
       git:
         repo: https://github.com/School-58-IT-gen-2/quest-hub-app.git
         dest: /projects/dnd/quest-hub-app
-        version: master
+        version: cd_development
       
     - name: Build Docker image
       command: docker build -t quest_hub_app:test /projects/dnd/quest-hub-app
