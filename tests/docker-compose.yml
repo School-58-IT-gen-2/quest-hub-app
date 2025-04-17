@@ -4,7 +4,7 @@ services:
   quest_hub_app:
     image: quest_hub_app:test
     container_name: quest_hub_app
-    env_file: .env
+    env_file: ../.env
     command: 'python main.py'
     ports:
       - 9009:9009
