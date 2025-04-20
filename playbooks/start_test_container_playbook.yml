@@ -9,6 +9,7 @@
       
     - name: Build Docker image
       command: docker build -t quest_hub_app:test /projects/dnd/quest-hub-app
+      
 
     - name: Stop old container
       command: docker compose -f /projects/dnd/quest-hub-app/docker-compose.yml down --remove-orphans
