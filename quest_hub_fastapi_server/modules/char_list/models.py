@@ -98,6 +98,9 @@ class CharListRequestModel(BaseModel):
     worldview: Optional[str] = None # text
     subrace: Optional[str] = None # text
     gender: Optional[str] = None # text
+    archetype: Optional[str] = None # text
+    fighting_style: Optional[str] = None # text
+    created_at: Optional[str] = None
 
 
 #Обработчик ошибок
