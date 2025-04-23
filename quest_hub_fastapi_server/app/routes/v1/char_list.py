@@ -17,33 +17,30 @@ char_route = APIRouter(prefix="/characters", tags=["characters"])
 @function_log
 @char_route.post(path="/char-list", response_model=CharListRequestModel)
 async def add_character(character: CharListRequestModel):
-    """
-        Создание персонажа.
+    try:
+        if not character:
+            raise BadRequestException()
+            
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        
+        new_character = character.model_dump(exclude_unset=True)
+        
+        new_db_source.insert("character_list", new_character)
+        
+        if character.id:
+            fetched_character = new_db_source.get_by_id("character_list", character.id)
+            if fetched_character and isinstance(fetched_character, list) and len(fetched_character) > 0:
+                return CharListRequestModel(**fetched_character[0])
+        
+        return character
+        
+    except BadRequestException as e:
+        raise e
+    except Exception as error:
+        print(f"Error creating character: {error}")
+        raise InternalServerErrorException()
 
-        Args:
-            character (CharListRequestModel): Данные персонажа.
-        Returns:
-            response (dict): Данные персонажа.
-        Raises:
-            BadRequestException: Некорректный запрос.
-            InternalServerErrorException: Внутренняя ошибка сервера.
-            ServiceUnavailableException: Сервис временно недоступен.
-    """
-    #try:
-    if not character:
-        raise BadRequestException()
-    new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-    new_db_source.connect()
-    new_character = character.model_dump(exclude_unset=True)
-    result = new_db_source.insert("character_list", new_character)
-    if result:
-        return result[0]
-    else:
-        raise ServiceUnavailableException()
-    #except BadRequestException as e:
-    #    raise e
-    #except Exception as error:
-    #    raise InternalServerErrorException()
 
 
 @function_log

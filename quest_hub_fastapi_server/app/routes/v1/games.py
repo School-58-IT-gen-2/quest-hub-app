@@ -47,6 +47,17 @@ async def view_part_game(game_id: Optional[uuid.UUID|str] = None):
     except:
         return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=500)
 
+@function_log
+@games_route.get(path="/view_all_games")
+async def view_part_game():
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        games = new_db_source.get_all("games")
+        return JSONResponse(content=games, status_code=200)
+    except:
+        return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=500)
+
 @function_log 
 @games_route.delete(path="/delete_game")
 async def delete_game(game_id: uuid.UUID|str):
