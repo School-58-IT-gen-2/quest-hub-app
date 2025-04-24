@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - cd_development
   workflow_dispatch:
 
 jobs:
@@ -27,12 +28,12 @@ jobs:
         run: |
           echo "${{ secrets.SSH_HOST }}:${{ secrets.SSH_PORT }}" >> inventory.ini
 
-      - name: Run Ansible playbook
+      - name: Start test container playbook
         env:
           ANSIBLE_USER: ${{ secrets.ANSIBLE_USER }}
           ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          ansible-playbook -i inventory.ini playbooks/deploy_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+          ansible-playbook -i inventory.ini playbooks/start_test_container_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
 
       - name: Wait for service to start
         run: |
@@ -72,6 +73,16 @@ jobs:
         run: |
           python3 ./scripts/send_telegram_alert.py
 
+      - name: Deploy old version
+        if: failure() && steps.healthcheck.outcome == 'failure'
+        run: |
+          ansible-playbook -i inventory.ini playbooks/deploy_old_version_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+
+      - name: Deploy new version
+        if: success() && steps.healthcheck.outcome == 'success'
+        run: |
+          ansible-playbook -i inventory.ini playbooks/deploy_new_version_playbook.yml --private-key private_key.pem -u ${{ secrets.ANSIBLE_USER }}
+      
       - name: Clean up
         run: |
           rm -f private_key.pem inventory.ini
