@@ -1,13 +1,22 @@
 import uuid
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
 from quest_hub_fastapi_server.adapters.db_source import DBSource
 from quest_hub_fastapi_server.modules.settings import settings
 from quest_hub_fastapi_server.modules.games.models import *
 from logs.log import function_log
-
+from datetime import datetime
+from string import ascii_letters, digits
+import random
 
 games_route = APIRouter(prefix="/games", tags=["games"])
+
+def generate_seed():
+    seed = []
+    for i in range(6):
+        t = list(ascii_letters+digits)[random.randint(0, len(ascii_letters+digits)-1)]
+        seed.append(t)
+    return "".join(seed)
 
 @function_log
 @games_route.post(path="/create")
@@ -18,10 +27,12 @@ async def create_game(game_data: Game):
         game = game_data.model_dump()
         game.pop("id")
         game.pop("created_at")
-        #game["game_level"] = game["game_level"].value
         game["players_id"] = [str(i) for i in  game["players_id"]]
         game["master_id"] = str(game["master_id"])
-        game["game_level"] = str(game["game_level"].value)
+        game["game_level"] = str(game["game_level"])
+        game["seed"] = generate_seed()
+        while new_db_source.get_by_value("games", "seed", game["seed"]) != []:
+            game["seed"] = generate_seed()
         result = new_db_source.insert("games", game)
         if result != []:
             return JSONResponse(content=result[0],status_code=201)
@@ -47,16 +58,16 @@ async def view_part_game(game_id: uuid.UUID|str):
     except:
         return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
 
-@function_log
-@games_route.get(path="/view_all_games")
-async def view_part_game():
-    try:
-        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
-        new_db_source.connect()
-        games = new_db_source.get_all("games")
-        return JSONResponse(content=games, status_code=200)
-    except:
-        return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
+# @function_log
+# @games_route.get(path="/view_all_games")
+# async def view_part_game():
+#     try:
+#         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+#         new_db_source.connect()
+#         games = new_db_source.get_all("games")
+#         return JSONResponse(content=games, status_code=200)
+#     except:
+#         return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
 
 @function_log 
 @games_route.delete(path="/delete_game")
@@ -109,3 +120,37 @@ async def update_game(new_game_data: Game_Update):
             content={"error": "Ошибка при обновлении игры"}, 
             status_code=400
         )
+
+
+@function_log
+@games_route.get(path="/view_game_with_params")
+async def view_game_with_params(
+    name: Optional[str] = Query(default=None),
+    game_level: Optional[str] = Query(default=None),
+    is_online: Optional[bool] = Query(default=None),
+    place: Optional[str] = Query(default=None),
+    number_of_players: Optional[int] = Query(default=None),
+    seed: Optional[str] = Query(default=None)
+):
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        games = new_db_source.get_all("games")
+        filtered_games = []
+        for game in games:
+            if name is not None and game["name"].lower() != name.lower():
+                continue
+            if game_level is not None and game["game_level"].lower() != game_level.lower():
+                continue
+            if is_online is not None and game["is_online"] != is_online:
+                continue
+            if place is not None and game["place"].lower() != place.lower():
+                continue
+            if number_of_players is not None and game["number_of_players"] != number_of_players:
+                continue
+            if seed is not None and game["seed"] != seed:
+                continue
+            filtered_games.append(game)
+        return JSONResponse(content=filtered_games, status_code=200)
+    except:
+        return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)

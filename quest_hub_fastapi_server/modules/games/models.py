@@ -8,10 +8,11 @@ class Game_Level(Enum):
     """
     Перечисление уровней игры.
     """
-    easy = "легко"
-    medium = "средне"
-    hard = "сложно"
-    very_hard = "пипец сложно"
+    any = None
+    easy = "Легкий"
+    medium = "Средний"
+    hard = "Сложный"
+    social = "Социальный"
 
 class Game(BaseModel):
     """
