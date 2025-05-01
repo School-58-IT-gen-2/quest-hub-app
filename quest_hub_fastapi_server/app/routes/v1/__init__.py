@@ -11,6 +11,7 @@ from quest_hub_fastapi_server.app.routes.v1.traits_and_abilities import traits_a
 from quest_hub_fastapi_server.app.routes.v1.games import games_route
 # from quest_hub_fastapi_server.app.routes.v1.level_up import level_up_route
 # from quest_hub_fastapi_server.app.routes.v1.to_ai import to_ai
+from quest_hub_fastapi_server.app.routes.v1.help import help_route
 
 route = APIRouter(prefix="/v1")
 
@@ -25,3 +26,4 @@ route.include_router(traits_and_abilities_route)
 # route.include_router(to_ai)
 route.include_router(profile_route)
 route.include_router(games_route)
+route.include_router(help_route)
