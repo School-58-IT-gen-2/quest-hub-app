@@ -138,7 +138,7 @@ async def view_game_with_params(
         games = new_db_source.get_all("games")
         filtered_games = []
         for game in games:
-            if name is not None and game["name"].lower() != name.lower():
+            if name is not None and name.lower() not in game["name"].lower():
                 continue
             if game_level is not None and game["game_level"].lower() != game_level.lower():
                 continue
