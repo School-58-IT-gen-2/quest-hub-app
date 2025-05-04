@@ -18,10 +18,10 @@ class Game(BaseModel):
     """
     Модель игры.
     """
-    id: uuid.UUID
+    id: Optional[uuid.UUID] = None
     name: str
     description: Optional[str] = None
-    created_at: datetime.datetime
+    created_at: Optional[datetime.datetime] = None
     is_online: bool
     place: str
     game_level: Optional[Game_Level] = None
@@ -46,3 +46,5 @@ class Game_Update(BaseModel):
     master_id: Optional[str] = None
     players_id: Optional[List[str]] = None
     seed: Optional[str] = None
+
+# {"name": "Тест", "description": "Тест", "is_online": false, "place": "Москва", "game_level": null, "number_of_players": 2, "master_id": "1648778328", "players_id": [], "seed": "test"}
