@@ -29,7 +29,6 @@ async def create_game(game_data: Game):
         game.pop("created_at")
         game["players_id"] = [str(i) for i in  game["players_id"]]
         game["master_id"] = str(game["master_id"])
-        game["game_level"] = str(game["game_level"])
         game["seed"] = generate_seed()
         while new_db_source.get_by_value("games", "seed", game["seed"]) != []:
             game["seed"] = generate_seed()
