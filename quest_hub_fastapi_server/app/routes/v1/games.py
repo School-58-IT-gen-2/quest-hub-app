@@ -30,6 +30,7 @@ async def create_game(game_data: Game):
         game["players_id"] = [str(i) for i in  game["players_id"]]
         game["master_id"] = str(game["master_id"])
         game["seed"] = generate_seed()
+        game["game_level"] = str(game["game_level"])
         while new_db_source.get_by_value("games", "seed", game["seed"]) != []:
             game["seed"] = generate_seed()
         result = new_db_source.insert("games", game)
@@ -38,7 +39,7 @@ async def create_game(game_data: Game):
         else:
             return JSONResponse(content={"error": "Ошибка при создании игры"}, status_code=500)
     except Exception as error:
-        return JSONResponse(content={"error": "Ошибка при создании игры"}, status_code=400)
+        return JSONResponse(content={"error": f"{error}"}, status_code=400)
     
 @function_log
 @games_route.get(path="/view_game")
