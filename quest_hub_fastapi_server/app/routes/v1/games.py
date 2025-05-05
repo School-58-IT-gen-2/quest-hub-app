@@ -129,10 +129,10 @@ async def update_game(new_game_data: Game_Update):
 @games_route.get(path="/view_game_with_params")
 async def view_game_with_params(
     name: Optional[str] = Query(default=None),
-    game_level: Optional[str] = Query(default=None),
-    is_online: Optional[bool] = Query(default=None),
-    place: Optional[str] = Query(default=None),
-    number_of_players: Optional[int] = Query(default=None),
+    level: Optional[str] = Query(default=None),
+    format: Optional[str] = Query(default=None),
+    city: Optional[str] = Query(default=None),
+    player_count: Optional[int] = Query(default=None),
     seed: Optional[str] = Query(default=None)
 ):
     try:
@@ -143,13 +143,13 @@ async def view_game_with_params(
         for game in games:
             if name is not None and name.lower() not in game["name"].lower():
                 continue
-            if game_level is not None and game["game_level"].lower() != game_level.lower():
+            if level is not None and game["game_level"].lower() != level.lower():
                 continue
-            if is_online is not None and game["is_online"] != is_online:
+            if format is not None and game["format"] != format:
                 continue
-            if place is not None and game["place"].lower() != place.lower():
+            if city is not None and game["city"].lower() != city.lower():
                 continue
-            if number_of_players is not None and game["number_of_players"] != number_of_players:
+            if player_count is not None and game["player_count"] != player_count:
                 continue
             if seed is not None and game["seed"] != seed:
                 continue
