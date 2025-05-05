@@ -33,7 +33,6 @@ async def create_game(game_data: Game):
         game["master_id"] = str(game["master_id"])
         game["seed"] = generate_seed()
         game["level"] = level
-        print(game)
         while new_db_source.get_by_value("games", "seed", game["seed"]) != []:
             game["seed"] = generate_seed()
         result = new_db_source.insert("games", game)
@@ -118,9 +117,9 @@ async def update_game(new_game_data: Game_Update):
     except HTTPException as http_ex:
         raise http_ex
     except Exception as error:
-        print(f"Ошибка при обновлении игры: {error}")
+        #print(f"Ошибка при обновлении игры: {error}")
         return JSONResponse(
-            content={"error": "Ошибка при обновлении игры"}, 
+            content={"error": f"Ошибка при обновлении игры {error}"}, 
             status_code=400
         )
 
