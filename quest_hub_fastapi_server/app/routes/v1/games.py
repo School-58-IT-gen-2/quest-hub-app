@@ -135,7 +135,7 @@ async def view_game_with_params(
     player_count: Optional[int] = Query(default=None),
     seed: Optional[str] = Query(default=None)
 ):
-    try:
+    # try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         games = new_db_source.get_all("games")
@@ -143,7 +143,7 @@ async def view_game_with_params(
         for game in games:
             if name is not None and name.lower() not in game["name"].lower():
                 continue
-            if level is not None and game["game_level"].lower() != level.lower():
+            if level is not None and (game["level"] is None or game["level"].lower() != level.lower()):
                 continue
             if format is not None and game["format"] != format:
                 continue
@@ -155,5 +155,5 @@ async def view_game_with_params(
                 continue
             filtered_games.append(game)
         return JSONResponse(content=filtered_games, status_code=200)
-    except:
-        return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
+    # except:
+    #     return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
