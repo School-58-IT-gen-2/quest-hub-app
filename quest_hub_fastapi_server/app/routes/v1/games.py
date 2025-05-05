@@ -25,7 +25,8 @@ async def create_game(game_data: Game):
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         level = game_data.level
-        level = level.value
+        if level != None:
+            level = level.value
         game = game_data.model_dump()
         game.pop("id")
         game.pop("created_at")
@@ -33,7 +34,6 @@ async def create_game(game_data: Game):
         game["master_id"] = str(game["master_id"])
         game["seed"] = generate_seed()
         game["level"] = level
-        print(game)
         while new_db_source.get_by_value("games", "seed", game["seed"]) != []:
             game["seed"] = generate_seed()
         result = new_db_source.insert("games", game)
