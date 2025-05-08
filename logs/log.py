@@ -36,7 +36,7 @@ file_handler.setLevel(logging.INFO)  # Только INFO и выше
 file_formatter = logging.Formatter("%(message)s")
 file_handler.setFormatter(file_formatter)
 
-# --- 2. LokiHandler (логи в Grafana Loki) ---
+'''# --- 2. LokiHandler (логи в Grafana Loki) ---
 loki_handler = LokiHandler(
     url="http://loki:3100/loki/api/v1/push",
     tags={"application": "my-app"},
@@ -45,10 +45,10 @@ loki_handler = LokiHandler(
 loki_handler.setLevel(logging.INFO) 
 loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
 loki_handler.setFormatter(loki_formatter)
-
+'''
 # Добавляем оба обработчика к логгеру
 logger.addHandler(file_handler)
-logger.addHandler(loki_handler)
+#logger.addHandler(loki_handler)
 
 # Функция удаления логов старше 30 дней
 def delete_old_logs():
