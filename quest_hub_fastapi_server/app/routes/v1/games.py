@@ -21,7 +21,7 @@ def generate_seed():
 @function_log
 @games_route.post(path="/create")
 async def create_game(game_data: Game):
-    try:
+    # try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         level = game_data.level
@@ -41,8 +41,8 @@ async def create_game(game_data: Game):
             return JSONResponse(content=result[0],status_code=201)
         else:
             return JSONResponse(content={"error": "Ошибка при создании игры"}, status_code=500)
-    except Exception as error:
-        return JSONResponse(content={"error": f"{error}"}, status_code=400)
+    # except Exception as error:
+    #     return JSONResponse(content={"error": f"{error}"}, status_code=400)
     
 @function_log
 @games_route.get(path="/view_game")
@@ -118,9 +118,8 @@ async def update_game(new_game_data: Game_Update):
     except HTTPException as http_ex:
         raise http_ex
     except Exception as error:
-        print(f"Ошибка при обновлении игры: {error}")
         return JSONResponse(
-            content={"error": "Ошибка при обновлении игры"}, 
+            content={"error": f"Ошибка при обновлении игры \n {error}"}, 
             status_code=400
         )
 
@@ -133,27 +132,45 @@ async def view_game_with_params(
     format: Optional[str] = Query(default=None),
     city: Optional[str] = Query(default=None),
     player_count: Optional[int] = Query(default=None),
-    seed: Optional[str] = Query(default=None)
+    seed: Optional[str] = Query(default=None),
+    type: Optional[str] = Query(default=None)
 ):
-    # try:
+    try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         games = new_db_source.get_all("games")
         filtered_games = []
         for game in games:
-            if name is not None and name.lower() not in game["name"].lower():
-                continue
-            if level is not None and (game["level"] is None or game["level"].lower() != level.lower()):
-                continue
-            if format is not None and game["format"] != format:
-                continue
-            if city is not None and game["city"].lower() != city.lower():
-                continue
-            if player_count is not None and game["player_count"] != player_count:
-                continue
-            if seed is not None and game["seed"] != seed:
-                continue
-            filtered_games.append(game)
+            if (name != None and name.lower() in game["name"].lower()) or name == None:
+                if (level != None and level.lower() == game["level"].lower()) or level == None:
+                    if (format != None and format.lower() == game["format"].lower()) or format == None:
+                        if (city != None and city.lower() in game["city"].lower()) or city == None:
+                            if player_count == None or player_count == game["player_count"]:
+                                if type == None or (type.lower() == game["type"].lower() and type != None):
+                                    if seed == None or game["seed"] == seed:
+                                        filtered_games.append(game)
         return JSONResponse(content=filtered_games, status_code=200)
-    # except:
-    #     return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
+    except:
+        return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
+    
+
+@function_log
+@games_route.post(path="/add_player")
+async def add_player(player_id: str, game_id: uuid.UUID):
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        game_data = new_db_source.get_by_id("games", game_id)
+        if game_data == []:
+            raise HTTPException(status_code=404, detail="Нету такой игры")
+        game_data = game_data[0]
+        if game_data["players_id"] == None:
+            game_data["players_id"] = []
+        game_data["players_id"].append(player_id)
+        new_db_source.update("games", game_data, game_id)
+        return JSONResponse(content=game_data, status_code=200)
+    except:
+        return JSONResponse(content={"error": "Ошибка при добавлении игрока"}, status_code=400)
+
+
+# {"type": "Открытая", "format": "Оффлайн", "city": "Москва", "level": "Социальный", "player_count": 5, "name": "Тестовое название", "description": "Тестовое описание", "players_id": []}

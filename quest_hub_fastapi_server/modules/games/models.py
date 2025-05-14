@@ -29,6 +29,7 @@ class Game(BaseModel):
     master_id: str
     players_id: Optional[List[str]] = None
     seed: Optional[str] = None
+    type: Optional[str] = None
 
 
 class Game_Update(BaseModel):
@@ -46,3 +47,4 @@ class Game_Update(BaseModel):
     master_id: Optional[str] = None
     players_id: Optional[List[str]] = None
     seed: Optional[str] = None
+    type: Optional[str] = None  
