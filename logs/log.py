@@ -4,8 +4,7 @@ import asyncio
 import sys
 import traceback
 from datetime import datetime, timezone, timedelta
-#from logging_loki import LokiHandler
-
+from logging_loki import LokiHandler
 # Настройка логирования
 log_file = "app_activity.log"
 log_separator = " ||| "  # Уникальный разделитель для удобного разбора логов
@@ -26,7 +25,7 @@ if not os.path.exists(log_file) or os.stat(log_file).st_size == 0:
     format="%(message)s",  # Отключаем стандартный формат, будем писать кастомные строки
 )
 '''
-
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 # Создаем логгер
 logger = logging.getLogger("my_app")
 logger.setLevel(logging.DEBUG)  # Уровень логирования
@@ -38,17 +37,18 @@ file_formatter = logging.Formatter("%(message)s")
 file_handler.setFormatter(file_formatter)
 
 # --- 2. LokiHandler (логи в Grafana Loki) ---
-'''loki_handler = LokiHandler(
-    url="http://localhost:3100/loki/api/v1/push",  # URL Loki
-    tags={"app": "my_app"},  # Метки для Loki 
+loki_handler = LokiHandler(
+    url="http://loki:3100/loki/api/v1/push",
+    tags={"application": "my-app"},
+    version="1"
 )
 loki_handler.setLevel(logging.INFO) 
 loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
-loki_handler.setFormatter(loki_formatter)'''
+loki_handler.setFormatter(loki_formatter)
 
 # Добавляем оба обработчика к логгеру
 logger.addHandler(file_handler)
-#logger.addHandler(loki_handler)
+logger.addHandler(loki_handler)
 
 # Функция удаления логов старше 30 дней
 def delete_old_logs():
@@ -78,7 +78,10 @@ def delete_old_logs():
 def log_to_file(level, function_name, context, result=None, error=None, error_code=None, traceback_info=None):
     timestamp = datetime.now(timezone.utc).isoformat()
     log_message = f"{timestamp}{log_separator}{level}{log_separator}{function_name}{log_separator}{context}{log_separator}{result if result is not None else ''}{log_separator}{error if error else ''}{log_separator}{error_code if error_code else ''}{log_separator}{traceback_info if traceback_info else ''}\n"
-    logger.info(log_message)
+    if level == "INFO":
+        logger.info(log_message)
+    elif level == "ERROR":
+        logger.error(log_message)
 
 # Декоратор логирования
 def function_log(func):

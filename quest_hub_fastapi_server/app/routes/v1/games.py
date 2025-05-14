@@ -21,7 +21,7 @@ def generate_seed():
 @function_log
 @games_route.post(path="/create")
 async def create_game(game_data: Game):
-    # try:
+    try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
         level = game_data.level
@@ -41,8 +41,8 @@ async def create_game(game_data: Game):
             return JSONResponse(content=result[0],status_code=201)
         else:
             return JSONResponse(content={"error": "Ошибка при создании игры"}, status_code=500)
-    # except Exception as error:
-    #     return JSONResponse(content={"error": f"{error}"}, status_code=400)
+    except Exception as error:
+        return JSONResponse(content={"error": f"{error}"}, status_code=400)
     
 @function_log
 @games_route.get(path="/view_game")
@@ -119,8 +119,7 @@ async def update_game(new_game_data: Game_Update):
         raise http_ex
     except Exception as error:
         return JSONResponse(
-            content={"error": f"Ошибка при обновлении игры \n {error}"}, 
-            status_code=400
+            content={"error": f"Ошибка при обновлении игры \n {error}"}
         )
 
 
@@ -171,6 +170,3 @@ async def add_player(player_id: str, game_id: uuid.UUID):
         return JSONResponse(content=game_data, status_code=200)
     except:
         return JSONResponse(content={"error": "Ошибка при добавлении игрока"}, status_code=400)
-
-
-# {"type": "Открытая", "format": "Оффлайн", "city": "Москва", "level": "Социальный", "player_count": 5, "name": "Тестовое название", "description": "Тестовое описание", "players_id": []}
