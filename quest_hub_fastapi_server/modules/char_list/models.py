@@ -102,7 +102,10 @@ class CharListRequestModel(BaseModel):
     fighting_style: Optional[str] = None # text
     created_at: Optional[str] = None
 
-
+class LevelUp(BaseModel):
+    archetype:str = None
+    stats:list = None
+    
 #Обработчик ошибок
 class BadRequestException(HTTPException):
     # @function_log
