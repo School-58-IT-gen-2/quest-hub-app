@@ -4,7 +4,7 @@ import asyncio
 import sys
 import traceback
 from datetime import datetime, timezone, timedelta
-from logging_loki import LokiHandler
+# from logging_loki import LokiHandler
 # Настройка логирования
 log_file = "app_activity.log"
 log_separator = " ||| "  # Уникальный разделитель для удобного разбора логов
@@ -37,18 +37,18 @@ file_formatter = logging.Formatter("%(message)s")
 file_handler.setFormatter(file_formatter)
 
 # --- 2. LokiHandler (логи в Grafana Loki) ---
-loki_handler = LokiHandler(
-    url="http://loki:3100/loki/api/v1/push",
-    tags={"application": "my-app"},
-    version="1"
-)
-loki_handler.setLevel(logging.INFO) 
-loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
-loki_handler.setFormatter(loki_formatter)
+# loki_handler = LokiHandler(
+#     url="http://loki:3100/loki/api/v1/push",
+#     tags={"application": "my-app"},
+#     version="1"
+# )
+# loki_handler.setLevel(logging.INFO) 
+# loki_formatter = logging.Formatter("%(message)s")  # Можно настроить иначе
+# loki_handler.setFormatter(loki_formatter)
 
-# Добавляем оба обработчика к логгеру
-logger.addHandler(file_handler)
-logger.addHandler(loki_handler)
+# # Добавляем оба обработчика к логгеру
+# logger.addHandler(file_handler)
+# logger.addHandler(loki_handler)
 
 # Функция удаления логов старше 30 дней
 def delete_old_logs():
