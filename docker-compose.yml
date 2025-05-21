@@ -8,3 +8,9 @@ services:
     command: 'python main.py'
     ports:
       - 9009:9009
+    networks:
+      - loki-stack
+
+networks:
+  loki-stack:
+    external: true
