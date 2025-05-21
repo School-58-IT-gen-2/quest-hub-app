@@ -15,6 +15,13 @@ class Help(BaseModel):
 @function_log
 @help_route.post(path="/save_question")
 async def get_help(help_data: Help):
+    """
+        Сохраняет вопрос в базе данных.
+        Args:
+            help_data (Help): вопрос.
+        Returns:
+            response (dict): сохраненный вопрос.
+    """
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
