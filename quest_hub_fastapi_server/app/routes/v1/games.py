@@ -151,7 +151,7 @@ async def view_game_with_params(
     level: Optional[str] = Query(default=None),
     format: Optional[str] = Query(default=None),
     city: Optional[str] = Query(default=None),
-    player_count: Optional[int] = Query(default=None),
+    player_count: Optional[str] = Query(default=None),  # Изменил тип на str
     seed: Optional[str] = Query(default=None),
     type: Optional[str] = Query(default=None)
 ):
@@ -177,18 +177,26 @@ async def view_game_with_params(
         new_db_source.connect()
         games = new_db_source.get_all("games")
         filtered_games = []
+        player_count_int = None
+        if player_count and player_count.strip():
+            try:
+                player_count_int = int(player_count)
+            except:
+                pass
         for game in games:
-            if (name != None and name.lower() in game["name"].lower()) or name == None:
-                if (level != None and level.lower() == game["level"].lower()) or level == None:
-                    if (format != None and format.lower() == game["format"].lower()) or format == None:
-                        if (city != None and city.lower() in game["city"].lower()) or city == None:
-                            if player_count == None or player_count == game["player_count"]:
-                                if type == None or (type.lower() == game["type"].lower() and type != None):
-                                    if seed == None or game["seed"] == seed:
+            if (not name or name.strip() == "" or name.lower() in game["name"].lower()):
+                if (not level or level.strip() == "" or level.lower() == game["level"].lower()):
+                    if (not format or format.strip() == "" or format.lower() == game["format"].lower()):
+                        if (not city or city.strip() == "" or city.lower() in game["city"].lower()):
+                            if (player_count_int is None or player_count_int == game["player_count"]):
+                                if (not type or type.strip() == "" or type.lower() == game["type"].lower()):
+                                    if (not seed or seed.strip() == "" or game["seed"] == seed):
                                         filtered_games.append(game)
         return JSONResponse(content=filtered_games, status_code=200)
-    except:
-        return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
+    except Exception as e:
+        return JSONResponse(content={"error": f"Ошибка при просмотре игры: {str(e)}"}, status_code=400)
+
+
     
 
 @function_log
