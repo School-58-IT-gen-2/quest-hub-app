@@ -184,13 +184,13 @@ async def view_game_with_params(
             except:
                 pass
         for game in games:
-            if (not name or name.strip() == "" or name.lower() in game["name"].lower()):
-                if (not level or level.strip() == "" or level.lower() == game["level"].lower()):
-                    if (not format or format.strip() == "" or format.lower() == game["format"].lower()):
-                        if (not city or city.strip() == "" or city.lower() in game["city"].lower()):
-                            if (player_count_int is None or player_count_int == game["player_count"]):
-                                if (not type or type.strip() == "" or type.lower() == game["type"].lower()):
-                                    if (not seed or seed.strip() == "" or game["seed"] == seed):
+            if (not name or name.strip() == "" or (game["name"] is not None and name.lower() in game["name"].lower())):
+                if (not level or level.strip() == "" or (game["level"] is not None and level.lower() == game["level"].lower())):
+                    if (not format or format.strip() == "" or (game["format"] is not None and format.lower() == game["format"].lower())):
+                        if (not city or city.strip() == "" or (game["city"] is not None and city.lower() in game["city"].lower())):
+                            if (player_count_int is None or (game["player_count"] is not None and player_count_int == game["player_count"])):
+                                if (not type or type.strip() == "" or (game["type"] is not None and type.lower() == game["type"].lower())):
+                                    if (not seed or seed.strip() == "" or (game["seed"] is not None and game["seed"] == seed)):
                                         filtered_games.append(game)
         return JSONResponse(content=filtered_games, status_code=200)
     except Exception as e:
