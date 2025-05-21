@@ -21,6 +21,13 @@ def generate_seed():
 @function_log
 @games_route.post(path="/create")
 async def create_game(game_data: Game):
+    """
+        Создает игру в базе данных.
+        Args:
+            game_data (Game): данные об игре.
+        Returns:
+            response (dict): созданная игра.   
+    """
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -47,6 +54,13 @@ async def create_game(game_data: Game):
 @function_log
 @games_route.get(path="/view_game")
 async def view_part_game(game_id: uuid.UUID|str):
+    """
+        Просмотр игры.
+        Args:
+            game_id (uuid.UUID | str): ID игры.
+        Returns:
+            response (dict): Данные игры.
+    """
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -75,6 +89,13 @@ async def view_part_game(game_id: uuid.UUID|str):
 @function_log 
 @games_route.delete(path="/delete_game")
 async def delete_game(game_id: uuid.UUID|str):
+    """
+        Удаление игры.
+        Args:
+            game_id (uuid.UUID|str): Идентификатор игры.
+        Returns:
+            response (dict): Данные игры.
+    """
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -134,6 +155,23 @@ async def view_game_with_params(
     seed: Optional[str] = Query(default=None),
     type: Optional[str] = Query(default=None)
 ):
+    """
+        Просмотр всех игр с параметрами.
+
+        Args:
+            name (str): навзание партии.
+            level (str): уровень сложности.
+            format (str): формат партии.
+            city (str): местро проведения партии.
+            player_count (int): количество игроков.
+            seed (str): краткий код для входа в партию.
+            type (str): открытая или закрытая партия.
+        Returns:
+            response (dict): Данные игр.
+        Raises:
+            NottFoundException: Игра не найдена.    
+            InternalServerErrorException: Внутренняя ошибка сервера.
+    """
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
@@ -156,6 +194,17 @@ async def view_game_with_params(
 @function_log
 @games_route.post(path="/add_player")
 async def add_player(player_id: str, game_id: uuid.UUID):
+    """
+        Добавление игрока в игру.
+        Args:
+            player_id (str): id игрока.
+            game_id (uuid.UUID): id игры.
+        Returns:
+            response (dict): Данные игры.
+        Raises:
+            NotFoundException: Игра не найдена.
+            InternalServerErrorException: Внутренняя ошибка сервера.
+    """
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
         new_db_source.connect()
