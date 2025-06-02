@@ -37,7 +37,7 @@ async def create_game(game_data: Game):
         game = game_data.model_dump()
         game.pop("id")
         game.pop("created_at")
-        game["players_id"] = [str(i) for i in  game["players_id"]]
+        game["char_id"] = [str(i) for i in  game["char_id"]]
         game["master_id"] = str(game["master_id"])
         game["seed"] = generate_seed()
         game["level"] = level

@@ -27,7 +27,7 @@ class Game(BaseModel):
     level: Optional[Game_Level] = None
     player_count: int
     master_id: str
-    players_id: Optional[List[str]] = None
+    char_id: Optional[List[str]] = None
     seed: Optional[str] = None
     type: Optional[str] = None
     active: Optional[bool] = None
@@ -47,7 +47,7 @@ class Game_Update(BaseModel):
     level: Optional[Game_Level] = None
     player_count: Optional[int] = None
     master_id: Optional[str] = None
-    players_id: Optional[List[str]] = None
+    char_id: Optional[List[str]] = None
     seed: Optional[str] = None
     type: Optional[str] = None
     active: Optional[bool] = None
