@@ -135,11 +135,14 @@ async def update_game(new_game_data: Game_Update):
                 game[i] = new_game_data[i]
         game["id"] = str(game["id"])
         result = db_source.update("games", game, game_id)
+        if result == []:
+            raise HTTPException(status_code=500, detail="Ошибка при обновлении игры")
         return JSONResponse(content=result[0], status_code=200)
     except HTTPException as http_ex:
         raise http_ex
     except Exception as error:
         return JSONResponse(
+            status_code=500,
             content={"error": f"Ошибка при обновлении игры \n {error}"}
         )
 
@@ -151,7 +154,7 @@ async def view_game_with_params(
     level: Optional[str] = Query(default=None),
     format: Optional[str] = Query(default=None),
     city: Optional[str] = Query(default=None),
-    player_count: Optional[str] = Query(default=None),  # Изменил тип на str
+    player_count: Optional[str] = Query(default=None),
     seed: Optional[str] = Query(default=None),
     type: Optional[str] = Query(default=None)
 ):
@@ -191,7 +194,8 @@ async def view_game_with_params(
                             if (player_count_int is None or (game["player_count"] is not None and player_count_int == game["player_count"])):
                                 if (not type or type.strip() == "" or (game["type"] is not None and type.lower() == game["type"].lower())):
                                     if (not seed or seed.strip() == "" or (game["seed"] is not None and game["seed"] == seed)):
-                                        filtered_games.append(game)
+                                        if game["active"]:
+                                            filtered_games.append(game)
         return JSONResponse(content=filtered_games, status_code=200)
     except Exception as e:
         return JSONResponse(content={"error": f"Ошибка при просмотре игры: {str(e)}"}, status_code=400)
