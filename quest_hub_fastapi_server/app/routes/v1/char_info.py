@@ -97,9 +97,9 @@ async def update_character_backstory(character_id: uuid.UUID|str, update: Update
         Изменение биографии персонажа.
         Args:
             backstory (str): новая биография персонажа.
-            character_id (uuid): айдишник персонажа.
+            character_id (uuid): идентефиикатор персонажа.
         Returns:
-            reponse (dict): словарь с новой биографией персонажа.
+            response (dict): словарь с новой биографией персонажа.
     """
     try:
         new_db_source = DBSource(settings.supabase.url, settings.supabase.key)

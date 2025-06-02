@@ -69,17 +69,17 @@ async def add_item_to_ammunition(character_id: uuid.UUID|str, item: Item):
         _item = item.model_dump()
         if item.name == None:
             return JSONResponse(content={"message": "Нет названия предмета"}, status_code=400)
-        _item["id"] = str(uuid.uuid4())
+        _item["id"] = str(uuid.uuid4()) # генерируем id предмета
         _is_uniq = True
         for i in character["weapons_and_equipment"]:
             if [{j:i[j]} for j in i.keys() if j not in ["id","count"]] == [{j:_item[j]} for j in _item.keys() if j not in ["id","count"]]:
-                i["count"] += _item["count"]
+                i["count"] += _item["count"] # если в строчке выше все совпало, то мы увеличиваем количество предмета на 1
                 _is_uniq = False
                 break
         if _is_uniq:
-            character["weapons_and_equipment"].append(_item)
+            character["weapons_and_equipment"].append(_item) # а иначе мы просто добавляем его в словарь
         new_db_source.update("character_list", character, character_id)
-        _item = {j: _item[j] for j in _item if _item[j] is not None}
+        _item = {j: _item[j] for j in _item if _item[j] is not None} # форматируем предмет (убираем None)
         return JSONResponse(content=_item, status_code=200)
     except:
         return JSONResponse(content={"message": "Что-то пошло не так"}, status_code=400)
