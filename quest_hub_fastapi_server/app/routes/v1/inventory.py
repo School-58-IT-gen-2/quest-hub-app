@@ -37,9 +37,9 @@ async def get_inventory(character_id: uuid.UUID|str, item_id: Optional[str] = No
         if item_id is None:
             return JSONResponse(content=character["inventory"], status_code=200)
         for i in character["inventory"]:
-            if str(i["id"]) == str(item_id):
+            if str(i["id"]) == str(item_id): # Оказывается, если i["id"] - uuid, а item_id - str, то они не равны, из-за этого и не срабатывало условие
                 res = i.copy()
-                res = {j: res[j] for j in res if res[j] is not None}
+                res = {j: res[j] for j in res if res[j] is not None} # приводим найденный предмет к нужному формату
                 return JSONResponse(content=res, status_code=200)
         return JSONResponse(content={"message": "Предмет не найден"}, status_code=404)
     except Exception as error:
@@ -70,7 +70,7 @@ async def add_item_to_inventory(character_id: uuid.UUID|str, item: Item):
         _is_uniq = True
         for i in character["inventory"]:
             if [{j:i[j]} for j in i.keys() if j not in ["id","count"]] == [{j:_item[j]} for j in _item.keys() if j not in ["id","count"]]:
-                i["count"] += _item["count"]
+                i["count"] += _item["count"]  # сравниваем наполнение словарей, если они равны, то увеличиваем количество предмета
                 _is_uniq = False
                 break
         if _is_uniq:
@@ -102,8 +102,8 @@ async def delete_item_from_inventory(character_id: uuid.UUID|str, item_id: str):
         for i in character["inventory"]:
             if i["id"] == item_id:
                 deleted_item = i
-                i["count"] -= 1
-                if i["count"] <= 0:
+                i["count"] -= 1 # тут вычиатаем количество предмета, чтобы не удалять его из инвентаря, если он есть в инвентаре несколько раз
+                if i["count"] <= 0: # если предмет не нужен, то удаляем его из инвентаря
                     character["inventory"].remove(i)
                 break
         if item_id not in [i["id"] for i in character["inventory"]]:
