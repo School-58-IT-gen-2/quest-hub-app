@@ -123,7 +123,7 @@ async def update_game(new_game_data: Game_Update):
         db_source = DBSource(settings.supabase.url, settings.supabase.key)
         db_source.connect()
         game_id = new_game_data.id
-        new_game_data = new_game_data.model_dump()
+        new_game_data = new_game_data.model_dump(exclude=["created_at"])
         game = db_source.get_by_id("games", game_id)
         if not game:
             raise HTTPException(status_code=404, detail="Игра не найдена")
