@@ -145,6 +145,7 @@ async def update_game(new_game_data: Game_Update):
             status_code=500,
             content={"error": f"Ошибка при обновлении игры \n {error}"}
         )
+    
 
 
 @function_log
@@ -200,9 +201,6 @@ async def view_game_with_params(
     except Exception as e:
         return JSONResponse(content={"error": f"Ошибка при просмотре игры: {str(e)}"}, status_code=400)
 
-
-    
-
 @function_log
 @games_route.post(path="/add_player")
 async def add_player(player_id: str, game_id: uuid.UUID):
@@ -231,3 +229,24 @@ async def add_player(player_id: str, game_id: uuid.UUID):
         return JSONResponse(content=game_data, status_code=200)
     except:
         return JSONResponse(content={"error": "Ошибка при добавлении игрока"}, status_code=400)
+    
+@function_log
+@games_route.get(path="/view_game_with_seed")
+async def view_game_with_seed(seed: str):
+    """
+        Просмотр игры по семени.
+        Args:
+            seed (str): короткий код для входа в партию.
+        Returns:
+            response (dict): Данные игры.
+    """
+    try:
+        new_db_source = DBSource(settings.supabase.url, settings.supabase.key)
+        new_db_source.connect()
+        game_data = new_db_source.get_by_value("games", "seed",seed)
+        if game_data == []:
+            raise HTTPException(status_code=404, detail="Нету такой игры")
+        game_data = game_data[0]
+        return JSONResponse(content=game_data, status_code=200)
+    except:
+        return JSONResponse(content={"error": "Ошибка при просмотре игры"}, status_code=400)
