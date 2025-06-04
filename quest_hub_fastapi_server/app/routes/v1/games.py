@@ -245,7 +245,7 @@ async def view_game_with_seed(seed: str):
         new_db_source.connect()
         game_data = new_db_source.get_by_value("games", "seed",seed)
         if game_data == []:
-            raise HTTPException(status_code=404, detail="Нету такой игры")
+            return None
         game_data = game_data[0]
         return JSONResponse(content=game_data, status_code=200)
     except:
